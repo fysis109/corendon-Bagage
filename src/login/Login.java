@@ -38,10 +38,10 @@ public class Login extends Application {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "lol123";
     private static final String CONN_STRING = "jdbc:mysql://localhost:3306/wsdatabase?autoReconnect=true&useSSL=false";
-
+    //test
     @Override
     public void start(Stage primaryStage) {
-
+         
         primaryStage.setTitle("Corendon Bagage");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);

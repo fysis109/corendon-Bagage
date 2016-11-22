@@ -78,7 +78,7 @@ public class Login extends Application {
         PasswordField pwBox = new PasswordField();
         grid.add(pwBox, 1, 2);  
 
-        //De Sign in button
+        //De Sign in 
         Button btn = new Button("Sign in");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);

@@ -29,15 +29,16 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-/**
- *
- * @author mikebuhrs
- */
 public class Login extends Application {
 
-    private static final String USERNAME = "beheerder";
-    private static final String PASSWORD = "lol123";
-    private static final String CONN_STRING = "jdbc:mysql://localhost:3306/wsdatabase?autoReconnect=true&useSSL=false";
+    //mysql connectie
+    mysql mysql = new mysql();
+    
+    //private
+    private final String USERNAME = mysql.username();
+    private final String PASSWORD = mysql.password();
+    private final String CONN_STRING = mysql.urlmysql();
+    
     //test
     @Override
     public void start(Stage primaryStage) {

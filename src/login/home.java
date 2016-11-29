@@ -1,37 +1,16 @@
 package login;
 
-import static java.awt.SystemColor.menu;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class home {
+public class Home {
 
     //mysql connectie
-    mysql mysql = new mysql();
+    Mysql mysql = new Mysql();
     
     //private mqsql
     private final String USERNAME = mysql.username();
@@ -58,7 +37,7 @@ public class home {
         
         Scene scene = new Scene(root, 1200, 920);
 
-        primaryStage.setTitle("java-buddy.blogspot.com");
+        primaryStage.setTitle("Home scherm");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package login;
 
 import java.sql.Connection;
@@ -12,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -31,10 +28,12 @@ import javafx.stage.Stage;
 
 public class Login extends Application {
 
+    home home = new home();
+    
     //mysql connectie
     mysql mysql = new mysql();
     
-    //private
+    //private mqsql
     private final String USERNAME = mysql.username();
     private final String PASSWORD = mysql.password();
     private final String CONN_STRING = mysql.urlmysql();
@@ -95,64 +94,69 @@ public class Login extends Application {
         btn.setDefaultButton(true);
 
         //Button event text
-        btn.setOnAction((ActionEvent e) -> {
-            String username = userTextField.getText();
-            String password = pwBox.getText();
-            if(pwBox.getText() == null || pwBox.getText().trim().isEmpty() || userTextField.getText() == null || userTextField.getText().trim().isEmpty()){
-                actiontarget.setText("Password and/or username \ncan't be left open");
-            }
-            else{
-            
-            System.out.print(username + "\n" + password);
-            Connection conn;
-            try {
-                conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-                System.out.println("Connected!");
-                Statement stmt = (Statement) conn.createStatement();
-                username = "'" + username + "'";
-               
-                ResultSet rs1 = stmt.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = " + username);
-                int count = 0;
-                while(rs1.next()){
-                    count = rs1.getInt("total");
-                }
-                System.out.println(count);
-                ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE username = " + username);
-                if(count > 0){
-                    while (rs.next()) {
-                        String pass = rs.getString("wachtwoord");
-                        System.out.print(pass);
-                        System.out.println(username);
-                        if (pass.equals(password)) {
-                            System.out.println("Je bent ingelogd!");
-                            actiontarget.setText("");
-                        } else {
-                            actiontarget.setText("Wrong password or uername try again!");
-                            System.out.println("Je bent niet inglogd");
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            private String[] test;
+            @Override
+            public void handle(ActionEvent e) {
+                String username = userTextField.getText();
+                String password = pwBox.getText();
+                if(pwBox.getText() == null || pwBox.getText().trim().isEmpty() || userTextField.getText() == null || userTextField.getText().trim().isEmpty()){
+                    actiontarget.setText("Password and/or username \ncan't be left open");
+                } else {
+                    
+                    System.out.print(username + "\n" + password);
+                    Connection conn;
+                    try {
+                        conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                        System.out.println("Connected!");
+                        Statement stmt = (Statement) conn.createStatement();
+                        username = "'" + username + "'";
+                        
+                        ResultSet rs1 = stmt.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = " + username);
+                        int count = 0;
+                        while(rs1.next()){
+                            count = rs1.getInt("total");
                         }
-                    }    
-                }else{
-                    actiontarget.setText("Wrong password or uername try again!");
+                        System.out.println(count);
+                        ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE username = " + username);
+                        if(count > 0){
+                            while (rs.next()) {
+                                String pass = rs.getString("wachtwoord");
+                                System.out.print(pass);
+                                System.out.println(username);
+                                if (pass.equals(password)) {
+                                    System.out.println("Je bent ingelogd!");
+                                    actiontarget.setText("");
+                                    
+                                    
+                                    home.start(primaryStage);
+                                    
+                                    
+                                } else {
+                                    actiontarget.setText("Wrong password or uername try again!");
+                                    System.out.println("Je bent niet inglogd");
+                                }
+                            }
+                        }else{
+                            actiontarget.setText("Wrong password or uername try again!");
+                        }
+                        
+                        
+                    } catch (SQLException ed) {
+                        System.err.println(ed);
+                    }
+                    
                 }
-                
-
-            } catch (SQLException ed) {
-                System.err.println(ed);
-            }
-            
             }
         });
 
-        Scene scene = new Scene(grid, 360, 275);
+        Scene scene = new Scene(grid, 500, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         launch(args);
+        //home.main(args);
     }
 
 }

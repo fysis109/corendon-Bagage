@@ -40,12 +40,23 @@ public class home {
     
     public void start(Stage primaryStage) {
         
+        //import java class
+        Login Log = new Login();
+        
         Button btn = new Button("Sign in");
         
         StackPane root = new StackPane();
         root.getChildren().add(btn);
-
-        Scene scene = new Scene(root, 300, 250);
+        
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            private String[] test;
+            @Override
+            public void handle(ActionEvent e) {
+                Log.start(primaryStage);
+            }
+        });
+        
+        Scene scene = new Scene(root, 1200, 920);
 
         primaryStage.setTitle("java-buddy.blogspot.com");
         primaryStage.setScene(scene);

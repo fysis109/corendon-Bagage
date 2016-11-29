@@ -150,7 +150,7 @@ public class Login extends Application {
             }
         });
 
-        Scene scene = new Scene(grid, 500, 500);
+        Scene scene = new Scene(grid, 1200, 920);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

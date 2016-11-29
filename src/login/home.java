@@ -7,10 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class home {
+public class Home {
 
     //mysql connectie
-    mysql mysql = new mysql();
+    Mysql mysql = new Mysql();
     
     //private mqsql
     private final String USERNAME = mysql.username();
@@ -37,7 +37,11 @@ public class home {
         
         Scene scene = new Scene(root, 1200, 920);
 
+<<<<<<< HEAD
         primaryStage.setTitle("Home");
+=======
+        primaryStage.setTitle("Home scherm");
+>>>>>>> origin/master
         primaryStage.setScene(scene);
         primaryStage.show();
     }

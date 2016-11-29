@@ -1,6 +1,6 @@
 package login;
 
-public class mysql {
+public class Mysql {
 
     private final String USENAME = "root";
     private final String PASSWORD = "Pulsar11";

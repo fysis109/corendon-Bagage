@@ -27,7 +27,6 @@ public class Home {
         GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
         Login log = new Login();
         GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
-        System.out.println("bla");
         
         
         GridPane grid = new GridPane();

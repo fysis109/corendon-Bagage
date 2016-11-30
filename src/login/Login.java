@@ -28,7 +28,7 @@ import javafx.stage.Stage;
 public class Login extends Application {
 
     //import java class
-    Home home = new Home();
+    Home Home = new Home();
     WachtwoordVergeten wachtwoordVergeten = new WachtwoordVergeten();
     
     //mysql connectie
@@ -146,9 +146,7 @@ public class Login extends Application {
                                     System.out.println("Je bent ingelogd!");
                                     actiontarget.setText("");
                                     
-                                    
-                                    home.start(primaryStage, rol);
-                                    
+                                    Home.start(primaryStage, rol);
                                     
                                 } else {
                                     actiontarget.setText("Wrong password or uername try again!");

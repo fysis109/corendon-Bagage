@@ -36,7 +36,7 @@ import javafx.stage.Stage;
  */
 public class GebruikerAanpassen {
 
-    mysql mysql = new mysql();
+    Mysql mysql = new Mysql();
 
     //private mqsql
     private final String USERNAME = mysql.username();

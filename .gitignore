@@ -18,3 +18,5 @@ hs_err_pid*
 *.properties
 
 *.xml
+nbproject/private/private.properties
+nbproject/project.properties

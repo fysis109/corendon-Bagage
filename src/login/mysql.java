@@ -10,18 +10,7 @@ public class Mysql {
     private final boolean AUTORECONNECT = true;
     private final boolean SSL = false;
     
-    
-    String username(){
-        return USENAME;
-    };
-        
-    String password(){
-        return PASSWORD;
-    };
-    
-    String urlmysql(){
-        return "jdbc:mysql://"+IPADDRESS+":"+POORT+"/"+DATABASENAAM+"?autoReconnect="+AUTORECONNECT+"&useSSL="+SSL;
-    };
+
     
     //nieuwe versie
     String getUsername(){

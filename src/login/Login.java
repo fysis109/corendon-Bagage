@@ -35,9 +35,9 @@ public class Login extends Application {
     Mysql mysql = new Mysql();
     
     //private mqsql
-    private final String USERNAME = mysql.username();
-    private final String PASSWORD = mysql.password();
-    private final String CONN_STRING = mysql.urlmysql();
+    private final String USERNAME = mysql.getUsername();
+    private final String PASSWORD = mysql.getPassword();
+    private final String CONN_STRING = mysql.getUrlmysql();
     
     //test
     @Override

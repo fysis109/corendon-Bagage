@@ -122,6 +122,7 @@ public class Login extends Application {
                         if(count > 0){
                             while (rs.next()) {
                                 String pass = rs.getString("wachtwoord");
+                                String rol = rs.getString("rol");
                                 System.out.print(pass);
                                 System.out.println(username);
                                 if (pass.equals(password)) {
@@ -129,16 +130,16 @@ public class Login extends Application {
                                     actiontarget.setText("");
                                     
                                     
-                                    home.start(primaryStage);
+                                    home.start(primaryStage, rol);
                                     
                                     
                                 } else {
                                     actiontarget.setText("Wrong password or uername try again!");
-                                    System.out.println("Je bent niet inglogd");
+                                    System.out.println("Je bent niet ingelogd");
                                 }
                             }
                         }else{
-                            actiontarget.setText("Wrong password or uername try again!");
+                            actiontarget.setText("Wrong password or username try again!");
                         }
                         
                         

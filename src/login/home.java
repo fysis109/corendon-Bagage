@@ -38,25 +38,62 @@ public class home {
     private final String PASSWORD = mysql.password();
     private final String CONN_STRING = mysql.urlmysql();
     
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage, String rol) {
         
         //import java class
-        Login Log = new Login();
+        GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
+        Login log = new Login();
+        GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
         
-        Button btn = new Button("Sign in");
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        
+        
+        Button btn = new Button("Gebruiker aanmaken");
+        Button btn1 = new Button("Sign in");
+        Button btn2 = new Button("Gebruiker aanpassen");
         
         StackPane root = new StackPane();
-        root.getChildren().add(btn);
+        if(rol.equals("admin")){
+            root.getChildren().add(btn);
+            grid.add(btn, 0, 6);
+            root.getChildren().add(btn2);
+            grid.add(btn2, 4, 6);
+        }else{
+            root.getChildren().add(btn1);
+            grid.add(btn1, 4, 6);
+        }
+        
+        btn2.setOnAction(new EventHandler<ActionEvent>() {
+            private String[] test;
+            @Override
+            public void handle(ActionEvent e) {
+                
+                gebruikerAanpassen.star(primaryStage);
+            }
+        });
+        
+        btn1.setOnAction(new EventHandler<ActionEvent>() {
+            private String[] test;
+            @Override
+            public void handle(ActionEvent e) {
+                log.start(primaryStage);
+            }
+        });
         
         btn.setOnAction(new EventHandler<ActionEvent>() {
             private String[] test;
             @Override
             public void handle(ActionEvent e) {
-                Log.start(primaryStage);
+                gebruikerAanmaken.start(primaryStage);
             }
         });
         
-        Scene scene = new Scene(root, 1200, 920);
+        Scene scene = new Scene(grid, 1200, 920);
 
         primaryStage.setTitle("java-buddy.blogspot.com");
         primaryStage.setScene(scene);
@@ -64,8 +101,6 @@ public class home {
     }
     
     public static void main(String[] args) {
-        System.out.println("hahaha");
-       
     }
 
 }

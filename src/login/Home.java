@@ -37,11 +37,7 @@ public class Home {
         
         Scene scene = new Scene(root, 1200, 920);
 
-<<<<<<< HEAD
         primaryStage.setTitle("Home");
-=======
-        primaryStage.setTitle("Home scherm");
->>>>>>> origin/master
         primaryStage.setScene(scene);
         primaryStage.show();
     }

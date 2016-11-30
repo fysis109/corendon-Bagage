@@ -1,6 +1,5 @@
 package login;
 
-import com.mysql.jdbc.log.Log;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -17,9 +16,9 @@ public class Home {
     Mysql mysql = new Mysql();
     
     //private mqsql
-    private final String USERNAME = mysql.username();
-    private final String PASSWORD = mysql.password();
-    private final String CONN_STRING = mysql.urlmysql();
+    private final String USERNAME = mysql.getUsername();
+    private final String PASSWORD = mysql.getPassword();
+    private final String CONN_STRING = mysql.getUrlmysql();
     
     public void start(Stage primaryStage, String rol) {
         

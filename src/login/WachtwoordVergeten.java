@@ -6,9 +6,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -16,53 +18,44 @@ public class WachtwoordVergeten {
     public void start(Stage primaryStage) {
 
     //import java class
-    Login Log = new Login();
+    Login Login = new Login();
     
     //grind
-    primaryStage.setTitle("Corendon Bagage");
+    primaryStage.setTitle("Wachtwoord vergeten");
     GridPane grid = new GridPane();
     grid.setAlignment(Pos.CENTER);
     grid.setHgap(10);
     grid.setVgap(10);
     grid.setPadding(new Insets(25, 25, 25, 25));
-
     
+    //Titel    
+    Label scenetitle = new Label("Wachtwoord vergeten.");
+    scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 25));
+    scenetitle.setAlignment(Pos.BOTTOM_CENTER);
+    grid.add(scenetitle, 0, 0);
+  
+    //text gebeid
+    Label text = new Label("Neem contact op met uw manager voor een wachtwoord reset.");
+    text.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+    grid.add(text, 0, 3);
     
-    
-    
-    
-    
-    
-    
-    //button
-    Button btn = new Button("Sign in");
-
-    StackPane root = new StackPane();
-    root.getChildren().add(btn);
-
-    btn.setOnAction(new EventHandler<ActionEvent>() {
+    //button wahtwoord vergeten
+    Button buttonWachtwoordVergeten = new Button("Forgot password");
+    HBox bwvbox = new HBox(10);
+    bwvbox.setAlignment(Pos.BOTTOM_CENTER);
+    bwvbox.getChildren().add(buttonWachtwoordVergeten);
+    grid.add(bwvbox, 0, 4);
+    buttonWachtwoordVergeten.setOnAction(new EventHandler<ActionEvent>() {
         private String[] test;
         @Override
         public void handle(ActionEvent e) {
-            Log.start(primaryStage);
+            Login.start(primaryStage);
         }
     });
-
-    Scene scene = new Scene(root, 1200, 920);
-
-    primaryStage.setTitle("Home scherm");
+    
+    //show interface
+    Scene scene = new Scene(grid, 1200, 920);
     primaryStage.setScene(scene);
     primaryStage.show();
-    
-    //text
-    Text scenetitle = new Text("Welcome");
-    
-    //button
-    Button buttonWachtwoordVergeten = new Button("Forgot password");
-    HBox bwvbox = new HBox(10);
-    bwvbox.setAlignment(Pos.BOTTOM_RIGHT);
-    bwvbox.getChildren().add(buttonWachtwoordVergeten);
-    grid.add(bwvbox, 1, 3);
-    //Login.start(primaryStage);
     }
 }

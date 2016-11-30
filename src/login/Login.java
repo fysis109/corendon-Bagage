@@ -101,6 +101,7 @@ public class Login extends Application {
         bwvbox.getChildren().add(buttonWachtwoordVergeten);
         grid.add(bwvbox, 1, 3);
         
+        //button event voor wachtwoord vergeten
         buttonWachtwoordVergeten.setOnAction(new EventHandler<ActionEvent>() {
             private String[] test;
             @Override
@@ -156,8 +157,6 @@ public class Login extends Application {
                         }else{
                             actiontarget.setText("Wrong password or uername try again!");
                         }
-                        
-                        
                     } catch (SQLException ed) {
                         System.err.println(ed);
                     }

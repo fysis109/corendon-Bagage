@@ -19,7 +19,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -28,15 +27,17 @@ import javafx.stage.Stage;
 
 public class Login extends Application {
 
-    home home = new home();
+    //import java class
+    Home home = new Home();
+    WachtwoordVergeten wachtwoordVergeten = new WachtwoordVergeten();
     
     //mysql connectie
-    mysql mysql = new mysql();
+    Mysql mysql = new Mysql();
     
     //private mqsql
-    private final String USERNAME = mysql.username();
-    private final String PASSWORD = mysql.password();
-    private final String CONN_STRING = mysql.urlmysql();
+    private final String USERNAME = mysql.getUsername();
+    private final String PASSWORD = mysql.getPassword();
+    private final String CONN_STRING = mysql.getUrlmysql();
     
     //test
     @Override
@@ -84,15 +85,31 @@ public class Login extends Application {
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
         grid.add(hbBtn, 1, 4);
-
+        
+        //Enter ook
+        btn.setDefaultButton(true);
+        
         //button event maken
         final Text actiontarget = new Text();
         actiontarget.setFill(Color.FIREBRICK);
         grid.add(actiontarget, 1, 6);
 
-        //Enter ook
-        btn.setDefaultButton(true);
-
+        //wachtwoord vergeten
+        Button buttonWachtwoordVergeten = new Button("Forgot password");
+        HBox bwvbox = new HBox(10);
+        bwvbox.setAlignment(Pos.BOTTOM_RIGHT);
+        bwvbox.getChildren().add(buttonWachtwoordVergeten);
+        grid.add(bwvbox, 1, 3);
+        
+        //button event voor wachtwoord vergeten
+        buttonWachtwoordVergeten.setOnAction(new EventHandler<ActionEvent>() {
+            private String[] test;
+            @Override
+            public void handle(ActionEvent e) {
+                wachtwoordVergeten.start(primaryStage);
+            }
+        });        
+        
         //Button event text
         btn.setOnAction(new EventHandler<ActionEvent>() {
             private String[] test;
@@ -141,8 +158,6 @@ public class Login extends Application {
                         }else{
                             actiontarget.setText("Wrong password or username try again!");
                         }
-                        
-                        
                     } catch (SQLException ed) {
                         System.err.println(ed);
                     }
@@ -157,7 +172,6 @@ public class Login extends Application {
     }
     public static void main(String[] args) {
         launch(args);
-        //home.main(args);
     }
 
 }

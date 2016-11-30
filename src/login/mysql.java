@@ -1,6 +1,6 @@
 package login;
 
-public class mysql {
+public class Mysql {
 
     private final String USENAME = "root";
     private final String PASSWORD = "Pulsar11";
@@ -20,6 +20,19 @@ public class mysql {
     };
     
     String urlmysql(){
+        return "jdbc:mysql://"+IPADDRESS+":"+POORT+"/"+DATABASENAAM+"?autoReconnect="+AUTORECONNECT+"&useSSL="+SSL;
+    };
+    
+    //nieuwe versie
+    String getUsername(){
+        return USENAME;
+    };
+        
+    String getPassword(){
+        return PASSWORD;
+    };
+    
+    String getUrlmysql(){
         return "jdbc:mysql://"+IPADDRESS+":"+POORT+"/"+DATABASENAAM+"?autoReconnect="+AUTORECONNECT+"&useSSL="+SSL;
     };
 }

@@ -23,7 +23,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -39,9 +38,9 @@ public class GebruikerAanmaken {
      Mysql mysql = new Mysql();
     
     //private mqsql
-    private final String USERNAME = mysql.username();
-    private final String PASSWORD = mysql.password();
-    private final String CONN_STRING = mysql.urlmysql();
+    private final String USERNAME = mysql.getUsername();
+    private final String PASSWORD = mysql.getPassword();
+    private final String CONN_STRING = mysql.getUrlmysql();
     
     //test
     public void start(Stage primaryStage) {

@@ -20,3 +20,17 @@ hs_err_pid*
 *.xml
 nbproject/private/private.properties
 nbproject/project.properties
+
+*.xml
+
+*.xml
+
+*.xml
+
+nbproject/jfx-impl.xml
+
+*.properties
+
+*.xml
+
+*.TXT

@@ -1,7 +1,6 @@
 package login;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -34,46 +33,42 @@ public class Home {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
         
-        Button btn = new Button("Gebruiker aanmaken");
-        Button btn1 = new Button("Sign in");
-        Button btn2 = new Button("Gebruiker aanpassen");
+        Button buttonGebruikerAanmaken = new Button("Gebruiker aanmaken");
+        Button buttonSignIn = new Button("Sign in");
+        Button buttonGebruikerAanpassen = new Button("Gebruiker aanpassen");
+        Button buttonGevondenKofferRegistreren = new Button("Gevonden bagage registreren");
+        
         
         StackPane root = new StackPane();
         
         if(rol.equals("admin")){
-            root.getChildren().add(btn);
-            grid.add(btn, 0, 6);
-            root.getChildren().add(btn2);
-            grid.add(btn2, 4, 6);
+            root.getChildren().add(buttonGebruikerAanmaken);
+            grid.add(buttonGebruikerAanmaken, 0, 6);
+            root.getChildren().add(buttonGebruikerAanpassen);
+            grid.add(buttonGebruikerAanpassen, 4, 6);
         }else{
-            root.getChildren().add(btn1);
-            grid.add(btn1, 4, 6);
+            root.getChildren().add(buttonSignIn);
+            grid.add(buttonSignIn, 4, 6);
+            grid.add(buttonGevondenKofferRegistreren, 3,6);
         }
         
-        btn2.setOnAction(new EventHandler<ActionEvent>() {
-            private String[] test;
-            @Override
-            public void handle(ActionEvent e) {
-                
-                gebruikerAanpassen.star(primaryStage);
-            }
+        buttonGebruikerAanpassen.setOnAction((ActionEvent e) -> {
+            gebruikerAanpassen.star(primaryStage);
         });
         
-        btn1.setOnAction(new EventHandler<ActionEvent>() {
-            private String[] test;
-            @Override
-            public void handle(ActionEvent e) {
-                log.start(primaryStage);
-            }
+        buttonSignIn.setOnAction((ActionEvent e) -> {
+            log.start(primaryStage);
         });
         
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            private String[] test;
-            @Override
-            public void handle(ActionEvent e) {
-                gebruikerAanmaken.start(primaryStage);
-            }
+        buttonGebruikerAanmaken.setOnAction((ActionEvent e) -> {
+            gebruikerAanmaken.start(primaryStage);
         });
+        
+        buttonGevondenKofferRegistreren.setOnAction((ActionEvent e) -> {
+            //.start(primaryStage);
+        });
+        
+        
         
         Scene scene = new Scene(grid, 1200, 920);
 

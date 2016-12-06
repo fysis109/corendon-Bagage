@@ -16,6 +16,8 @@ public class Home {
     //mysql connectie
     Mysql mysql = new Mysql();
     
+    public Stage test;
+    
     //private mqsql
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
@@ -23,7 +25,7 @@ public class Home {
     
     
     public void start(Stage primaryStage) {
-   
+        test = primaryStage;
         //import java class
         GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
         Login log = new Login();
@@ -33,7 +35,7 @@ public class Home {
 
         // deze vijf regels om een homeknop aan te roepen
         MenuB menuB = new MenuB();
-        MenuBar menuBar = menuB.createMenuB();        
+        MenuBar menuBar = menuB.createMenuB(primaryStage);        
         BorderPane root = new BorderPane();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
@@ -87,6 +89,8 @@ public class Home {
         primaryStage.setTitle("Home");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        
     }
     
     public static void main(String[] args) {

@@ -25,6 +25,7 @@ public class Home {
         GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
         Login log = new Login();
         GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
+        GevKofferReg gevKofferReg = new GevKofferReg();
         
         
         GridPane grid = new GridPane();
@@ -65,7 +66,7 @@ public class Home {
         });
         
         buttonGevondenKofferRegistreren.setOnAction((ActionEvent e) -> {
-            //.start(primaryStage);
+            gevKofferReg.start(primaryStage);
         });
         
         

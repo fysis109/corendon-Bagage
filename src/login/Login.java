@@ -26,7 +26,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Login extends Application {
-
+    
     //import java class
     Home Home = new Home();
     WachtwoordVergeten wachtwoordVergeten = new WachtwoordVergeten();
@@ -42,7 +42,7 @@ public class Login extends Application {
     //test
     @Override
     public void start(Stage primaryStage) {
-         
+       
         primaryStage.setTitle("Corendon Bagage");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -167,6 +167,7 @@ public class Login extends Application {
         Scene scene = new Scene(grid, 1200, 920);
         primaryStage.setScene(scene);
         primaryStage.show();
+        
     }
     public static void main(String[] args) {
         launch(args);

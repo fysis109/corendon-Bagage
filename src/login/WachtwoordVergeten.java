@@ -107,7 +107,7 @@ public class WachtwoordVergeten {
                         conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                         
                         //SQL query
-                        private String query = "SELECT * FROM users WHERE username LIKE '"+username+"'";
+                        String query = "SELECT * FROM users WHERE username LIKE '"+username+"'";
                         System.out.println(query);
 
                         // create the java statement
@@ -119,29 +119,29 @@ public class WachtwoordVergeten {
                         while (databaseResponse.next())
                         {   
                             //database response verwerken
-                            private String DBEmailadress = databaseResponse.getString("email");
-                            private String customerId = databaseResponse.getString("userID");
+                            String DBEmailadress = databaseResponse.getString("email");
+                            String customerId = databaseResponse.getString("userID");
                             
                             //kijk of mail adres het zelfde is als in het database staat
                             if(emailadress.equals(DBEmailadress)){
                                 
                                 //creat nieuw cijfer matig wachtwoord.
-                                private String randomGetal = "";
+                                String randomGetal = "";
                                 for(int i = 0; i < 8; i++){
                                     randomGetal += String.valueOf((int) (Math.random()* ((10-1)+1)));
                                 }
                                 
                                 //update quary
-                                private String updateQuary = "UPDATE users SET wachtwoord='"+randomGetal+"' WHERE userID='"+customerId+"'";
+                                String updateQuary = "UPDATE users SET wachtwoord='"+randomGetal+"' WHERE userID='"+customerId+"'";
                                 st.executeUpdate(updateQuary);
                                 
-                                private String RECIPIENT = emailadress;
+                               String RECIPIENT = emailadress;
                                 
-                                private String from = EMAIL_USER_NAME;
-                                private String pass = EMAIL_PASSWORD;
-                                private String[] to = { RECIPIENT };
-                                private String subject = "Corendon wachtwoord reset.";
-                                private String body = "Welkom. Hier bij is een nieuwe wachtwoord. Wachtwoord is:"+randomGetal;
+                                String from = EMAIL_USER_NAME;
+                                String pass = EMAIL_PASSWORD;
+                                String[] to = { RECIPIENT };
+                                String subject = "Corendon wachtwoord reset.";
+                                String body = "Welkom. Hier bij is een nieuwe wachtwoord. Wachtwoord is:"+randomGetal;
 
                                 //send mail
                                 sendFromGMail(from, pass, to, subject, body);

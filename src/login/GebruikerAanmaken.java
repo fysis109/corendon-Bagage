@@ -20,10 +20,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -50,7 +52,11 @@ public class GebruikerAanmaken {
     //test
     public void start(Stage primaryStage) {
         
-        
+        MenuB menuB = new MenuB();
+        MenuBar menuBar = menuB.createMenuB(primaryStage);        
+        BorderPane root = new BorderPane();
+        menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
+        root.setTop(menuBar);
         
         primaryStage.setTitle("Gebruiker aanmaken");
         GridPane grid = new GridPane();
@@ -58,6 +64,8 @@ public class GebruikerAanmaken {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        root.setCenter(grid);
         
         //Welkom + Letter type
         Text scenetitle = new Text("Welcome");
@@ -204,7 +212,7 @@ public class GebruikerAanmaken {
             }
         });
 
-        Scene scene = new Scene(grid, 1200, 920);
+        Scene scene = new Scene(root, 1200, 920);
         primaryStage.setScene(scene);
         primaryStage.show();
     

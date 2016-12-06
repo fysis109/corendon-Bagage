@@ -6,6 +6,8 @@
 package login;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -13,6 +15,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.Stage;
 
 /**
  *
@@ -20,19 +23,32 @@ import javafx.scene.control.ToggleGroup;
  */
 public class MenuB {
     
-    public MenuBar createMenuB(){
+    GevKofferReg GVR = new GevKofferReg();
+    
+    public MenuBar createMenuB(Stage primaryStage){
         
         MenuBar menuBar = new MenuBar();
+        Home home = new Home();
+        Login login = new Login();
         
     // File menu - new, save, exit
-    Menu fileMenu = new Menu("File");
-    MenuItem newMenuItem = new MenuItem("New");
-    MenuItem saveMenuItem = new MenuItem("Save");
-    MenuItem exitMenuItem = new MenuItem("Exit");
-    exitMenuItem.setOnAction(actionEvent -> Platform.exit());
-
-    fileMenu.getItems().addAll(newMenuItem, saveMenuItem,
-        new SeparatorMenuItem(), exitMenuItem);
+    Menu homeB = new Menu("Options");
+    Menu options = new Menu("Options");
+    Button btn = new Button("test");
+    MenuItem homePage = new MenuItem("Go to homepage");
+    MenuItem logout = new MenuItem("Logout");
+    MenuItem exit = new MenuItem("Exit application");
+    
+    exit.setOnAction(actionEvent -> Platform.exit());
+    homePage.setOnAction((ActionEvent e) -> {
+        home.start(primaryStage);
+        });
+        logout.setOnAction((ActionEvent e) -> {
+        login.start(primaryStage);
+        });
+    
+    homeB.getItems().addAll(homePage, logout,
+        new SeparatorMenuItem(), exit);
 
     Menu webMenu = new Menu("Web");
     CheckMenuItem htmlMenuItem = new CheckMenuItem("HTML");
@@ -63,7 +79,7 @@ public class MenuB {
 
     sqlMenu.getItems().add(tutorialManeu);
 
-    menuBar.getMenus().addAll(fileMenu, webMenu, sqlMenu);
+    menuBar.getMenus().addAll(homeB, webMenu, sqlMenu);
         
     return menuBar;
     

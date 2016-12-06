@@ -44,7 +44,6 @@ public class WachtwoordVergeten {
     //import java class
     Login Login = new Login();
     
-    
     //grind
     primaryStage.setTitle("Wachtwoord vergeten");
     GridPane grid = new GridPane();

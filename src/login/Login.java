@@ -38,6 +38,7 @@ public class Login extends Application {
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
+    public static String rol;
     
     //test
     @Override
@@ -139,14 +140,14 @@ public class Login extends Application {
                         if(count > 0){
                             while (rs.next()) {
                                 String pass = rs.getString("wachtwoord");
-                                String rol = rs.getString("rol");
+                                rol = rs.getString("rol");
                                 System.out.print(pass);
                                 System.out.println(username);
                                 if (pass.equals(password)) {
                                     System.out.println("Je bent ingelogd!");
                                     actiontarget.setText("");
                                     
-                                    Home.start(primaryStage, rol);
+                                    Home.start(primaryStage);
                                     
                                 } else {
                                     actiontarget.setText("Wrong password or uername try again!");
@@ -158,8 +159,7 @@ public class Login extends Application {
                         }
                     } catch (SQLException ed) {
                         System.err.println(ed);
-                    }
-                    
+                    }                  
                 }
             }
         });

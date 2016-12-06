@@ -19,7 +19,8 @@ public class Home {
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
     
-    public void start(Stage primaryStage, String rol) {
+    
+    public void start(Stage primaryStage) {
         
         //import java class
         GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
@@ -42,7 +43,7 @@ public class Home {
         
         StackPane root = new StackPane();
         
-        if(rol.equals("admin")){
+        if(Login.rol.equals("admin")){
             root.getChildren().add(buttonGebruikerAanmaken);
             grid.add(buttonGebruikerAanmaken, 0, 6);
             root.getChildren().add(buttonGebruikerAanpassen);

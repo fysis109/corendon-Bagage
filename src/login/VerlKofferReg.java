@@ -11,12 +11,10 @@ import javafx.stage.Stage;
  *
  * @author tim
  */
-public class GevKofferReg {
+public class VerlKofferReg {
     
-    public void start(Stage primaryStage) {
-       
+    public void start(Stage primaryStage){
         
-         
     }
     
 }

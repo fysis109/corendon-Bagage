@@ -27,6 +27,7 @@ public class Home {
         Login log = new Login();
         GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
         GevKofferReg gevKofferReg = new GevKofferReg();
+        VerlKofferReg verlKofferReg = new VerlKofferReg();
         
         
         GridPane grid = new GridPane();
@@ -39,6 +40,7 @@ public class Home {
         Button buttonSignIn = new Button("Sign in");
         Button buttonGebruikerAanpassen = new Button("Gebruiker aanpassen");
         Button buttonGevondenKofferRegistreren = new Button("Gevonden bagage registreren");
+        Button buttonVerlKofferReg = new Button("Verloren bagage registreren");
         
         
         StackPane root = new StackPane();
@@ -68,6 +70,10 @@ public class Home {
         
         buttonGevondenKofferRegistreren.setOnAction((ActionEvent e) -> {
             gevKofferReg.start(primaryStage);
+        });
+        
+        buttonVerlKofferReg.setOnAction((ActionEvent e) -> {
+            verlKofferReg.start(primaryStage);
         });
         
         

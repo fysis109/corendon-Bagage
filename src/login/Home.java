@@ -5,11 +5,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 public class Home {
 
@@ -25,13 +24,21 @@ public class Home {
     
     
     public void start(Stage primaryStage) {
+<<<<<<< HEAD
         test = primaryStage;
         //import java class
+=======
+   
+
+>>>>>>> origin/master
         GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
         Login log = new Login();
         GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
         GevKofferReg gevKofferReg = new GevKofferReg();
-        //leg.start(primaryStage);
+
+        VerlKofferReg verlKofferReg = new VerlKofferReg();
+
+
 
         // deze vijf regels om een homeknop aan te roepen
         MenuB menuB = new MenuB();
@@ -39,6 +46,7 @@ public class Home {
         BorderPane root = new BorderPane();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
+
         
                 
         GridPane grid = new GridPane();
@@ -53,6 +61,7 @@ public class Home {
         Button buttonSignIn = new Button("Sign in");
         Button buttonGebruikerAanpassen = new Button("Gebruiker aanpassen");
         Button buttonGevondenKofferRegistreren = new Button("Gevonden bagage registreren");
+        Button buttonVerlKofferReg = new Button("Verloren bagage registreren");
         
         if(Login.rol.equals("admin")){
             root.getChildren().add(buttonGebruikerAanmaken);
@@ -80,6 +89,10 @@ public class Home {
         
         buttonGevondenKofferRegistreren.setOnAction((ActionEvent e) -> {
             gevKofferReg.start(primaryStage);
+        });
+        
+        buttonVerlKofferReg.setOnAction((ActionEvent e) -> {
+            verlKofferReg.start(primaryStage);
         });
         
         

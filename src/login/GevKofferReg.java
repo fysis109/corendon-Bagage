@@ -30,7 +30,7 @@ public class GevKofferReg {
     String InputBagageNummer = null;
     String kofferKleur = null;
     String merkKoffer = null;
-    String hoogteKoffer = null;
+    String breedteKoffer = null;
     String lengteKoffer = null;
     String dikteKoffer = null;
     String locatieKoffer = null; 
@@ -130,23 +130,24 @@ public class GevKofferReg {
         grid.add(TextHoogteKoffer, 0, 4);       
         
         //drop down box hoogte koffer
-        final ComboBox hoogteKofferComboBox = new ComboBox();
-        hoogteKofferComboBox.getItems().addAll(
-            "30cm-40cm",
-            "40cm-50cm",
-            "50cm-60cm",
-            "60cm-70cm",
-            "70cm-80cm",
+        final ComboBox dikteKofferComboBox = new ComboBox();
+        dikteKofferComboBox.getItems().addAll(
+            "10cm-15cm",
+            "15cm-20cm",
+            "20cm-25cm",
+            "25cm-30cm",
+            "35cm-40cm",
+            "40cm-45cm",
             "niet bekend"
         );
          
         //add mark koffer in scene
-        grid.add(hoogteKofferComboBox, 1, 4);       
+        grid.add(dikteKofferComboBox, 1, 4);       
         
         //update string lengte koffer 
-        hoogteKofferComboBox.valueProperty().addListener(new ChangeListener<String>() {
+        dikteKofferComboBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override public void changed(ObservableValue ov, String t, String t1) {                
-                hoogteKoffer = t1;
+                dikteKoffer = t1;
             }    
         });
         
@@ -157,10 +158,11 @@ public class GevKofferReg {
         //drop down box hoogte koffer
         final ComboBox lengteKofferComboBox = new ComboBox();
         lengteKofferComboBox.getItems().addAll(
-            "20cm-30cm",
             "30cm-40cm",
             "40cm-50cm",
             "50cm-60cm",
+            "60cm-70cm",
+            "70cm-80cm",
             "niet bekend"
         );
          
@@ -175,28 +177,26 @@ public class GevKofferReg {
         });
         
         //text dikte koffer
-        Label TextDikteKoffer = new Label("Dikte van de koffer in cm: ");
-        grid.add(TextDikteKoffer, 0, 6);       
+        Label TextBreedeKoffer = new Label("Breedte van de koffer in cm: ");
+        grid.add(TextBreedeKoffer, 0, 6);       
         
         //drop down box hoogte koffer
-        final ComboBox dikteKofferComboBox = new ComboBox();
-        dikteKofferComboBox.getItems().addAll(
-            "10cm-15cm",
-            "15cm-20cm",
-            "20cm-25cm",
-            "25cm-30cm",
-            "35cm-40cm",
-            "40cm-45cm",
+        final ComboBox breedteKofferComboBox = new ComboBox();
+        breedteKofferComboBox.getItems().addAll(
+            "20cm-30cm",
+            "30cm-40cm",
+            "40cm-50cm",
+            "50cm-60cm",
             "niet bekend"
         );
          
         //add mark koffer in scene
-        grid.add(dikteKofferComboBox, 1, 6); 
+        grid.add(breedteKofferComboBox, 1, 6); 
         
         //update string dikte koffer
-        dikteKofferComboBox.valueProperty().addListener(new ChangeListener<String>() {
+        breedteKofferComboBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override public void changed(ObservableValue ov, String t, String t1) {                
-                dikteKoffer = t1;
+                breedteKoffer = t1;
             }    
         });
         
@@ -222,20 +222,29 @@ public class GevKofferReg {
             }    
         });
         
+        //bagage nummer text
+        Label TextBijzonderheden = new Label("Zijn er bijzondere dingen: ");
+        grid.add(TextBijzonderheden, 0, 8);
+
+        //input veld bagage nummer
+        TextField Bijzonderheden = new TextField();
+        grid.add(Bijzonderheden, 1, 1);
+        
+        
         //button voor registeren
         Button registreerInformatie = new Button("Registreer");
-        grid.add(registreerInformatie, 1,8);
+        grid.add(registreerInformatie, 1,9);
         
         //button event maken
         final Text actiontarget = new Text();
         actiontarget.setFill(Color.FIREBRICK);
-        grid.add(actiontarget, 1, 9);
+        grid.add(actiontarget, 1, 10);
 
         registreerInformatie.setOnAction((ActionEvent e) -> {
             //registreerInformatie.star(primaryStage);
             
             //maak connectie met het database
-            if(InputBagageNummer.getText() == null || kofferKleur == null || hoogteKoffer == null || lengteKoffer == null || dikteKoffer == null || locatieKoffer == null){
+            if(InputBagageNummer.getText() == null || kofferKleur == null || breedteKoffer == null || lengteKoffer == null || dikteKoffer == null || locatieKoffer == null){
                 actiontarget.setText("You can leave anything open.");
             } else {
                 Connection conn;
@@ -244,8 +253,8 @@ public class GevKofferReg {
                 conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 
                 //SQL query
-                String INSERTINFOQuary = "INSERT INTO `corendonbagagesystem`.`gevondenbagage` (`bagagelabel`, `kleur`, `hoogte`, `lengte`, `breedte`, `luchthavengevonden`, `datum`)"+
-                        "VALUES ('"+InputBagageNummer.getText()+"', '"+kofferKleur+"', '"+hoogteKoffer+"', '"+lengteKoffer+"', '"+dikteKoffer+"', '"+locatieKoffer+"', CURDATE())";
+                String INSERTINFOQuary = "INSERT INTO `corendonbagagesystem`.`gevondenbagage` (`bagagelabel`, `kleur`, `dikte`, `lengte`, `breedte`, `luchthavengevonden`, `datum`, `bijzonderhede`)"+
+                        "VALUES ('"+InputBagageNummer.getText()+"','"+kofferKleur+"', '"+dikteKoffer+"', '"+lengteKoffer+"', '"+breedteKoffer+"', '"+locatieKoffer+"', CURDATE(), '"+Bijzonderheden.getText()+"')";
                 System.out.println(INSERTINFOQuary);
 
                 // create the java statement

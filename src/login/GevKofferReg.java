@@ -19,6 +19,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.MenuBar;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -47,6 +49,13 @@ public class GevKofferReg {
     
     public void start(Stage primaryStage) {
        
+        
+        MenuB menuB = new MenuB();
+        MenuBar menuBar = menuB.createMenuB(primaryStage);        
+        BorderPane root = new BorderPane();
+        menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
+        root.setTop(menuBar);
+        
         //grind
         primaryStage.setTitle("Gevonden koffer.");
         GridPane grid = new GridPane();
@@ -55,6 +64,8 @@ public class GevKofferReg {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
+        root.setCenter(grid);
+        
         //Titel    
         Label scenetitle = new Label("Gevonden koffer.");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 25));
@@ -289,7 +300,7 @@ public class GevKofferReg {
         });
         
         //scene
-        Scene scene = new Scene(grid, 1200, 920);
+        Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Home");
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -9,6 +9,7 @@ package login;
  *
  * @author Jiorgos
  */
+import java.sql.Connection;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.beans.property.SimpleStringProperty;
@@ -27,15 +28,18 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
  
 public class Databasescherm extends Application {
- 
+      Mysql mysql = new Mysql();
+     Connection con;
+    
+    
     private TableView<Person> table = new TableView<Person>();
     private final ObservableList<Person> data =
         FXCollections.observableArrayList(
-            new Person("23123", "Rood", "Hardcase", "Portugal"),
-            new Person("31244", "Geel", "Hardcase", "Turkije"),
-            new Person("431231", "Zwart", "Softcase", "Nederland"),
-            new Person("31234", "Bruin", "Softcase", "Griekenland"),
-            new Person("31234", "Zwart", "Hardcase", "Turkije")
+            new Person("001","34GF4" ,"Rood","GF","GF","GF", "Portugal","20160101", "Hardcase","g" ),
+            new Person("002","34GF4" ,"Geel","GF","GF","GF","Turkije","20160101", "Hardcase","g"),
+            new Person("003","34GF4" ,"Zwart","GF","GF","GF","Nederland","20160101","Softcase","g" ),
+            new Person("004","34GF4" ,"Bruin","GF","GF","GF", "Griekenland","20160101", "Softcase","g"),
+            new Person("005","34GF4" ,"Zwart","GF","GF","GF","Turkije","20160101", "Hardcase","g" )
         );
    
     public static void main(String[] args) {
@@ -47,35 +51,65 @@ public class Databasescherm extends Application {
         Scene scene = new Scene(new Group());
         stage.setTitle("Table View Sample");
         stage.setWidth(600);
-        stage.setHeight(500);
+        stage.setHeight(2000);
  
         final Label label = new Label("Gevonden Koffers");
         label.setFont(new Font("Arial", 20));
  
         table.setEditable(true);
  
-        TableColumn firstNameCol = new TableColumn("Tan code");
-        firstNameCol.setMinWidth(100);
-        firstNameCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("firstName"));
+        TableColumn gevondenkofferIDcol = new TableColumn("id");
+        gevondenkofferIDcol.setMinWidth(100);
+        gevondenkofferIDcol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("id"));
  
-        TableColumn lastNameCol = new TableColumn("Kleur");
-        lastNameCol.setMinWidth(100);
-        lastNameCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("lastName"));
+        TableColumn bagagelabelcol = new TableColumn("bagagelabel");
+        bagagelabelcol.setMinWidth(100);
+        bagagelabelcol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("bagagelabel"));
  
-        TableColumn emailCol = new TableColumn("Soft/Hard-case");
-        emailCol.setMinWidth(200);
-        emailCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("email"));
+        TableColumn kleurcol = new TableColumn("kleur");
+        kleurcol.setMinWidth(200);
+        kleurcol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("kleur"));
         
-        TableColumn landCol = new TableColumn("Land");
-        landCol.setMinWidth(200);
-        landCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("Land"));
+        TableColumn diktecol = new TableColumn("dikte");
+        diktecol.setMinWidth(200);
+        diktecol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("dikte"));
+        
+        TableColumn lengtecol = new TableColumn("lengte");
+        lengtecol.setMinWidth(200);
+        lengtecol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("lengte"));
+        
+        TableColumn breedtecol = new TableColumn("breedte");
+        breedtecol.setMinWidth(200);
+        breedtecol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("breedte"));
+        
+        TableColumn luchthavengevondencol = new TableColumn("luchthavengevonden");
+        luchthavengevondencol.setMinWidth(200);
+        luchthavengevondencol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("luchthavengevonden"));
+        
+        TableColumn datumcol = new TableColumn("datum");
+        datumcol.setMinWidth(200);
+        datumcol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("datum"));
+        
+        TableColumn softhardcol = new TableColumn("soft/hard");
+        softhardcol.setMinWidth(200);
+        softhardcol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("soft/hard"));
+        
+        TableColumn bijzonderhedecol = new TableColumn("bijzonderhede");
+        bijzonderhedecol.setMinWidth(200);
+        bijzonderhedecol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("bijzonderhede"));
  
         table.setItems(data);
-        table.getColumns().addAll(firstNameCol, lastNameCol, emailCol,landCol);
+        table.getColumns().addAll(gevondenkofferIDcol, bagagelabelcol, kleurcol, diktecol, lengtecol, breedtecol, luchthavengevondencol, datumcol, softhardcol, bijzonderhedecol);
  
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
@@ -90,47 +124,108 @@ public class Databasescherm extends Application {
  
     public static class Person {
  
-        private final SimpleStringProperty firstName;
-        private final SimpleStringProperty lastName;
-        private final SimpleStringProperty email;
-        private final SimpleStringProperty land;
+        private final SimpleStringProperty gevondenkofferID;
+        private final SimpleStringProperty bagagelabel;
+        private final SimpleStringProperty kleur;
+        private final SimpleStringProperty dikte;
+        private final SimpleStringProperty lengte;
+        private final SimpleStringProperty breedte;
+        private final SimpleStringProperty luchthavengevonden;
+        private final SimpleStringProperty datum;
+        private final SimpleStringProperty softhard;
+        private final SimpleStringProperty bijzonderhede;
+
  
-        private Person(String fName, String lName, String email, String land) {
-            this.firstName = new SimpleStringProperty(fName);
-            this.lastName = new SimpleStringProperty(lName);
-            this.email = new SimpleStringProperty(email);
-            this.land = new SimpleStringProperty(land);
+        private Person(String gevondenkofferID, String bagagelabel, String kleur, String dikte, String lengte,String breedte,String luchthavengevonden, String datum, String softhard, String bijzonderhede) {
+            this.gevondenkofferID = new SimpleStringProperty(gevondenkofferID);
+            this.bagagelabel = new SimpleStringProperty(bagagelabel);
+            this.kleur = new SimpleStringProperty(kleur);
+            this.dikte = new SimpleStringProperty(dikte);
+            this.lengte = new SimpleStringProperty(lengte);
+            this.breedte = new SimpleStringProperty(breedte);
+            this.luchthavengevonden = new SimpleStringProperty(luchthavengevonden);
+            this.datum = new SimpleStringProperty(datum);
+            this.softhard = new SimpleStringProperty(softhard);
+            this.bijzonderhede = new SimpleStringProperty(bijzonderhede);
+        }
+     public String getgevondenkofferID() {
+            return gevondenkofferID.get();
         }
  
-        public String getFirstName() {
-            return firstName.get();
+        public void setgevondenkofferID(String gevondenkofferID) {
+            this.gevondenkofferID.set(gevondenkofferID);
         }
  
-        public void setFirstName(String fName) {
-            firstName.set(fName);
+        public String getbagagelabel() {
+            return bagagelabel.get();
         }
  
-        public String getLastName() {
-            return lastName.get();
+        public void setbagagelabel(String gevondenkofferID) {
+            this.bagagelabel.set(gevondenkofferID);
         }
  
-        public void setLastName(String fName) {
-            lastName.set(fName);
+        public String getkleur() {
+            return kleur.get();
         }
  
-        public String getEmail() {
-            return email.get();
+        public void setkleur(String gevondenkofferID) {
+            this.kleur.set(gevondenkofferID);
+        }
+         public String getdikte() {
+            return dikte.get();
         }
  
-        public void setEmail(String fName) {
-            email.set(fName);
+        public void setdikte(String gevondenkofferID) {
+            this.dikte.set(gevondenkofferID);
         }
-         public String getLand() {
-            return land.get();
+        
+        public String getlengte() {
+            return lengte.get();
         }
  
-        public void setLand(String fName) {
-            land.set(fName);
+        public void setlengte(String gevondenkofferID) {
+            this.lengte.set(gevondenkofferID);
+        }
+        
+        public String getbreedte() {
+            return breedte.get();
+        }
+ 
+        public void setbreedte(String gevondenkofferID) {
+            this.breedte.set(gevondenkofferID);
+        }
+        
+        public String getluchthavengevonden() {
+            return luchthavengevonden.get();
+        }
+ 
+        public void setluchthavengevonden(String gevondenkofferID) {
+            this.luchthavengevonden.set(gevondenkofferID);
+        }
+        
+        public String getdatum() {
+            return datum.get();
+        }
+ 
+        public void setdatum(String gevondenkofferID) {
+            this.datum.set(gevondenkofferID);
+        }
+        
+        public String getsofthard() {
+            return softhard.get();
+        }
+ 
+        public void setsofthard(String gevondenkofferID) {
+            this.softhard.set(gevondenkofferID);
+        }
+        
+        public String getbijzonderhede() {
+            return bijzonderhede.get();
+        }
+ 
+        public void setbijzonderhede(String gevondenkofferID) {
+            this.bijzonderhede.set(gevondenkofferID);
+        }
+        
         }
     }
-} 

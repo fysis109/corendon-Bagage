@@ -50,8 +50,8 @@ public class Databasescherm extends Application {
     public void start(Stage stage) {
         Scene scene = new Scene(new Group());
         stage.setTitle("Table View Sample");
-        stage.setWidth(600);
-        stage.setHeight(2000);
+        stage.setWidth(1950);
+        stage.setHeight(500);
  
         final Label label = new Label("Gevonden Koffers");
         label.setFont(new Font("Arial", 20));

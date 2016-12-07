@@ -24,13 +24,9 @@ public class Home {
     
     
     public void start(Stage primaryStage) {
-<<<<<<< HEAD
-        test = primaryStage;
-        //import java class
-=======
-   
 
->>>>>>> origin/master
+        
+
         GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
         Login log = new Login();
         GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
@@ -72,6 +68,7 @@ public class Home {
             root.getChildren().add(buttonSignIn);
             grid.add(buttonSignIn, 4, 6);
             grid.add(buttonGevondenKofferRegistreren, 3,6);
+            grid.add(buttonVerlKofferReg, 5,6);
             
         }
         

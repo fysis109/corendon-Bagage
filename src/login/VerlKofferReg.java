@@ -17,7 +17,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -37,11 +39,22 @@ public class VerlKofferReg {
     private int customerID;
     
     public void start(Stage primaryStage){
+        
+        MenuB menuB = new MenuB();
+        MenuBar menuBar = menuB.createMenuB(primaryStage);        
+        BorderPane root = new BorderPane();
+        menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
+        root.setTop(menuBar);
+        
         GridPane grid = new GridPane(); 
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        root.setCenter(grid);
+        
+        
         
         int rij = 0;
         
@@ -147,7 +160,8 @@ public class VerlKofferReg {
                         bwvbox1.getChildren().add(verderNaarBagage);
                         grid.add(bwvbox1, 1, 9);
                         
-                        } catch (SQLException ed) {      
+                        } catch (SQLException ed) { 
+                            System.out.println(ed);
                     }                  
                 }
             }
@@ -160,7 +174,7 @@ public class VerlKofferReg {
             }
         });
         
-        Scene scene = new Scene(grid,1200,920);        
+        Scene scene = new Scene(root,1200,920);        
         primaryStage.setTitle("Register Found Bagage");
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -50,7 +50,7 @@ public class Databasescherm extends Application {
     public void start(Stage stage) {
         Scene scene = new Scene(new Group());
         stage.setTitle("Table View Sample");
-        stage.setWidth(1950);
+        stage.setWidth(2000);
         stage.setHeight(500);
  
         final Label label = new Label("Gevonden Koffers");
@@ -61,7 +61,7 @@ public class Databasescherm extends Application {
         TableColumn gevondenkofferIDcol = new TableColumn("id");
         gevondenkofferIDcol.setMinWidth(100);
         gevondenkofferIDcol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("id"));
+                new PropertyValueFactory<Person, String>("gevondenkofferID"));
  
         TableColumn bagagelabelcol = new TableColumn("bagagelabel");
         bagagelabelcol.setMinWidth(100);
@@ -113,7 +113,7 @@ public class Databasescherm extends Application {
  
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
+        vbox.setPadding(new Insets(100, 0, 0, 10));
         vbox.getChildren().addAll(label, table);
  
         ((Group) scene.getRoot()).getChildren().addAll(vbox);

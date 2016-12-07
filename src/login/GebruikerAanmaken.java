@@ -10,17 +10,22 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -35,36 +40,40 @@ import javafx.stage.Stage;
  */
 public class GebruikerAanmaken {
     
-     Mysql mysql = new Mysql();
-    
+    Mysql mysql = new Mysql();
+     
     //private mqsql
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
+    String gebruikersRol;
+    
     
     //test
     public void start(Stage primaryStage) {
-         
+        
+        MenuB menuB = new MenuB();
+        MenuBar menuBar = menuB.createMenuB(primaryStage);        
+        BorderPane root = new BorderPane();
+        menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
+        root.setTop(menuBar);
+        
         primaryStage.setTitle("Gebruiker aanmaken");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
-
-        //Plaatje linksonder
-        Image logo = new Image("file:src/images/corendon_logo.jpg");
-        ImageView imgpic = new ImageView();
-        imgpic.setImage(logo);
-        imgpic.setFitHeight(50);
-        imgpic.setFitWidth(150);
-        grid.add(imgpic, 0, 6);
-
+        
+        root.setCenter(grid);
+        
         //Welkom + Letter type
         Text scenetitle = new Text("Welcome");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
 
+        
+        
         int rij = 1;
         //Username text
         Label userName = new Label("Username:");
@@ -98,13 +107,28 @@ public class GebruikerAanmaken {
         PasswordField pwBox2 = new PasswordField();
         grid.add(pwBox2, 1, rij++);  
 
+        String rol;
+        
+        final ComboBox rollen = new ComboBox();
+        rollen.getItems().addAll(
+        "Admin",
+        "Balie",
+        "Manager"
+                                   );
+        grid.add(rollen , 0 , rij++);
+        
+        rollen.valueProperty().addListener(new ChangeListener<String>() {
+            @Override public void changed(ObservableValue ov, String t, String t1) {                
+                gebruikersRol = t1;                
+            }});   
+        
          //Password: text
-        Label rol = new Label("Gebruikersrol:");
-        grid.add(rol, 0, rij);
+        Label mail = new Label("Emailadres:");
+        grid.add(mail, 0, rij);
 
         //text veld na password + bullets
-        TextField rolnaam = new TextField();
-        grid.add(rolnaam, 1, rij++);
+        TextField mails = new TextField();
+        grid.add(mails, 1, rij++);
         
         //De Sign in 
         Button btn = new Button("Make user");
@@ -118,6 +142,17 @@ public class GebruikerAanmaken {
         actiontarget.setFill(Color.FIREBRICK);
         grid.add(actiontarget, 1, rij++);
 
+        //Plaatje linksonder
+        Image logo = new Image("file:src/images/corendon_logo.jpg");
+        ImageView imgpic = new ImageView(logo);
+        imgpic.setImage(logo);
+        imgpic.setFitHeight(50);
+        imgpic.setFitWidth(150);
+        grid.add(imgpic, 1, rij++ , 1 , 1);
+        
+        Button btn5 = new Button();
+        btn5.setGraphic(new ImageView(logo));
+        
         //Enter ook
         btn.setDefaultButton(true);
 
@@ -126,19 +161,22 @@ public class GebruikerAanmaken {
             private String[] test;
             @Override
             public void handle(ActionEvent e) {
+                System.out.println(gebruikersRol);
                 String username = userTextField.getText();
                 String password = pwBox.getText();
                 String username2 = userTextField2.getText();
                 String password2 = pwBox2.getText();
-                String gebruikersRol = rolnaam.getText();
+                String mail = mails.getText();
                 if(pwBox.getText().trim().isEmpty() || pwBox2.getText().trim().isEmpty() ||
                    userTextField.getText().trim().isEmpty()|| userTextField2.getText().trim().isEmpty()){
                    actiontarget.setText("Password and/or username \ncan't be left open");
                 } else {
                     System.out.print(username + "\n" + password);
+                    actiontarget.setText("");
                     Connection conn;
                     if(!username.equals(username2) || !password.equals(password2)){
                         System.out.println("Password and/or username are not the same");
+                        actiontarget.setText("Password and/or username \nare not the same");
                     }else{
                     
                         try {
@@ -154,12 +192,16 @@ public class GebruikerAanmaken {
                             if(count == 0){
                             
                             
-                            String insert="INSERT INTO users (username, wachtwoord, rol) VALUES('"+username+"','"+password+"','"+gebruikersRol+"')";
+                            String insert="INSERT INTO users (username, wachtwoord, rol, email) VALUES('"+username+"','"+password+"','"
+                                    +gebruikersRol+"','"+mail+"')";
                             stmt.execute(insert);
+                            actiontarget.setFill(Color.GREEN);
+                            actiontarget.setText("User has been added");
                             System.out.println("Gebruiker toegevoegd");
                             }else{
+                                actiontarget.setText("Username already exists");
                                 System.out.println("bestaat al");}
-                            
+                                
 
 
                         } catch (SQLException ed) {
@@ -170,7 +212,7 @@ public class GebruikerAanmaken {
             }
         });
 
-        Scene scene = new Scene(grid, 1200, 920);
+        Scene scene = new Scene(root, 1200, 920);
         primaryStage.setScene(scene);
         primaryStage.show();
     

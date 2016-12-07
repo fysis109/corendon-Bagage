@@ -5,14 +5,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuBar;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Home {
 
     //mysql connectie
     Mysql mysql = new Mysql();
+    
+    public Stage test;
     
     //private mqsql
     private final String USERNAME = mysql.getUsername();
@@ -21,27 +24,40 @@ public class Home {
     
     
     public void start(Stage primaryStage) {
+
         
-        //import java class
+
         GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
         Login log = new Login();
         GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
         GevKofferReg gevKofferReg = new GevKofferReg();
+
+        VerlKofferReg verlKofferReg = new VerlKofferReg();
+
+
+
+        // deze vijf regels om een homeknop aan te roepen
+        MenuB menuB = new MenuB();
+        MenuBar menuBar = menuB.createMenuB(primaryStage);        
+        BorderPane root = new BorderPane();
+        menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
+        root.setTop(menuBar);
+
         
-        
+                
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
-        
+        // deze regel moet ook aangemaakt worden voor de homeknop
+        root.setCenter(grid);
+
         Button buttonGebruikerAanmaken = new Button("Gebruiker aanmaken");
         Button buttonSignIn = new Button("Sign in");
         Button buttonGebruikerAanpassen = new Button("Gebruiker aanpassen");
         Button buttonGevondenKofferRegistreren = new Button("Gevonden bagage registreren");
-        
-        
-        StackPane root = new StackPane();
+        Button buttonVerlKofferReg = new Button("Verloren bagage registreren");
         
         if(Login.rol.equals("admin")){
             root.getChildren().add(buttonGebruikerAanmaken);
@@ -52,6 +68,8 @@ public class Home {
             root.getChildren().add(buttonSignIn);
             grid.add(buttonSignIn, 4, 6);
             grid.add(buttonGevondenKofferRegistreren, 3,6);
+            grid.add(buttonVerlKofferReg, 5,6);
+            
         }
         
         buttonGebruikerAanpassen.setOnAction((ActionEvent e) -> {
@@ -70,16 +88,23 @@ public class Home {
             gevKofferReg.start(primaryStage);
         });
         
+        buttonVerlKofferReg.setOnAction((ActionEvent e) -> {
+            verlKofferReg.start(primaryStage);
+        });
         
         
-        Scene scene = new Scene(grid, 1200, 920);
-
+        // deze aanpassen van grid naar root..
+        Scene scene = new Scene(root, 1200, 920);
+        
         primaryStage.setTitle("Home");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        
     }
     
-    public static void main(String[] args) {  
+    public static void main(String[] args) {
+       
     }
 
 }

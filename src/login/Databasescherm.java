@@ -145,52 +145,52 @@ public class Databasescherm extends Application {
         TableColumn gevondenkofferIDcol = new TableColumn("id");
         gevondenkofferIDcol.setMinWidth(10);
         gevondenkofferIDcol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("gevondenkofferID"));
+                new PropertyValueFactory<>("gevondenkofferID"));
  
         TableColumn bagagelabelcol = new TableColumn("bagagelabel");
         bagagelabelcol.setMinWidth(100);
         bagagelabelcol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("bagagelabel"));
+                new PropertyValueFactory<>("bagagelabel"));
  
         TableColumn kleurcol = new TableColumn("kleur");
         kleurcol.setMinWidth(200);
         kleurcol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("kleur"));
+                new PropertyValueFactory<>("kleur"));
         
         TableColumn diktecol = new TableColumn("dikte");
         diktecol.setMinWidth(200);
         diktecol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("dikte"));
+                new PropertyValueFactory<>("dikte"));
         
         TableColumn lengtecol = new TableColumn("lengte");
         lengtecol.setMinWidth(200);
         lengtecol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("lengte"));
+                new PropertyValueFactory<>("lengte"));
         
         TableColumn breedtecol = new TableColumn("breedte");
         breedtecol.setMinWidth(200);
         breedtecol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("breedte"));
+                new PropertyValueFactory<>("breedte"));
         
         TableColumn luchthavengevondencol = new TableColumn("luchthavengevonden");
         luchthavengevondencol.setMinWidth(200);
         luchthavengevondencol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("luchthavengevonden"));
+                new PropertyValueFactory<>("luchthavengevonden"));
         
         TableColumn datumcol = new TableColumn("datum");
         datumcol.setMinWidth(200);
         datumcol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("datum"));
+                new PropertyValueFactory<>("datum"));
         
         TableColumn softhardcol = new TableColumn("soft/hard");
         softhardcol.setMinWidth(200);
         softhardcol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("softhard"));
+                new PropertyValueFactory<>("softhard"));
         
         TableColumn bijzonderhedecol = new TableColumn("bijzonderhede");
         bijzonderhedecol.setMinWidth(200);
         bijzonderhedecol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("bijzonderhede"));
+                new PropertyValueFactory<>("bijzonderhede"));
           
         
         

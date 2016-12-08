@@ -11,12 +11,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.PasswordField;
@@ -44,7 +47,7 @@ public class GebruikerAanpassen {
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
-
+    String gebruikersRol = null;
     //test
     public void star(Stage primaryStage) {
         
@@ -63,18 +66,12 @@ public class GebruikerAanpassen {
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         root.setCenter(grid);
-        //Plaatje linksonder
-        Image logo = new Image("file:src/images/corendon_logo.jpg");
-        ImageView imgpic = new ImageView();
-        imgpic.setImage(logo);
-        imgpic.setFitHeight(50);
-        imgpic.setFitWidth(150);
-        grid.add(imgpic, 0, 6);
+        
 
         //Welkom + Letter type
         Text scenetitle = new Text("Welcome");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 0, 0, 2, 1);
+        grid.add(scenetitle, 0, 0, 10, 1);
 
         int rij = 1;
         //Username text
@@ -109,22 +106,63 @@ public class GebruikerAanpassen {
         PasswordField pwBox2 = new PasswordField();
         grid.add(pwBox2, 1, rij++);
 
+        Connection conn;
+        /*
+        try {
+                            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                            System.out.println("Connected!");
+                            Statement stmt = (Statement) conn.createStatement();
+                            String recQuery = ("select * from users");
+                            
+                            ResultSet rs5 = stmt.executeQuery(recQuery);
+                            while (rs5.next()) {
+                                String usernameUitDatabase = rs5.getString("username");
+                                rollen.getItems().add(usernameUitDatabase);
+
+            }
+                            
+            
+            rollen.setPrefWidth(150);
+        grid.add(rollen , 1 , rij++);
+        
+        
+        rollen.valueProperty().addListener(new ChangeListener<String>() {
+            @Override public void changed(ObservableValue ov, String t, String t1) {                
+                gebruikersRol = t1;                
+            }});
+
+        } catch (SQLException ed) {
+                            System.err.println(ed);
+                    }*/
+        
         //Rol: text
-        Label rol = new Label("User role:");
+        Label rol = new Label("Rol:");
         grid.add(rol, 0, rij);
-
-        //text veld na Rol + bullets
-        TextField rolnaam = new TextField();
-        grid.add(rolnaam, 1, rij++);
-
-        //Rolnew: text
-        Label rol2 = new Label("User role:");
-        grid.add(rol2, 0, rij);
-
-        //text veld na rolnew + bullets
-        TextField rolnaam2 = new TextField();
-        grid.add(rolnaam2, 1, rij++);
-
+        
+        final ComboBox rollen = new ComboBox();
+        rollen.getItems().addAll(
+        "Admin",
+        "Balie",
+        "Manager"
+                                   );
+        rollen.setPrefWidth(150);
+        grid.add(rollen , 1 , rij++);
+        
+        rollen.valueProperty().addListener(new ChangeListener<String>() {
+            @Override public void changed(ObservableValue ov, String t, String t1) {                
+                gebruikersRol = t1;                
+            }}); 
+        
+        
+        
+        //Plaatje linksonder
+        Image logo = new Image("file:src/images/corendon_logo.jpg");
+        ImageView imgpic = new ImageView();
+        imgpic.setImage(logo);
+        imgpic.setFitHeight(50);
+        imgpic.setFitWidth(150);
+        grid.add(imgpic, 0, 6);
+        
         //De Sign in 
         Button btn = new Button("Adjust user");
         HBox hbBtn = new HBox(10);
@@ -146,13 +184,14 @@ public class GebruikerAanpassen {
 
             @Override
             public void handle(ActionEvent e) {
+                System.out.println(gebruikersRol);
                 String username = userTextField.getText();
                 String password = pwBox.getText();
-                String gebruikersRol = rolnaam.getText();
                 String username2 = userTextField2.getText();
                 String password2 = pwBox2.getText();
-                String gebruikersRol2 = rolnaam2.getText();
-                if (pwBox.getText().trim().isEmpty() || pwBox2.getText().trim().isEmpty() || userTextField.getText().trim().isEmpty()) {
+                if (gebruikersRol == null ||pwBox.getText().trim().isEmpty() || pwBox2.getText().trim().isEmpty() || 
+                        userTextField.getText().trim().isEmpty())
+                {
                     actiontarget.setText("Fields can't be left open");
                 } else {
                     try {
@@ -185,7 +224,7 @@ public class GebruikerAanpassen {
                                     PreparedStatement statement = conn.prepareStatement(sql);
                                     statement.setString(1, username2);
                                     statement.setString(2, password2);
-                                    statement.setString(3, gebruikersRol2);
+                                    statement.setString(3, gebruikersRol);
                                     statement.setInt(4, userID);
                                     int rowsUpdated = statement.executeUpdate();
                                     if (rowsUpdated > 0) {
@@ -193,7 +232,7 @@ public class GebruikerAanpassen {
                                     }
 
                                 } else {
-                                    actiontarget.setText("Wrong password or uername try again!");
+                                    actiontarget.setText("Wrong password or username\ntry again!");
                                     System.out.println("Gebruiker bestaat niet");
                                 }
                             }

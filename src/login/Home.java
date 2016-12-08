@@ -59,7 +59,7 @@ public class Home {
         Button buttonGevondenKofferRegistreren = new Button("Gevonden bagage registreren");
         Button buttonVerlKofferReg = new Button("Verloren bagage registreren");
         
-        if(Login.rol.equals("admin")){
+        if(Login.rol.equals("Admin")){
             root.getChildren().add(buttonGebruikerAanmaken);
             grid.add(buttonGebruikerAanmaken, 0, 6);
             root.getChildren().add(buttonGebruikerAanpassen);

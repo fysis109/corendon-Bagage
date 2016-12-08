@@ -36,7 +36,7 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author Joljin Verwest
+ * @author Joljin Verwest 
  */
 public class GebruikerAanmaken {
     
@@ -105,9 +105,26 @@ public class GebruikerAanmaken {
 
         //text veld na password + bullets
         PasswordField pwBox2 = new PasswordField();
-        grid.add(pwBox2, 1, rij++);  
+        grid.add(pwBox2, 1, rij++);
+        
+         //Password: text
+        Label mail = new Label("Emailadres:");
+        grid.add(mail, 0, rij);
 
-        String rol;
+        //text veld na password + bullets
+        TextField mailbox = new TextField();
+        grid.add(mailbox, 1, rij++);
+        
+         //Password: text
+        Label mail2 = new Label("Emailadres:");
+        grid.add(mail2, 0, rij);
+
+        //text veld na password + bullets
+        TextField mailbox2= new TextField();
+        grid.add(mailbox2, 1, rij++);
+        
+        Label rol = new Label("Rol");
+        grid.add(rol, 0, rij);
         
         final ComboBox rollen = new ComboBox();
         rollen.getItems().addAll(
@@ -115,21 +132,14 @@ public class GebruikerAanmaken {
         "Balie",
         "Manager"
                                    );
-        grid.add(rollen , 0 , rij++);
+        rollen.setPrefWidth(150);
+        grid.add(rollen , 1 , rij++);
+        
         
         rollen.valueProperty().addListener(new ChangeListener<String>() {
             @Override public void changed(ObservableValue ov, String t, String t1) {                
                 gebruikersRol = t1;                
-            }});   
-        
-         //Password: text
-        Label mail = new Label("Emailadres:");
-        grid.add(mail, 0, rij);
-
-        //text veld na password + bullets
-        TextField mails = new TextField();
-        grid.add(mails, 1, rij++);
-        
+            }});  
         //De Sign in 
         Button btn = new Button("Make user");
         HBox hbBtn = new HBox(10);
@@ -166,17 +176,19 @@ public class GebruikerAanmaken {
                 String password = pwBox.getText();
                 String username2 = userTextField2.getText();
                 String password2 = pwBox2.getText();
-                String mail = mails.getText();
+                String mail = mailbox.getText();
+                String mail2 = mailbox2.getText();
                 if(pwBox.getText().trim().isEmpty() || pwBox2.getText().trim().isEmpty() ||
-                   userTextField.getText().trim().isEmpty()|| userTextField2.getText().trim().isEmpty()){
-                   actiontarget.setText("Password and/or username \ncan't be left open");
+                   userTextField.getText().trim().isEmpty()|| userTextField2.getText().trim().isEmpty()||
+                   mailbox.getText().trim().isEmpty()||mailbox2.getText().trim().isEmpty()||gebruikersRol == null){
+                   actiontarget.setText("Fields can't be left open");
                 } else {
                     System.out.print(username + "\n" + password);
                     actiontarget.setText("");
                     Connection conn;
-                    if(!username.equals(username2) || !password.equals(password2)){
-                        System.out.println("Password and/or username are not the same");
-                        actiontarget.setText("Password and/or username \nare not the same");
+                    if(!username.equals(username2) || !password.equals(password2) || !mail.equals(mail2)){
+                        System.out.println("Username, password and/or mailadress are not the same");
+                        actiontarget.setText("Username, password and/or\n mailadress are not the same");
                     }else{
                     
                         try {

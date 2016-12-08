@@ -98,11 +98,11 @@ public class Databasescherm extends Application {
                             Statement st2 = conn.createStatement();
                             ResultSet databaseResponse2 = st2.executeQuery(query2);
                             
-
+                        ObservableList<Person> data = FXCollections.observableArrayList();
                         
                         while (databaseResponse2.next())
                         {   
-                            for (int i = 0; i<=this.idcounter; i++){
+                            
                                 
                             //database response verwerken
                             this.kofferid = databaseResponse2.getString("gevondenkofferID");
@@ -118,13 +118,12 @@ public class Databasescherm extends Application {
                             this.idnumber = databaseResponse2.getInt("rowNumber");
                            
 
-                            ObservableList<Person> data =
-                            FXCollections.observableArrayList (
-                             new Person(kofferid,dlabel,kleur,dikte,lengte,breedte,luchthavengevonden,datum,softhard,bijzonderhede)
-                              );
+                             
+                             
+                             data.add(new Person(kofferid,dlabel,kleur,dikte,lengte,breedte,luchthavengevonden,datum,softhard,bijzonderhede));
+                             
                              table.setItems(data);
                             
-                        }
                         }
         }
                         catch (SQLException ed) {

@@ -10,6 +10,10 @@ package login;
  * @author Jiorgos
  */
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,7 +25,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -29,29 +32,110 @@ import javafx.stage.Stage;
  
 public class Databasescherm extends Application {
       Mysql mysql = new Mysql();
-     Connection con;
+      Connection conn;
+      private final String USERNAME = mysql.getUsername();
+      private final String PASSWORD = mysql.getPassword();
+      private final String CONN_STRING = mysql.getUrlmysql();
+      private String kofferid;
+      private String dlabel;
+      private String kleur;
+      private String dikte;
+      private String lengte;
+      private String breedte;
+      private String luchthavengevonden;
+      private String datum;
+      private String softhard;
+      private String bijzonderhede;
+      private int idnumber = 0;
+      private int idcounter;
+      
+      
+             
+      
+      
+      
+      
     
     
     private TableView<Person> table = new TableView<Person>();
-    private final ObservableList<Person> data =
-        FXCollections.observableArrayList(
-            new Person("001","34GF4" ,"Rood","GF","GF","GF", "Portugal","20160101", "Hardcase","g" ),
-            new Person("002","34GF4" ,"Geel","GF","GF","GF","Turkije","20160101", "Hardcase","g"),
-            new Person("003","34GF4" ,"Zwart","GF","GF","GF","Nederland","20160101","Softcase","g" ),
-            new Person("004","34GF4" ,"Bruin","GF","GF","GF", "Griekenland","20160101", "Softcase","g"),
-            new Person("005","34GF4" ,"Zwart","GF","GF","GF","Turkije","20160101", "Hardcase","g" )
-        );
+    
+    
    
     public static void main(String[] args) {
+        
         launch(args);
     }
  
     @Override
     public void start(Stage stage) {
+        try{           
+                        //maak connectie met het database
+                        conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                        // querry voor aantal koffers
+                        String query1 = "select count(*) AS count from gevondenbagage";
+                        System.out.println(query1);
+                        
+                        // create the java statement
+                        Statement st1 = conn.createStatement();
+                        
+                        // execute the query, and get a java resultset
+                        ResultSet databaseResponse = st1.executeQuery(query1);
+                        while (databaseResponse.next())
+                        { 
+                             this.idcounter = databaseResponse.getInt("count");
+                            
+                        }
+                        Person[] person = new Person[this.idcounter];
+                        
+                       
+                        
+                            String query2 =  "SELECT\n" +
+                                             "(@testid := @testid + 1) AS rowNumber , gevondenkofferID, bagagelabel,kleur,dikte,lengte,breedte,luchthavengevonden,datum,softhardcase,bijzonderhede\n" +
+                                             "FROM gevondenbagage AS t\n" +
+                                             "CROSS JOIN (SELECT @testid := 0) AS dummy\n" +
+                                             "ORDER BY gevondenkofferID ;";
+                        System.out.println(query2);
+                            Statement st2 = conn.createStatement();
+                            ResultSet databaseResponse2 = st2.executeQuery(query2);
+                            
+
+                        
+                        while (databaseResponse2.next())
+                        {   
+                            for (int i = 0; i<=this.idcounter; i++){
+                                
+                            //database response verwerken
+                            this.kofferid = databaseResponse2.getString("gevondenkofferID");
+                            this.dlabel = databaseResponse2.getString("bagagelabel");
+                            this.kleur = databaseResponse2.getString("kleur");
+                            this.dikte = databaseResponse2.getString("dikte");
+                            this.lengte = databaseResponse2.getString("lengte");
+                            this.breedte = databaseResponse2.getString("breedte");
+                            this.luchthavengevonden = databaseResponse2.getString("luchthavengevonden");
+                            this.datum = databaseResponse2.getString("datum");
+                            this.softhard = databaseResponse2.getString("softhardcase");
+                            this.bijzonderhede = databaseResponse2.getString("bijzonderhede");
+                            this.idnumber = databaseResponse2.getInt("rowNumber");
+                           
+
+                            ObservableList<Person> data =
+                            FXCollections.observableArrayList (
+                             new Person(kofferid,dlabel,kleur,dikte,lengte,breedte,luchthavengevonden,datum,softhard,bijzonderhede)
+                              );
+                             table.setItems(data);
+                            
+                        }
+                        }
+        }
+                        catch (SQLException ed) {
+                        System.err.println(ed);
+                        }
+        
+        
         Scene scene = new Scene(new Group());
         stage.setTitle("Table View Sample");
-        stage.setWidth(2000);
-        stage.setHeight(500);
+        stage.setWidth(1900);
+        stage.setHeight(400);
  
         final Label label = new Label("Gevonden Koffers");
         label.setFont(new Font("Arial", 20));
@@ -59,7 +143,7 @@ public class Databasescherm extends Application {
         table.setEditable(true);
  
         TableColumn gevondenkofferIDcol = new TableColumn("id");
-        gevondenkofferIDcol.setMinWidth(100);
+        gevondenkofferIDcol.setMinWidth(10);
         gevondenkofferIDcol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("gevondenkofferID"));
  
@@ -101,19 +185,22 @@ public class Databasescherm extends Application {
         TableColumn softhardcol = new TableColumn("soft/hard");
         softhardcol.setMinWidth(200);
         softhardcol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("soft/hard"));
+                new PropertyValueFactory<Person, String>("softhard"));
         
         TableColumn bijzonderhedecol = new TableColumn("bijzonderhede");
         bijzonderhedecol.setMinWidth(200);
         bijzonderhedecol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("bijzonderhede"));
+          
+        
+        
  
-        table.setItems(data);
+       
         table.getColumns().addAll(gevondenkofferIDcol, bagagelabelcol, kleurcol, diktecol, lengtecol, breedtecol, luchthavengevondencol, datumcol, softhardcol, bijzonderhedecol);
  
         final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(100, 0, 0, 10));
+        vbox.setSpacing(10);
+        vbox.setPadding(new Insets(10, 0, 0, 10));
         vbox.getChildren().addAll(label, table);
  
         ((Group) scene.getRoot()).getChildren().addAll(vbox);
@@ -148,82 +235,82 @@ public class Databasescherm extends Application {
             this.softhard = new SimpleStringProperty(softhard);
             this.bijzonderhede = new SimpleStringProperty(bijzonderhede);
         }
-     public String getgevondenkofferID() {
+     public String getGevondenkofferID() {
             return gevondenkofferID.get();
         }
  
-        public void setgevondenkofferID(String gevondenkofferID) {
+        public void setGevondenkofferID(String gevondenkofferID) {
             this.gevondenkofferID.set(gevondenkofferID);
         }
  
-        public String getbagagelabel() {
+        public String getBagagelabel() {
             return bagagelabel.get();
         }
  
-        public void setbagagelabel(String gevondenkofferID) {
+        public void setBagagelabel(String gevondenkofferID) {
             this.bagagelabel.set(gevondenkofferID);
         }
  
-        public String getkleur() {
+        public String getKleur() {
             return kleur.get();
         }
  
-        public void setkleur(String gevondenkofferID) {
+        public void setKleur(String gevondenkofferID) {
             this.kleur.set(gevondenkofferID);
         }
-         public String getdikte() {
+         public String getDikte() {
             return dikte.get();
         }
  
-        public void setdikte(String gevondenkofferID) {
+        public void setDikte(String gevondenkofferID) {
             this.dikte.set(gevondenkofferID);
         }
         
-        public String getlengte() {
+        public String getLengte() {
             return lengte.get();
         }
  
-        public void setlengte(String gevondenkofferID) {
+        public void setLengte(String gevondenkofferID) {
             this.lengte.set(gevondenkofferID);
         }
         
-        public String getbreedte() {
+        public String getBreedte() {
             return breedte.get();
         }
  
-        public void setbreedte(String gevondenkofferID) {
+        public void setBreedte(String gevondenkofferID) {
             this.breedte.set(gevondenkofferID);
         }
         
-        public String getluchthavengevonden() {
+        public String getLuchthavengevonden() {
             return luchthavengevonden.get();
         }
  
-        public void setluchthavengevonden(String gevondenkofferID) {
+        public void setLuchthavengevonden(String gevondenkofferID) {
             this.luchthavengevonden.set(gevondenkofferID);
         }
         
-        public String getdatum() {
+        public String getDatum() {
             return datum.get();
         }
  
-        public void setdatum(String gevondenkofferID) {
+        public void setDatum(String gevondenkofferID) {
             this.datum.set(gevondenkofferID);
         }
         
-        public String getsofthard() {
+        public String getSofthard() {
             return softhard.get();
         }
  
-        public void setsofthard(String gevondenkofferID) {
+        public void setSofthard(String gevondenkofferID) {
             this.softhard.set(gevondenkofferID);
         }
         
-        public String getbijzonderhede() {
+        public String getBijzonderhede() {
             return bijzonderhede.get();
         }
  
-        public void setbijzonderhede(String gevondenkofferID) {
+        public void setBijzonderhede(String gevondenkofferID) {
             this.bijzonderhede.set(gevondenkofferID);
         }
         

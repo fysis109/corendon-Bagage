@@ -80,7 +80,7 @@ public class Home {
         });
 
         buttonVerlKofferReg.setOnAction((ActionEvent e) -> {
-            verlKofferReg.start(primaryStage);
+            verlKofferReg.klantRegistreren(primaryStage);
         });
 
         buttonStatistics.setOnAction((ActionEvent e) -> {

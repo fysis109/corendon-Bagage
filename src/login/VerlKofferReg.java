@@ -13,7 +13,6 @@ import java.sql.Statement;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -42,26 +41,31 @@ public class VerlKofferReg {
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
+    
     private int customerID;
-    private String kleur, merk, hoogte, lengte, breedte, luchthavenVertrekEntry, luchthavenAankomstEntry, countryEntry, softHard;
+    private String kleur, merk, hoogte, lengte, breedte, luchthavenVertrekEntry,
+            luchthavenAankomstEntry, countryEntry, softHard;
 
-    public void start(Stage primaryStage) {
+    public void klantRegistreren(Stage primaryStage) {
 
+        //Menubar aan de bovenkant
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
-
+        
+        //Gridpane
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
-
+        
         int rij = 1;
 
+        //Alle labels en textfields
         Text scenetitle = new Text("Customer Information");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -114,61 +118,57 @@ public class VerlKofferReg {
 
         Button verderNaarBagage = new Button("Register Lugage");
 
-        registreerKlant.setOnAction(new EventHandler<ActionEvent>() {
-            private String[] test;
-
-            @Override
-            public void handle(ActionEvent e) {
-                String lastName = lastNameEntry.getText();
-                String firstName = firstNameEntry.getText();
-                String phoneNumber = phonenumberEntry.getText();
-                String email = emailEntry.getText();
-                String tussenvoegsel = tussenVoegselEntry.getText();
-                String geb_datum = geboorteDatumEntry.getText();
-
-                if (lastNameEntry.getText().trim().isEmpty() || firstNameEntry.getText().trim().isEmpty() || geboorteDatumEntry.getText().trim().isEmpty()
-                        || emailEntry.getText().trim().isEmpty() || phonenumberEntry.getText().trim().isEmpty()) {
-                    actiontarget.setText("Lastname, Firstname,\ndate of birth, phonenumber\n and email can't\n be left open");
-                } else {
-                    Connection conn;
-                    try {
-                        conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-                        Statement stmt = (Statement) conn.createStatement();
-                        ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM customers WHERE voornaam = '" + firstName + "' AND achternaam = '" + lastName + "' AND tussenvoegsel = '" + tussenvoegsel + "' AND geb_datum = '" + geb_datum + "'");
-                        int count = 0;
-                        while (rs.next()) {
-                            count = rs.getInt("total");
-                            System.out.println(count);
-                        }
-                        if (count == 0) {
-                            String insert = "insert into customers (voornaam, achternaam, tussenvoegsel, telefoonnummer, email, geb_datum) "
-                                    + "VALUES ('" + firstName + "','" + lastName + "', '" + tussenvoegsel + "' , '" + phoneNumber + "', '" + email + "','" + geb_datum + "' )";
-                            stmt.execute(insert);
-                            actiontarget.setFill(Color.GREEN);
-                            actiontarget.setText("Klant Toegevoegd");
-                        } else {
-                            actiontarget.setFill(Color.FIREBRICK);
-                            actiontarget.setText("Klant bestaat al,\nklik op ga verder\nom aan deze klant\neen koffer toe\nte voegen");
-                        }
-
-                        ResultSet rs2 = stmt.executeQuery("SELECT customersID FROM customers WHERE voornaam = '" + firstName + "' AND achternaam = '" + lastName + "' AND tussenvoegsel = '" + tussenvoegsel + "' AND geb_datum = '" + geb_datum + "'");
-                        while (rs2.next()) {
-                            customerID = rs2.getInt("customersID");
-                        }
-                        System.out.println(customerID);
-
-                        HBox bwvbox1 = new HBox(10);
-                        bwvbox1.setAlignment(Pos.BOTTOM_RIGHT);
-                        bwvbox1.getChildren().add(verderNaarBagage);
-                        grid.add(bwvbox1, 1, 10);
-
-                    } catch (SQLException ed) {
-                        System.out.println(ed);
+        registreerKlant.setOnAction((ActionEvent e) -> {
+            String lastName1 = lastNameEntry.getText();
+            String firstName1 = firstNameEntry.getText();
+            String phoneNumber = phonenumberEntry.getText();
+            String email1 = emailEntry.getText();
+            String tussenvoegsel = tussenVoegselEntry.getText();
+            String geb_datum = geboorteDatumEntry.getText();
+            //kijkt of alle velden zijn ingevuld
+            if (lastNameEntry.getText().trim().isEmpty() || firstNameEntry.getText().trim().isEmpty() 
+                    || geboorteDatumEntry.getText().trim().isEmpty() || emailEntry.getText().trim().isEmpty()
+                    || phonenumberEntry.getText().trim().isEmpty()) {
+                actiontarget.setText("Lastname, Firstname,\ndate of birth, phonenumber\n and email can't\n be left open");
+            } else {
+                Connection conn;
+                try {
+                    conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                    //eerst wordt er gekeken of de klant al bestaat, zo ja dan wordt de customersid opgezocht
+                    //zo nee dan wordt de klant aangemaakt
+                    Statement stmt = (Statement) conn.createStatement();
+                    ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM customers WHERE voornaam = '" + firstName1 + "' AND achternaam = '" + lastName1 + "' AND tussenvoegsel = '" + tussenvoegsel + "' AND geb_datum = '" + geb_datum + "'");
+                    int count = 0;
+                    while (rs.next()) {
+                        count = rs.getInt("total");
+                        System.out.println(count);
                     }
+                    if (count == 0) {
+                        String insert = "insert into customers (voornaam, achternaam, tussenvoegsel, telefoonnummer, email, geb_datum) "
+                                + "VALUES ('" + firstName1 + "','" + lastName1 + "', '" + tussenvoegsel + "' , '" + phoneNumber + "', '" + email1 + "','" + geb_datum + "' )";
+                        stmt.execute(insert);
+                        actiontarget.setFill(Color.GREEN);
+                        actiontarget.setText("Klant Toegevoegd");
+                    } else {
+                        actiontarget.setFill(Color.FIREBRICK);
+                        actiontarget.setText("Klant bestaat al,\nklik op ga verder\nom aan deze klant\neen koffer toe\nte voegen");
+                    }
+                    ResultSet rs2 = stmt.executeQuery("SELECT customersID FROM customers WHERE voornaam = '" + firstName1 + "' AND achternaam = '" + lastName1 + "' AND tussenvoegsel = '" + tussenvoegsel + "' AND geb_datum = '" + geb_datum + "'");
+                    while (rs2.next()) {
+                        customerID = rs2.getInt("customersID");
+                    }
+                    System.out.println(customerID);
+                    HBox bwvbox1 = new HBox(10);
+                    bwvbox1.setAlignment(Pos.BOTTOM_RIGHT);
+                    bwvbox1.getChildren().add(verderNaarBagage);
+                    grid.add(bwvbox1, 1, 10);
+                }catch (SQLException ed) {
+                    System.out.println(ed);
                 }
             }
         });
 
+        //Dan naar het volgende scherm, om bagage toe te voegen
         verderNaarBagage.setOnAction((ActionEvent event) -> {
             BagageToevoegen(primaryStage);
         });
@@ -181,12 +181,14 @@ public class VerlKofferReg {
 
     private void BagageToevoegen(Stage primaryStage) {
 
+        //Menubar aan de bonvenkant
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
-
+        
+        //Gridpane aanmaken
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -194,8 +196,10 @@ public class VerlKofferReg {
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
 
+        //deze integer wordt gebruikt om alles steeds een rij naar beneneden te schuiven
         int rij = 1;
-
+        
+        //alle labels en textfields
         Text scenetitle = new Text("Register lost Lugage");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -212,12 +216,7 @@ public class VerlKofferReg {
 
         ComboBox kleurKofferComboBox = new ComboBox();
         kleurKofferComboBox.getItems().addAll(
-                "Blauw",
-                "Geel",
-                "Zwart",
-                "Grijs",
-                "Bruin",
-                "Other"
+            "Blauw", "Geel", "Zwart", "Grijs", "Bruin", "Other"
         );
         kleurKofferComboBox.setPrefWidth(225);
         grid.add(kleurKofferComboBox, 1, rij++, 2, 1);
@@ -229,24 +228,15 @@ public class VerlKofferReg {
                 kleur = t1;
             }
         });
-
+        
         Label merkKoffer = new Label("Brand:");
         grid.add(merkKoffer, 0, rij);
 
         ComboBox merkKofferComboBox = new ComboBox();
         merkKofferComboBox.getItems().addAll(
-                "American Tourister",
-                "Eastpak ",
-                "March",
-                "Porsche Design",
-                "Rimowa",
-                "Samsonite",
-                "Swiss Wenger",
-                "Ted Baker",
-                "The North Face",
-                "Tumi",
-                "Victorinox",
-                "Other"
+            "American Tourister", "Eastpak ", "March", "Porsche Design", "Rimowa",
+            "Samsonite", "Swiss Wenger", "Ted Baker", "The North Face", 
+            "Tumi", "Victorinox", "Other"
         );
         merkKofferComboBox.setPrefWidth(225);
         grid.add(merkKofferComboBox, 1, rij++, 2, 1);
@@ -264,13 +254,8 @@ public class VerlKofferReg {
 
         ComboBox hoogteKofferComboBox = new ComboBox();
         hoogteKofferComboBox.getItems().addAll(
-                "10cm-15cm",
-                "15cm-20cm",
-                "20cm-25cm",
-                "25cm-30cm",
-                "35cm-40cm",
-                "40cm-45cm",
-                "Unknown"
+            "10cm-15cm", "15cm-20cm", "20cm-25cm", "25cm-30cm",
+            "35cm-40cm", "40cm-45cm", "Unknown"
         );
         hoogteKofferComboBox.setPrefWidth(225);
         grid.add(hoogteKofferComboBox, 1, rij++, 2, 1);
@@ -288,12 +273,8 @@ public class VerlKofferReg {
 
         ComboBox lengteKofferComboBox = new ComboBox();
         lengteKofferComboBox.getItems().addAll(
-                "30cm-40cm",
-                "40cm-50cm",
-                "50cm-60cm",
-                "60cm-70cm",
-                "70cm-80cm",
-                "Unknown"
+            "30cm-40cm", "40cm-50cm", "50cm-60cm",
+            "60cm-70cm", "70cm-80cm", "Unknown"
         );
         lengteKofferComboBox.setPrefWidth(225);
         grid.add(lengteKofferComboBox, 1, rij++, 2, 1);
@@ -310,11 +291,8 @@ public class VerlKofferReg {
 
         ComboBox breedteKofferComboBox = new ComboBox();
         breedteKofferComboBox.getItems().addAll(
-                "20cm-30cm",
-                "30cm-40cm",
-                "40cm-50cm",
-                "50cm-60cm",
-                "Unknown"
+            "20cm-30cm", "30cm-40cm", "40cm-50cm",
+            "50cm-60cm", "Unknown"
         );
         breedteKofferComboBox.setPrefWidth(225);
         grid.add(breedteKofferComboBox, 1, rij++, 2, 1);
@@ -332,8 +310,7 @@ public class VerlKofferReg {
         
         ComboBox softHardComboBox = new ComboBox();
         softHardComboBox.getItems().addAll(
-                "Soft",
-                "Hard"
+                "Soft", "Hard"  
         );
         softHardComboBox.setPrefWidth(225);
         grid.add(softHardComboBox, 1, rij++, 2, 1);
@@ -352,9 +329,7 @@ public class VerlKofferReg {
 
         ComboBox vliegveldVertrekComboBox = new ComboBox();
         vliegveldVertrekComboBox.getItems().addAll(
-                "Schiphol, Amsterdam",
-                "El Prat, Barcelona",
-                "Atatürk, Istanbul"
+            "Schiphol, Amsterdam", "El Prat, Barcelona", "Atatürk, Istanbul" 
         );
         vliegveldVertrekComboBox.setPrefWidth(225);
         grid.add(vliegveldVertrekComboBox, 1, rij++, 2, 1);
@@ -372,9 +347,7 @@ public class VerlKofferReg {
 
         ComboBox vliegveldAankomstComboBox = new ComboBox();
         vliegveldAankomstComboBox.getItems().addAll(
-                "Schiphol, Amsterdam",
-                "El Prat, Barcelona",
-                "Atatürk, Istanbul"
+            "Schiphol, Amsterdam", "El Prat, Barcelona", "Atatürk, Istanbul"
         );
         vliegveldAankomstComboBox.setPrefWidth(225);
         grid.add(vliegveldAankomstComboBox, 1, rij++, 2, 1);
@@ -405,9 +378,7 @@ public class VerlKofferReg {
 
         ComboBox countryComboBox = new ComboBox();
         countryComboBox.getItems().addAll(
-                "Netherlands",
-                "Spain",
-                "Turkey"
+            "Netherlands", "Spain", "Turkey"       
         );
         countryComboBox.setPrefWidth(225);
         grid.add(countryComboBox, 1, rij++, 2, 1);
@@ -473,49 +444,44 @@ public class VerlKofferReg {
                     bijzonderheden = null;
                 }
                 int huisnummer = 0;
-                if (huisnummerEntry.getText() == null) {
+                if (huisnummerEntry.getText() != null) {
                     huisnummer = Integer.valueOf(huisnummerEntry.getText());
                 }
                 String toevoeging = huisnummerToevoeging.getText();
                 String postcode = postcodeEntry.getText();
+                //kijkt of alle velden zijn ingevuld
                 if (countryEntry == null || bagageLabelEntry.getText().trim().isEmpty() || city == null || straat == null || huisnummerEntry.getText().trim().isEmpty() || postcodeEntry.getText().trim().isEmpty() || merk == null
                         || kleur == null || hoogte == null || lengte == null || breedte == null || luchthavenAankomstEntry == null || luchthavenVertrekEntry == null || softHard == null) {
                     actiontarget.setText("All fields must be filled in except Characteristics");
                 } else {
+                    //insert de bagage in de database
                     Statement stmt = (Statement) conn.createStatement();
-                    String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, soft/hard)"
+                    String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, softhard)"
                             + "VALUES ('" + bagagelabel + "','" + kleur + "','" + hoogte + "','" + lengte + "','" + breedte + "','" + luchthavenVertrekEntry + "','" + luchthavenAankomstEntry
                             + "',curdate(),'" + bijzonderheden + "','" + merk + "', '" + customerID + "','"+softHard+"')";
                     stmt.execute(insert);
                     actiontarget.setFill(Color.GREEN);
                     actiontarget.setText("Lugage added");
-
-                    ResultSet result1232 = stmt.executeQuery("SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '" + bagagelabel + "' AND kleur = '" + kleur + "' AND dikte = '" + hoogte + "' AND lengte ='"
+                    //Select de verlorenkoffer id en koppen deze aan de customer
+                    ResultSet rs = stmt.executeQuery("SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '" + bagagelabel + "' AND kleur = '" + kleur + "' AND dikte = '" + hoogte + "' AND lengte ='"
                             + lengte + "' AND breedte = '" + breedte + "' AND luchthavenvertrokken = '" + luchthavenVertrekEntry + "' AND luchthavenaankomst = '" + luchthavenAankomstEntry
-                            + "' AND datum = curdate() AND bijzonderheden = '" + bijzonderheden + "' AND merk = '" + merk + "' AND customersID = '" + customerID + "' AND soft/hard = '"+softHard+"'");
+                            + "' AND datum = curdate() AND bijzonderheden = '" + bijzonderheden + "' AND merk = '" + merk + "' AND customersID = '" + customerID + "' AND softhard = '"+softHard+"'");
 
                     int verlorenKofferID = 0;
-
-                    while (result1232.next()) {
-                        verlorenKofferID = result1232.getInt("verlorenkofferID");
+                    while (rs.next()) {
+                        verlorenKofferID = rs.getInt("verlorenkofferID");
                     }
-
                     stmt.execute("INSERT INTO afleveradres (verlorenkofferID, Land, Straat, Huisnummer, Toevoeging, Postcode, Plaats) VALUES "
                             + "('" + verlorenKofferID + "','" + countryEntry + "','" + straat + "','" + huisnummer + "','" + toevoeging + "','" + postcode + "','" + city + "')");
-
                 }
             } catch (SQLException ed) {
                 System.out.println(ed);
             }
-        });
-        
-        
+        });        
 
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Register Lost Lugage");
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
-
 }

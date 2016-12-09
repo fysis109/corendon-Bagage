@@ -13,10 +13,7 @@ import javafx.stage.Stage;
 public class Home {
 
     //mysql connectie
-    Mysql mysql = new Mysql();
-    
-    public Stage test;
-    
+    Mysql mysql = new Mysql();   
     //private mqsql
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
@@ -31,9 +28,8 @@ public class Home {
         Login log = new Login();
         GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
         GevKofferReg gevKofferReg = new GevKofferReg();
-
         VerlKofferReg verlKofferReg = new VerlKofferReg();
-
+        ManagerStartScherm managerStartScherm = new ManagerStartScherm();
 
 
         // deze vijf regels om een homeknop aan te roepen
@@ -58,12 +54,13 @@ public class Home {
         Button buttonGebruikerAanpassen = new Button("Gebruiker aanpassen");
         Button buttonGevondenKofferRegistreren = new Button("Gevonden bagage registreren");
         Button buttonVerlKofferReg = new Button("Verloren bagage registreren");
+        Button buttonStatistics = new Button("Statistics");
         
         if(Login.rol.equals("Admin")){
-            root.getChildren().add(buttonGebruikerAanmaken);
             grid.add(buttonGebruikerAanmaken, 0, 6);
-            root.getChildren().add(buttonGebruikerAanpassen);
             grid.add(buttonGebruikerAanpassen, 4, 6);
+        }else if(Login.rol.equals("Manager")){
+            grid.add(buttonStatistics,0,0);
         }else{
             root.getChildren().add(buttonSignIn);
             grid.add(buttonSignIn, 4, 6);
@@ -90,6 +87,10 @@ public class Home {
         
         buttonVerlKofferReg.setOnAction((ActionEvent e) -> {
             verlKofferReg.start(primaryStage);
+        });
+        
+        buttonStatistics.setOnAction((ActionEvent e) -> {
+           managerStartScherm.start(primaryStage); 
         });
         
         

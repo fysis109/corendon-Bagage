@@ -80,6 +80,7 @@ public class Login extends Application {
 
         //De Sign in button
         Button btn = new Button("Sign in");
+        btn.setPrefWidth(150);
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
@@ -95,6 +96,7 @@ public class Login extends Application {
 
         //wachtwoord vergeten
         Button buttonWachtwoordVergeten = new Button("Forgot password");
+        buttonWachtwoordVergeten.setPrefWidth(150);
         HBox bwvbox = new HBox(10);
         bwvbox.setAlignment(Pos.BOTTOM_RIGHT);
         bwvbox.getChildren().add(buttonWachtwoordVergeten);

@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -26,25 +25,24 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Login extends Application {
-    
-    //import java class
-    Home Home = new Home();
+
+    //Aanmaken van objecten
+    Home home = new Home();
     WachtwoordVergeten wachtwoordVergeten = new WachtwoordVergeten();
-    
+
     //mysql connectie
     Mysql mysql = new Mysql();
-    
+
     //private mqsql
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
+    //gebruikersrol die wordt geset op het moment van inloggen
     public static String rol;
-    
-    //test
+
     @Override
     public void start(Stage primaryStage) {
-       
-        primaryStage.setTitle("Corendon Bagage");
+
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -72,25 +70,25 @@ public class Login extends Application {
         TextField userTextField = new TextField();
         grid.add(userTextField, 1, 1);
 
-        //Password: text
+        //Password text
         Label pw = new Label("Password:");
         grid.add(pw, 0, 2);
 
-        //text veld na password + bullets
+        //text veld na password
         PasswordField pwBox = new PasswordField();
-        grid.add(pwBox, 1, 2);  
+        grid.add(pwBox, 1, 2);
 
-        //De Sign in 
+        //De Sign in button
         Button btn = new Button("Sign in");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, 4);
-        
-        //Enter ook
+        grid.add(hbBtn, 1, 3);
+
+        //Registreert ook een enter
         btn.setDefaultButton(true);
-        
-        //button event maken
+
+        //Text die een foutmelding geeft
         final Text actiontarget = new Text();
         actiontarget.setFill(Color.FIREBRICK);
         grid.add(actiontarget, 1, 6);
@@ -100,75 +98,59 @@ public class Login extends Application {
         HBox bwvbox = new HBox(10);
         bwvbox.setAlignment(Pos.BOTTOM_RIGHT);
         bwvbox.getChildren().add(buttonWachtwoordVergeten);
-        grid.add(bwvbox, 1, 3);
-        
-        //button event voor wachtwoord vergeten
-        buttonWachtwoordVergeten.setOnAction(new EventHandler<ActionEvent>() {
-            private String[] test;
-            @Override
-            public void handle(ActionEvent e) {
-                wachtwoordVergeten.start(primaryStage);
-            }
-        });        
-        
-        //Button event text
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            private String[] test;
-            @Override
-            public void handle(ActionEvent e) {
-                String username = userTextField.getText();
-                String password = pwBox.getText();
-                if(pwBox.getText() == null || pwBox.getText().trim().isEmpty() || userTextField.getText() == null || userTextField.getText().trim().isEmpty()){
-                    actiontarget.setText("Password and/or username \ncan't be left open");
-                } else {
-                    
-                    System.out.print(username + "\n" + password);
-                    Connection conn;
-                    try {
-                        conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-                        System.out.println("Connected!");
-                        Statement stmt = (Statement) conn.createStatement();
-                        username = "'" + username + "'";
-                        
-                        ResultSet rs1 = stmt.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = " + username);
-                        int count = 0;
-                        while(rs1.next()){
-                            count = rs1.getInt("total");
-                        }
-                        System.out.println(count);
-                        ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE username = " + username);
-                        if(count > 0){
-                            while (rs.next()) {
-                                String pass = rs.getString("wachtwoord");
-                                rol = rs.getString("rol");
-                                System.out.print(pass);
-                                System.out.println(username);
-                                if (pass.equals(password)) {
-                                    System.out.println("Je bent ingelogd!");
-                                    actiontarget.setText("");
-                                    
-                                    Home.start(primaryStage);
-                                    
-                                } else {
-                                    actiontarget.setText("Wrong password or uername try again!");
-                                    System.out.println("Je bent niet ingelogd");
-                                }
+        grid.add(bwvbox, 1, 4);
+
+        //button ActionEvent wachtwoord vergeten
+        buttonWachtwoordVergeten.setOnAction((ActionEvent e) -> {
+            wachtwoordVergeten.start(primaryStage);
+        });
+
+        //button ActionEvent inloggen
+        btn.setOnAction((ActionEvent e) -> {
+            String username = userTextField.getText();
+            String password = pwBox.getText();
+            //kijkt of allebei de velden zijn ingevuld
+            if (pwBox.getText().trim().isEmpty() || userTextField.getText().trim().isEmpty()) {
+                actiontarget.setText("Password and/or username \ncan't be left open");
+            } else {
+                Connection conn;
+                try {
+                    conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                    Statement stmt = (Statement) conn.createStatement();
+                    //kijkt of er wel een user bestaat met deze username
+                    ResultSet rs1 = stmt.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = '" + username + "'");
+                    int count = 0;
+                    while (rs1.next()) {
+                        count = rs1.getInt("total");
+                    }
+                    //zoja vraag wachtwoord en de rol op
+                    if (count > 0) {
+                        ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE username = '" + username + "'");
+                        while (rs.next()) {
+                            String pass = rs.getString("wachtwoord");
+                            rol = rs.getString("rol");
+                            //kijkt of de wachtwoorden overeen komen
+                            if (pass.equals(password)) {
+                                home.start(primaryStage);
+                            } else {
+                                actiontarget.setText("Wrong password or uername try again!");
                             }
-                        }else{
-                            actiontarget.setText("Wrong password or username try again!");
                         }
-                    } catch (SQLException ed) {
-                        System.err.println(ed);
-                    }                  
+                    } else {
+                        actiontarget.setText("Wrong password or username try again!");
+                    }
+                } catch (SQLException ed) {
+                    System.err.println(ed);
                 }
             }
         });
 
+        primaryStage.setTitle("Corendon Bagage");
         Scene scene = new Scene(grid, 1200, 920);
         primaryStage.setScene(scene);
         primaryStage.show();
-        
     }
+
     public static void main(String[] args) {
         launch(args);
     }

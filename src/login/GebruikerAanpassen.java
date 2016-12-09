@@ -49,7 +49,7 @@ public class GebruikerAanpassen {
     private final String CONN_STRING = mysql.getUrlmysql();
     String gebruikersRol = null;
     //test
-    public void star(Stage primaryStage) {
+    public void start(Stage primaryStage) {
         
          // deze vijf regels om een homeknop aan te roepen
         MenuB menuB = new MenuB();

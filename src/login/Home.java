@@ -12,99 +12,95 @@ import javafx.stage.Stage;
 
 public class Home {
 
-    //mysql connectie
-    Mysql mysql = new Mysql();
-    
-    public Stage test;
-    
-    //private mqsql
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();
-    
-    
     public void start(Stage primaryStage) {
 
-        
-
+        //Objects aanmaken
         GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
         Login log = new Login();
         GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
         GevKofferReg gevKofferReg = new GevKofferReg();
-
         VerlKofferReg verlKofferReg = new VerlKofferReg();
+        ManagerStartScherm managerStartScherm = new ManagerStartScherm();
+        KlantenAanpassen klantenAanpassen = new KlantenAanpassen();
 
-
-
-        // deze vijf regels om een homeknop aan te roepen
+        //Hier wordt de menubar bovenin aangemaakt
         MenuB menuB = new MenuB();
-        MenuBar menuBar = menuB.createMenuB(primaryStage);        
+        MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
 
-        
-                
+        //gridpaneaangemaakt
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
-        // deze regel moet ook aangemaakt worden voor de homeknop
         root.setCenter(grid);
 
+        //Alle Buttons
         Button buttonGebruikerAanmaken = new Button("Gebruiker aanmaken");
-        Button buttonSignIn = new Button("Sign in");
+        buttonGebruikerAanmaken.setMaxWidth(220);
         Button buttonGebruikerAanpassen = new Button("Gebruiker aanpassen");
+        buttonGebruikerAanpassen.setMaxWidth(220);
         Button buttonGevondenKofferRegistreren = new Button("Gevonden bagage registreren");
+        buttonGevondenKofferRegistreren.setMaxWidth(220);
         Button buttonVerlKofferReg = new Button("Verloren bagage registreren");
-        
-        if(Login.rol.equals("Admin")){
-            root.getChildren().add(buttonGebruikerAanmaken);
-            grid.add(buttonGebruikerAanmaken, 0, 6);
-            root.getChildren().add(buttonGebruikerAanpassen);
-            grid.add(buttonGebruikerAanpassen, 4, 6);
-        }else{
-            root.getChildren().add(buttonSignIn);
-            grid.add(buttonSignIn, 4, 6);
-            grid.add(buttonGevondenKofferRegistreren, 3,6);
-            grid.add(buttonVerlKofferReg, 5,6);
-            
+        buttonVerlKofferReg.setMaxWidth(220);
+        Button buttonKlantenAanpassen = new Button("Adjust customers");
+        buttonVerlKofferReg.setMaxWidth(220);
+        Button buttonStatistics = new Button("Statistics");
+        buttonStatistics.setMaxWidth(220);
+
+        //kijkt welke buttons er op de homepage moeten afhankeijk van de rol 
+        switch (Login.rol) {
+            case "Admin":
+                grid.add(buttonGebruikerAanmaken, 0, 0);
+                grid.add(buttonGebruikerAanpassen, 1, 0);
+                grid.add(buttonGevondenKofferRegistreren, 0, 1);
+                grid.add(buttonVerlKofferReg, 1, 1);
+                break;
+            case "Manager":
+                grid.add(buttonStatistics, 0, 0);
+                break;
+            default:
+                grid.add(buttonKlantenAanpassen, 7, 6 );
+                grid.add(buttonGevondenKofferRegistreren, 3, 6);
+                grid.add(buttonVerlKofferReg, 5, 6);
+                break;
         }
-        
+
+        //alle ActionEvent handlers van de buttons
         buttonGebruikerAanpassen.setOnAction((ActionEvent e) -> {
-            gebruikerAanpassen.star(primaryStage);
+            gebruikerAanpassen.start(primaryStage);
         });
-        
-        buttonSignIn.setOnAction((ActionEvent e) -> {
-            log.start(primaryStage);
-        });
-        
+
         buttonGebruikerAanmaken.setOnAction((ActionEvent e) -> {
             gebruikerAanmaken.start(primaryStage);
         });
-        
+
         buttonGevondenKofferRegistreren.setOnAction((ActionEvent e) -> {
             gevKofferReg.start(primaryStage);
         });
-        
-        buttonVerlKofferReg.setOnAction((ActionEvent e) -> {
-            verlKofferReg.start(primaryStage);
+        buttonKlantenAanpassen.setOnAction((ActionEvent e) -> {
+            klantenAanpassen.start(primaryStage);
         });
         
-        
-        // deze aanpassen van grid naar root..
-        Scene scene = new Scene(root, 1200, 920);
-        
+        buttonVerlKofferReg.setOnAction((ActionEvent e) -> {
+            verlKofferReg.klantRegistreren(primaryStage);
+        });
+
+        buttonStatistics.setOnAction((ActionEvent e) -> {
+            managerStartScherm.start(primaryStage);
+        });
+
+        Scene scene = new Scene(root, 1220, 920);
         primaryStage.setTitle("Home");
         primaryStage.setScene(scene);
         primaryStage.show();
-        
-        
     }
-    
+
     public static void main(String[] args) {
-       
     }
 
 }

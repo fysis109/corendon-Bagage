@@ -207,7 +207,7 @@ public class VerlKofferReg {
 
         ComboBox kleurKofferComboBox = new ComboBox();
         kleurKofferComboBox.getItems().addAll(
-            "Blauw", "Geel", "Zwart", "Grijs", "Bruin", "Other"
+            "Blue", "Yellow", "Black", "Gray", "Brown", "Other"
         );
         kleurKofferComboBox.setPrefWidth(225);
         grid.add(kleurKofferComboBox, 1, rij++, 2, 1);
@@ -225,7 +225,7 @@ public class VerlKofferReg {
 
         ComboBox merkKofferComboBox = new ComboBox();
         merkKofferComboBox.getItems().addAll(
-            "American Tourister", "Eastpak ", "March", "Porsche Design", "Rimowa",
+            "American Tourister", "Eastpak", "March", "Porsche Design", "Rimowa",
             "Samsonite", "Swiss Wenger", "Ted Baker", "The North Face", 
             "Tumi", "Victorinox", "Other"
         );
@@ -240,7 +240,7 @@ public class VerlKofferReg {
             }
         });
 
-        Label hoogteKoffer = new Label("Height of Lugage:");
+        Label hoogteKoffer = new Label("Height of luggage:");
         grid.add(hoogteKoffer, 0, rij);
 
         ComboBox hoogteKofferComboBox = new ComboBox();
@@ -259,7 +259,7 @@ public class VerlKofferReg {
             }
         });
 
-        Label lengteKoffer = new Label("Length of Lugage:");
+        Label lengteKoffer = new Label("Length of luggage:");
         grid.add(lengteKoffer, 0, rij);
 
         ComboBox lengteKofferComboBox = new ComboBox();
@@ -277,13 +277,12 @@ public class VerlKofferReg {
             }
         });
 
-        Label breedteKoffer = new Label("Width of Lugage:");
+        Label breedteKoffer = new Label("Width of luggage:");
         grid.add(breedteKoffer, 0, rij);
 
         ComboBox breedteKofferComboBox = new ComboBox();
         breedteKofferComboBox.getItems().addAll(
-            "20cm-30cm", "30cm-40cm", "40cm-50cm",
-            "50cm-60cm", "Unknown"
+            "20cm-30cm", "30cm-40cm", "40cm-50cm", "50cm-60cm", "Unknown"
         );
         breedteKofferComboBox.setPrefWidth(225);
         grid.add(breedteKofferComboBox, 1, rij++, 2, 1);
@@ -351,7 +350,7 @@ public class VerlKofferReg {
             }
         });
 
-        Label bijzonderhedenLabel = new Label("Characteristics");
+        Label bijzonderhedenLabel = new Label("Characteristics: ");
         grid.add(bijzonderhedenLabel, 0, rij);
 
         TextArea bijzonderhedenEntry = new TextArea();
@@ -453,7 +452,7 @@ public class VerlKofferReg {
                     stmt.execute(insert);
                     actiontarget.setFill(Color.GREEN);
                     actiontarget.setText("Lugage added");
-                    //Select de verlorenkoffer id en koppen deze aan de customer
+                    //Select de verlorenkoffer id en koppel deze aan de customer
                     ResultSet rs = stmt.executeQuery("SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '" + bagagelabel + "' AND kleur = '" + kleur + "' AND dikte = '" + hoogte + "' AND lengte ='"
                             + lengte + "' AND breedte = '" + breedte + "' AND luchthavenvertrokken = '" + luchthavenVertrekEntry + "' AND luchthavenaankomst = '" + luchthavenAankomstEntry
                             + "' AND datum = curdate() AND bijzonderheden = '" + bijzonderheden + "' AND merk = '" + merk + "' AND customersID = '" + customerID + "' AND softhard = '"+softHard+"'");

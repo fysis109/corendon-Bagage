@@ -42,7 +42,7 @@ public class Login extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
+        
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -151,6 +151,7 @@ public class Login extends Application {
         Scene scene = new Scene(grid, 1200, 920);
         primaryStage.setScene(scene);
         primaryStage.show();
+        
     }
 
     public static void main(String[] args) {

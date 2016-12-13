@@ -21,6 +21,7 @@ public class Home {
         GevKofferReg gevKofferReg = new GevKofferReg();
         VerlKofferReg verlKofferReg = new VerlKofferReg();
         ManagerStartScherm managerStartScherm = new ManagerStartScherm();
+        KlantenAanpassen klantenAanpassen = new KlantenAanpassen();
 
         //Hier wordt de menubar bovenin aangemaakt
         MenuB menuB = new MenuB();
@@ -46,6 +47,8 @@ public class Home {
         buttonGevondenKofferRegistreren.setMaxWidth(220);
         Button buttonVerlKofferReg = new Button("Verloren bagage registreren");
         buttonVerlKofferReg.setMaxWidth(220);
+        Button buttonKlantenAanpassen = new Button("Adjust customers");
+        buttonVerlKofferReg.setMaxWidth(220);
         Button buttonStatistics = new Button("Statistics");
         buttonStatistics.setMaxWidth(220);
 
@@ -61,6 +64,7 @@ public class Home {
                 grid.add(buttonStatistics, 0, 0);
                 break;
             default:
+                grid.add(buttonKlantenAanpassen, 7, 6 );
                 grid.add(buttonGevondenKofferRegistreren, 3, 6);
                 grid.add(buttonVerlKofferReg, 5, 6);
                 break;
@@ -78,7 +82,10 @@ public class Home {
         buttonGevondenKofferRegistreren.setOnAction((ActionEvent e) -> {
             gevKofferReg.start(primaryStage);
         });
-
+        buttonKlantenAanpassen.setOnAction((ActionEvent e) -> {
+            klantenAanpassen.start(primaryStage);
+        });
+        
         buttonVerlKofferReg.setOnAction((ActionEvent e) -> {
             verlKofferReg.klantRegistreren(primaryStage);
         });

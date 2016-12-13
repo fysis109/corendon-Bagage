@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package login;
 
 import java.sql.Connection;
@@ -30,6 +35,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ *
+ * @author Joljin Verwest
+ */
 public class GebruikerAanpassen {
 
     Mysql mysql = new Mysql();
@@ -40,7 +49,7 @@ public class GebruikerAanpassen {
     private final String CONN_STRING = mysql.getUrlmysql();
     String gebruikersRol = null;
     //test
-    public void start(Stage primaryStage) {
+    public void star(Stage primaryStage) {
         
          // deze vijf regels om een homeknop aan te roepen
         MenuB menuB = new MenuB();

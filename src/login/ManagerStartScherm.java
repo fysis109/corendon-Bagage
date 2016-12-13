@@ -1,7 +1,10 @@
 package login;
 
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -22,9 +25,13 @@ public class ManagerStartScherm {
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
     
+    private String beginJaarString, beginMaandString, beginDagString,eindJaarString,
+                    eindMaandString,eindDagString;
+    private boolean amsterdamSelected, barcelonaSelected, istanbulSelected;
+    
     public void start(Stage primaryStage) {
         
-        // deze vijf regels om een homeknop aan te roepen
+        // deze vijf regels om de menubar aan te roepen
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);        
         BorderPane root = new BorderPane();
@@ -35,9 +42,9 @@ public class ManagerStartScherm {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
-        // deze regel moet ook aangemaakt worden voor de homeknop
         root.setCenter(grid);
         
+        //labels en comboBoxen en checkboxen
         Text grafieken = new Text("Statistics");
         grafieken.setFont(Font.font("Tahoma", FontWeight.NORMAL, 25));
         grid.add(grafieken, 0, 0, 2, 1);
@@ -114,10 +121,56 @@ public class ManagerStartScherm {
         CheckBox istanbulAirport = new CheckBox();
         grid.add(istanbulAirport, 10 ,4 );
         
+        Button showLostAndFound = new Button("Show");
+        grid.add(showLostAndFound, 20, 0);
         
         
+        //eventhandlers voor de begindatum
+        beginJaar.setOnAction((event) -> {
+            beginJaarString = (String) beginJaar.getSelectionModel().getSelectedItem();
+        });
+        
+        beginMaand.setOnAction((event) -> {
+           beginMaandString = (String) beginMaand.getSelectionModel().getSelectedItem();
+        });
+        
+        beginDag.setOnAction((event) -> {
+            beginDagString = (String) beginDag.getSelectionModel().getSelectedItem();
+        });
+        
+        //eventhandler voor de einddatum
+        eindJaar.setOnAction((event) -> {
+            eindJaarString = (String) eindJaar.getSelectionModel().getSelectedItem();
+        });
+        
+        eindMaand.setOnAction((event) -> {
+            eindMaandString = (String) eindMaand.getSelectionModel().getSelectedItem();
+        });
+        
+        eindDag.setOnAction((event) -> {
+            eindDagString = (String) eindDag.getSelectionModel().getSelectedItem();
+        });
+        
+       
+        //eventhandlers voor de checkboxes
+        amsterdamAirport.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
+            amsterdamSelected = new_val;
+        });
+        
+        barcelonaAirport.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
+            barcelonaSelected = new_val;
+        });        
+        
+        istanbulAirport.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
+            istanbulSelected = new_val;
+        });  
         
         
+         
+        showLostAndFound.setOnAction((ActionEvent e) -> {
+            String beginDatum = beginJaarString + "/" +beginMaandString + "/" +beginDagString;
+            String eindDatum = eindJaarString + "/" + eindMaandString + "/" + eindDagString;
+        });
         
         // deze aanpassen van grid naar root..
         Scene scene = new Scene(root, 1200, 920);

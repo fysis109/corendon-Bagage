@@ -72,7 +72,7 @@ public class Home {
 
         //alle ActionEvent handlers van de buttons
         buttonGebruikerAanpassen.setOnAction((ActionEvent e) -> {
-            gebruikerAanpassen.start(primaryStage);
+            gebruikerAanpassen.star(primaryStage);
         });
 
         buttonGebruikerAanmaken.setOnAction((ActionEvent e) -> {
@@ -87,7 +87,7 @@ public class Home {
         });
         
         buttonVerlKofferReg.setOnAction((ActionEvent e) -> {
-            verlKofferReg.klantRegistreren(primaryStage);
+            verlKofferReg.start(primaryStage);
         });
 
         buttonStatistics.setOnAction((ActionEvent e) -> {

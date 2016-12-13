@@ -43,7 +43,8 @@ public class VerlKofferReg {
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
     private int customerID;
-    private String kleur, merk, hoogte, lengte, breedte, luchthavenVertrekEntry, luchthavenAankomstEntry, countryEntry;
+    private String kleur, merk, hoogte, lengte, breedte, luchthavenVertrekEntry, 
+            luchthavenAankomstEntry, countryEntry, hardSoftCase;
 
     public void start(Stage primaryStage) {
 
@@ -308,6 +309,23 @@ public class VerlKofferReg {
                 breedte = t1;
             }
         });
+        
+        Label hardSoftCaseLabel = new Label("Soft/hard case:");
+        grid.add(hardSoftCaseLabel, 0 ,rij);
+        
+        ComboBox hardSoftCaseComboBox = new ComboBox();
+        hardSoftCaseComboBox.getItems().addAll(
+                "Soft", "Hard"
+        );
+        hardSoftCaseComboBox.setPrefWidth(225);
+        grid.add(hardSoftCaseComboBox, 1, rij++, 2, 1);
+        
+        hardSoftCaseComboBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                hardSoftCase = t1;
+            }
+        });
 
         Label luchthavenVertrek = new Label("Airport of departure:");
         grid.add(luchthavenVertrek, 0, rij);
@@ -441,24 +459,18 @@ public class VerlKofferReg {
                 String toevoeging = huisnummerToevoeging.getText();
                 String postcode = postcodeEntry.getText();
                 if (countryEntry == null || bagageLabelEntry.getText().trim().isEmpty() || city == null || straat == null || huisnummerEntry.getText().trim().isEmpty() || postcodeEntry.getText().trim().isEmpty() || merk == null
-                        || kleur == null || hoogte == null || lengte == null || breedte == null || luchthavenAankomstEntry == null || luchthavenVertrekEntry == null) {
+                        || kleur == null || hoogte == null || lengte == null || breedte == null || luchthavenAankomstEntry == null || luchthavenVertrekEntry == null || hardSoftCase == null) {
                     actiontarget.setText("All fields must be filled in except Characteristics");
                 } else {
                     System.out.println(bagagelabel + kleur + merk + hoogte + lengte + breedte + luchthavenVertrekEntry + luchthavenAankomstEntry + bijzonderheden + countryEntry + city + straat + huisnummer + toevoeging + postcode);
                     Statement stmt = (Statement) conn.createStatement();
-                    String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID)"
+                    String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, softhard)"
                             + "VALUES ('" + bagagelabel + "','" + kleur + "','" + hoogte + "','" + lengte + "','" + breedte + "','" + luchthavenVertrekEntry + "','" + luchthavenAankomstEntry
-                            + "',curdate(),'" + bijzonderheden + "','" + merk + "', '" + customerID + "')";
+                            + "',curdate(),'" + bijzonderheden + "','" + merk + "', '" + customerID + "', '"+hardSoftCase+"')";
                     stmt.execute(insert);
                     actiontarget.setFill(Color.GREEN);
                     actiontarget.setText("Lugage added");
-                    //Select de verlorenkoffer id en koppel deze aan de customer
                     
-
-
-                    /*String select = "SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '"+ bagagelabel +"' AND kleur = '"+kleur+"' AND dikte = '"+hoogte+"' AND lengte ='"
-                            + lengte+"' AND breedte = '"+breedte+"' AND luchthavenvertrokken = '"+luchthavenVertrekEntry+ "' AND luchthavenaankomst = '"+luchthavenAankomstEntry+
-                                    "' AND datum = curdate() AND bijzonderheden = '" + bijzonderheden+"' AND merk =' "+merk+"'";*/
                     System.out.println("test voor execute");
 
                     ResultSet result1232 = stmt.executeQuery("SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '" + bagagelabel + "' AND kleur = '" + kleur + "' AND dikte = '" + hoogte + "' AND lengte ='"

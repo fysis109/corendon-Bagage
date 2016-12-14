@@ -72,14 +72,7 @@ public class KlantenAanpassen extends Application {
         BorderPane root = new BorderPane();
         //menuBar.prefWidthProperty().bind(stage.widthProperty());
         root.setTop(menuBar);
-        
-        //Gridpane
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-        root.setCenter(grid);
+        root.setCenter(table);
         
         int rij = 1;
         
@@ -124,19 +117,6 @@ public class KlantenAanpassen extends Application {
                             this.gebDatum = databaseResponse2.getString("geb_datum");
                             this.telefoon = databaseResponse2.getString("telefoonnummer");
                             
-                            /*
-                            this.kofferid = databaseResponse2.getString("gevondenkofferID");
-                            this.dlabel = databaseResponse2.getString("bagagelabel");
-                            this.kleur = databaseResponse2.getString("kleur");
-                            this.dikte = databaseResponse2.getString("dikte");
-                            this.lengte = databaseResponse2.getString("lengte");
-                            this.breedte = databaseResponse2.getString("breedte");
-                            this.luchthavengevonden = databaseResponse2.getString("luchthavengevonden");
-                            this.datum = databaseResponse2.getString("datum");
-                            this.softhard = databaseResponse2.getString("softhardcase");
-                            this.bijzonderhede = databaseResponse2.getString("bijzonderhede");
-                            this.idnumber = databaseResponse2.getInt("rowNumber");
-                            */
                              data.add(new Person(firstName, lastName, tussenvoegsel, mail, gebDatum, telefoon, customersID));
                              
                              table.setItems(data);
@@ -164,7 +144,7 @@ public class KlantenAanpassen extends Application {
         gevondenkofferIDcol.setMinWidth(20);
         gevondenkofferIDcol.setCellValueFactory(
                 new PropertyValueFactory<>("firstName"));
- 
+        
         TableColumn bagagelabelcol = new TableColumn("lastname");
         bagagelabelcol.setMinWidth(100);
         bagagelabelcol.setCellValueFactory(
@@ -222,7 +202,7 @@ public class KlantenAanpassen extends Application {
                                             {
                                                 Person person = getTableView().getItems().get( getIndex() );
                                                 aanpassenKlanten.AanpassenKlanten(stage,person.getFirstName(), person.getLastName(), person.getTussenvoegsel(),
-                                                        person.getTelefoon(), person.getMail(),person.getGebDatum(),person.getCustomersID());
+                                                        person.getTelefoon(), person.getMail(),person.getGebDatum(),person.getCustomersID()); 
                                                 System.out.println( person.getFirstName() + "   " + person.getLastName() );
                                     } );
                                     setGraphic( btn );
@@ -231,6 +211,7 @@ public class KlantenAanpassen extends Application {
                                 }
                             }
                         };
+                        cell.setAlignment(Pos.CENTER);
                         return cell;
                     }
                 };
@@ -239,8 +220,9 @@ public class KlantenAanpassen extends Application {
         //table.prefWidthProperty().bind(scene.widthProperty());
         table.getColumns().addAll(gevondenkofferIDcol,bagagelabelcol,tussenvoegselCol, gebdatumcol,
                 mailcol,telefooncol, actionCol);
- 
+        
         final VBox vbox = new VBox(root);
+        
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
         vbox.getChildren().addAll(label, table);

@@ -39,7 +39,7 @@ public class GevKofferReg {
 
     //Strings
     private String kofferKleur, merkKoffer, breedteKoffer, lengteKoffer,
-            dikteKoffer, locatieKoffer, softHardCase;
+            dikteKoffer, locatieKoffer, softHardCase, BagageNummer;
 
     //mysql connectie
     Mysql mysql = new Mysql();
@@ -49,6 +49,7 @@ public class GevKofferReg {
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
+    
 
     public void start(Stage primaryStage) {
 
@@ -259,12 +260,49 @@ public class GevKofferReg {
             @Override
             public void handle(ActionEvent e) {
                 //registreerInformatie.star(primaryStage);
-
+                String BagageNummer2 = InputBagageNummer.getText().trim(); 
                 //maak connectie met het database
-                if (kofferKleur == null || breedteKoffer == null || lengteKoffer == null || dikteKoffer == null || locatieKoffer == null || softHardCase == null || merkKoffer == null) {
+                if (!InputBagageNummer.getText().trim().isEmpty()) 
+                    {
+                        Connection conn;
+                    try {
+                        //maak connectie met het database
+                        conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                        
+                        System.out.println(BagageNummer2);
+                        
+                        Statement stmt2 = conn.createStatement();
+                        ResultSet rs2 = stmt2.executeQuery("SELECT COUNT(*) AS total FROM verlorenbagage WHERE bagagelabel = '" + InputBagageNummer.getText().trim() + "'");
+                        int count = 0;
+                        while (rs2.next()) {
+                            count = rs2.getInt("total");
+                        }
+                        if (count > 0){
+                            String BagageNummer = InputBagageNummer.getText();
+                            zoekBagage zoekBagage = new zoekBagage(BagageNummer, kofferKleur, merkKoffer, breedteKoffer, lengteKoffer, dikteKoffer, locatieKoffer, softHardCase);
+                            int[] bagageIdArray = zoekBagage.check();
+                            createTable(bagageIdArray, primaryStage);
+                            
+                        }else if (count == 0){
+                        //SQL query
+                        String INSERTINFOQuary = "INSERT INTO `corendonbagagesystem`.`gevondenbagage` (`bagagelabel`, `kleur`, `dikte`, `lengte`, `breedte`, `luchthavengevonden`, `datum`, `bijzonderhede`, `merk`, `softhard`)"
+                                + "VALUES ('" + InputBagageNummer.getText() + "','" + kofferKleur + "', '" + dikteKoffer + "', '" + lengteKoffer + "', '" + breedteKoffer + "', '" + locatieKoffer + "', CURDATE(), '" + Bijzonderheden.getText() + "', '" + merkKoffer + "', '" + softHardCase + "')";
+                        
+                        // create the java statement
+                        Statement st = conn.createStatement();
+
+                        //push naar het database
+                        st.executeUpdate(INSERTINFOQuary);
+                        }
+                        
+                    } catch (SQLException ed) {
+                        System.err.println(ed);
+                    }
+                    
+                } else if (kofferKleur == null || breedteKoffer == null || lengteKoffer == null || dikteKoffer == null || locatieKoffer == null || softHardCase == null || merkKoffer == null) {
                     actiontarget.setText("You can't leave anything open.");
                 } else {
-                    Connection conn;
+                        Connection conn;
                     try {
                         //maak connectie met het database
                         conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
@@ -286,7 +324,9 @@ public class GevKofferReg {
                     } catch (SQLException ed) {
                         System.err.println(ed);
                     }
-                }
+                        
+                        }
+                
             }
         });
 

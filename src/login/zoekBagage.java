@@ -171,7 +171,7 @@ public class zoekBagage {
                 }
                 
                 //dikteKoffer
-                if(!"Unknown".equals(dikteKoffer)){
+                if(!dikteKoffer.equals("Unknown")){
                     
                     //kijken of quary nog het zelfde
                     if(!ZoekenKenmerkenQuary.equals("SELECT * FROM verlorenbagage WHERE")){
@@ -185,6 +185,7 @@ public class zoekBagage {
                         ZoekenKenmerkenQuary += " AND softhard = '"+softHardCase+"'";
                     } else {
                         ZoekenKenmerkenQuary += " softhard '"+softHardCase+"'";
+                        
                     }
                 
                 ZoekenKenmerkenQuary += " AND (luchthavenvertrokken = '"+locatieKoffer+"' OR luchthavenaankomst = '"+locatieKoffer+"')";
@@ -199,7 +200,11 @@ public class zoekBagage {
                 while (databaseResponse.next()){
                     list.add(databaseResponse.getInt("verlorenkofferID"));
                 }
-               
+                if(list.isEmpty()){
+                    int [] resultIfNoMatches = new int[1];
+                    resultIfNoMatches [0] = 0;
+                    return resultIfNoMatches;
+                }
                 int [] result = new int[list.size()];
                 result = list.stream().mapToInt(i->i).toArray();
                 return result;

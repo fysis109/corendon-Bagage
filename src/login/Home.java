@@ -16,7 +16,6 @@ public class Home {
 
         //Objects aanmaken
         GebruikerAanmaken gebruikerAanmaken = new GebruikerAanmaken();
-        Login log = new Login();
         GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
         GevKofferReg gevKofferReg = new GevKofferReg();
         VerlKofferReg verlKofferReg = new VerlKofferReg();
@@ -30,7 +29,7 @@ public class Home {
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
 
-        //gridpaneaangemaakt
+        //gridpane aangemaakt
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -39,13 +38,13 @@ public class Home {
         root.setCenter(grid);
 
         //Alle Buttons
-        Button buttonGebruikerAanmaken = new Button("Gebruiker aanmaken");
+        Button buttonGebruikerAanmaken = new Button("Create new user");
         buttonGebruikerAanmaken.setMaxWidth(220);
-        Button buttonGebruikerAanpassen = new Button("Gebruiker aanpassen");
+        Button buttonGebruikerAanpassen = new Button("Adjust user");
         buttonGebruikerAanpassen.setMaxWidth(220);
-        Button buttonGevondenKofferRegistreren = new Button("Gevonden bagage registreren");
+        Button buttonGevondenKofferRegistreren = new Button("Register found luggage");
         buttonGevondenKofferRegistreren.setMaxWidth(220);
-        Button buttonVerlKofferReg = new Button("Verloren bagage registreren");
+        Button buttonVerlKofferReg = new Button("Register lost luggage");
         buttonVerlKofferReg.setMaxWidth(220);
         Button buttonKlantenAanpassen = new Button("Adjust customers");
         buttonVerlKofferReg.setMaxWidth(220);

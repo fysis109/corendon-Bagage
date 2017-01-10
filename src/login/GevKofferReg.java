@@ -40,6 +40,8 @@ public class GevKofferReg {
     //Strings
     private String kofferKleur, merkKoffer, breedteKoffer, lengteKoffer,
             dikteKoffer, locatieKoffer, softHardCase;
+    private int gevKofID;
+    private int[] bagageIdArray;
 
     //mysql connectie
     Mysql mysql = new Mysql();
@@ -256,11 +258,12 @@ public class GevKofferReg {
         actiontarget.setFill(Color.FIREBRICK);
         grid.add(actiontarget, 1, 11);
 
+        
+        
         registreerInformatie.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                //registreerInformatie.star(primaryStage);
-                String BagageNummer2 = InputBagageNummer.getText().trim(); 
+                 
                 //maak connectie met het database
                 if (!InputBagageNummer.getText().trim().isEmpty()) 
                     {
@@ -269,64 +272,60 @@ public class GevKofferReg {
                         //maak connectie met het database
                         conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                         
-                        System.out.println(BagageNummer2);
-                        
-                        Statement stmt2 = conn.createStatement();
-                        ResultSet rs2 = stmt2.executeQuery("SELECT COUNT(*) AS total FROM verlorenbagage WHERE bagagelabel = '" + InputBagageNummer.getText().trim() + "'");
-                        int count = 0;
-                        while (rs2.next()) {
-                            count = rs2.getInt("total");
-                        }
-                        if (count > 0){
-                            String BagageNummer = InputBagageNummer.getText();
-                            zoekBagage zoekBagage = new zoekBagage(BagageNummer, kofferKleur, merkKoffer, breedteKoffer, lengteKoffer, dikteKoffer, locatieKoffer, softHardCase);
-                            int[] bagageIdArray = zoekBagage.check();
-                            createTable(bagageIdArray, primaryStage);
-                            
-                        }else if (count == 0){
-                        //SQL query
-                        String INSERTINFOQuary = "INSERT INTO `corendonbagagesystem`.`gevondenbagage` (`bagagelabel`, `kleur`, `dikte`, `lengte`, `breedte`, `luchthavengevonden`, `datum`, `bijzonderhede`, `merk`, `softhard`)"
-                                + "VALUES ('" + InputBagageNummer.getText() + "','" + kofferKleur + "', '" + dikteKoffer + "', '" + lengteKoffer + "', '" + breedteKoffer + "', '" + locatieKoffer + "', CURDATE(), '" + Bijzonderheden.getText() + "', '" + merkKoffer + "', '" + softHardCase + "')";
-                        
-                        // create the java statement
+                       
+                        String INSERTINFOQuary = "INSERT INTO `corendonbagagesystem`.`gevondenbagage` (`bagagelabel`, `kleur`, `dikte`, `lengte`, `breedte`, `luchthavengevonden`, `datum`, `bijzonderhede`, `merk`, `softhard`, status)"
+                            + "VALUES ('" + InputBagageNummer.getText() + "','" + kofferKleur + "', '" + dikteKoffer + "', '" + lengteKoffer + "', '" + breedteKoffer + "', '" + locatieKoffer + "', CURDATE(), '" + Bijzonderheden.getText() + "', '" + merkKoffer + "', '" + softHardCase + "', 'notSolved')";
                         Statement st = conn.createStatement();
-
-                        //push naar het database
                         st.executeUpdate(INSERTINFOQuary);
+
+                        String selectGevKofferID = "SELECT gevondenKofferID from gevondenbagage where bagagelabel = '"+InputBagageNummer.getText()+"' AND kleur = '"+kofferKleur+"' AND dikte = '"+dikteKoffer+"' AND lengte = '"+lengteKoffer+"' AND breedte = '"+breedteKoffer+"'"
+                                + " AND luchthavengevonden = '"+ locatieKoffer + "' AND datum = CURDATE() AND bijzonderhede = '"+Bijzonderheden.getText()+"' AND merk = '"+merkKoffer+"' AND softhard = '"+softHardCase+"'";                                      
+                        ResultSet gevKofferIdRes = st.executeQuery(selectGevKofferID);
+                        while(gevKofferIdRes.next()){
+                            gevKofID = gevKofferIdRes.getInt("gevondenKofferID");
                         }
-                        
+                        String BagageNummer = InputBagageNummer.getText();
+                        zoekBagage zoekBagage = new zoekBagage(BagageNummer, kofferKleur, merkKoffer, breedteKoffer, lengteKoffer, dikteKoffer, locatieKoffer, softHardCase);
+                        bagageIdArray = zoekBagage.check();
+                        createTable(bagageIdArray, primaryStage);
                     } catch (SQLException ed) {
                         System.err.println(ed);
                     }
                     
-                } else if (kofferKleur == null || breedteKoffer == null || lengteKoffer == null || dikteKoffer == null || locatieKoffer == null || softHardCase == null || merkKoffer == null) {
+                }else if (kofferKleur == null || breedteKoffer == null || lengteKoffer == null || dikteKoffer == null 
+                        || locatieKoffer == null || softHardCase == null || merkKoffer == null) {
                     actiontarget.setText("You can't leave anything open.");
-                } else {
+                }else{
                         Connection conn;
                     try {
                         //maak connectie met het database
                         conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-
+                        System.out.println("test");
                         //SQL query
                         String INSERTINFOQuary = "INSERT INTO `corendonbagagesystem`.`gevondenbagage` (`bagagelabel`, `kleur`, `dikte`, `lengte`, `breedte`, `luchthavengevonden`, `datum`, `bijzonderhede`, `merk`, `softhard`)"
                                 + "VALUES ('" + InputBagageNummer.getText() + "','" + kofferKleur + "', '" + dikteKoffer + "', '" + lengteKoffer + "', '" + breedteKoffer + "', '" + locatieKoffer + "', CURDATE(), '" + Bijzonderheden.getText() + "', '" + merkKoffer + "', '" + softHardCase + "')";
 
                         // create the java statement
                         Statement st = conn.createStatement();
-
+                        
+                        String selectGevKofferID = "SELECT gevondenKofferID from gevondenbagage where bagagelabel = '"+InputBagageNummer.getText()+"' AND kleur = '"+kofferKleur+"' AND dikte = '"+dikteKoffer+"' AND lengte = '"+lengteKoffer+"' AND breedte = '"+breedteKoffer+"'"
+                                    + " AND luchthavengevonden = '"+ locatieKoffer + "' AND datum = CURDATE() AND bijzonderhede = '"+Bijzonderheden.getText()+"' AND merk = '"+merkKoffer+"' AND softhard = '"+softHardCase+"'";                                      
+                        ResultSet gevKofferIdRes = st.executeQuery(selectGevKofferID);
+                        while(gevKofferIdRes.next()){
+                            gevKofID = gevKofferIdRes.getInt("gevondenKofferID");
+                            System.out.println(gevKofID);
+                        }
                         //push naar het database
                         st.executeUpdate(INSERTINFOQuary);
 
                         String BagageNummer = InputBagageNummer.getText();
                         zoekBagage zoekBagage = new zoekBagage(BagageNummer, kofferKleur, merkKoffer, breedteKoffer, lengteKoffer, dikteKoffer, locatieKoffer, softHardCase);
-                        int[] bagageIdArray = zoekBagage.check();
+                        bagageIdArray = zoekBagage.check();
                         createTable(bagageIdArray, primaryStage);
                     } catch (SQLException ed) {
                         System.err.println(ed);
-                    }
-                        
-                        }
-                
+                    }        
+                }
             }
         });
 
@@ -471,11 +470,21 @@ public class GevKofferReg {
 
             Scene scene = new Scene(new Group(), 1200, 920);
             primaryStage.setTitle("Table");
+            
+            
+            Button match = new Button("Match");
+        
+            match.setOnAction((ActionEvent e) -> {
+                if(table.getSelectionModel().isEmpty() == false){
+                    Person selected = table.getSelectionModel().getSelectedItem();
+                    zetMatchInDatabase(selected.getGevondenkofferID());
+                }
+            });
 
             final VBox vbox = new VBox(root);
             vbox.setSpacing(10);
             vbox.setPadding(new Insets(10, 0, 0, 10));
-            vbox.getChildren().addAll(matchesLabel, table);
+            vbox.getChildren().addAll(matchesLabel, table, match);
 
             ((Group) scene.getRoot()).getChildren().addAll(vbox);
             primaryStage.setScene(scene);
@@ -502,6 +511,35 @@ public class GevKofferReg {
             });
         }
 
+    }
+    
+    private void zetMatchInDatabase(String verlorenKofferID){
+        Connection conn;
+        int klantID = 0;
+        try {
+            //maak connectie met het database
+            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+            Statement st = conn.createStatement();
+                        
+            String selectKlantID = "SELECT customersID from verlorenbagage where verlorenkofferID = '"+verlorenKofferID+"'";
+            ResultSet resultKlantID = st.executeQuery(selectKlantID);
+            while(resultKlantID.next()){
+                klantID = resultKlantID.getInt("customersID");
+            }
+            
+            String insertOpgelost = "INSERT INTO opgelost (customersID, verlorenkofferID, gevondenkofferID, datum) "
+                    + "values ('"+klantID+"', '"+verlorenKofferID+"', '"+gevKofID+"', curdate())";
+            st.execute(insertOpgelost);
+            
+            String updateStatusVerl = "UPDATE verlorenbagage SET status = 'pending' WHERE verlorenkofferID = '"+verlorenKofferID+"'";
+            String updateStatusGev = "UPDATE gevondenbagage SET status = 'pending' WHERE gevondenkofferID = '"+gevKofID+"'";
+            System.out.println(updateStatusGev);
+            st.execute(updateStatusVerl);
+            st.execute(updateStatusGev);
+            
+        } catch (SQLException ed) {
+            
+        }
     }
 
     public static class Person {

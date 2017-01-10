@@ -40,7 +40,7 @@ public class zoekBagage {
         this.softHardCase = softHardCase;
     }
     
-    int[] check(){
+    public int[] check(){
         int [] zoekenOpkenmerkenCallback;
         Connection conn;
         try {
@@ -56,7 +56,7 @@ public class zoekBagage {
             if (!bagageNummer.trim().isEmpty()){
                 
                 // execute the query, and get a java resultset
-                ResultSet databaseResponse = st.executeQuery("SELECT * FROM verlorenbagage WHERE bagagelabel ='"+bagageNummer+"'");
+                ResultSet databaseResponse = st.executeQuery("SELECT * FROM verlorenbagage WHERE bagagelabel ='"+bagageNummer+"' AND status = 'notSolved'");
                 while (databaseResponse.next()){
                     
                     //database response verwerken
@@ -189,6 +189,7 @@ public class zoekBagage {
                     }
                 
                 ZoekenKenmerkenQuary += " AND (luchthavenvertrokken = '"+locatieKoffer+"' OR luchthavenaankomst = '"+locatieKoffer+"')";
+                ZoekenKenmerkenQuary += " AND status = 'notSolved'";
                 
              
                 

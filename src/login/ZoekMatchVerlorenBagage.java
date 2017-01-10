@@ -82,6 +82,7 @@ public class ZoekMatchVerlorenBagage {
         }
         zoekCriteria += " AND softhard = '" + hardSoftCase + "'";
         zoekCriteria += " AND (luchthavengevonden = '" + luchthavenAankomst + "' OR luchthavengevonden = '" + luchthavenVertrek + "' )";
+        zoekCriteria += " AND status = 'notSolved'";
         System.out.println(zoekCriteria);
         zoekOpCriteria(zoekCriteria, zoekOpBagagelabel, bagagelabel);
     }
@@ -299,8 +300,14 @@ public class ZoekMatchVerlorenBagage {
             Statement st = conn.createStatement();
             String insertString = "INSERT INTO opgelost (customersID, verlorenkofferID, gevondenkofferID, datum) "
                     + "values ('"+customerId+"', '"+verlorenKofferID+"', '"+gevondenKofferID+"', curdate())";
-            System.out.println(insertString);
             st.execute(insertString);
+            
+            String updateStatusVerl = "UPDATE verlorenbagage SET status = 'pending' WHERE verlorenkofferID = '"+verlorenKofferID+"'";
+            String updateStatusGev = "UPDATE gevondenbagage SET status = 'pending' WHERE gevondenkofferID = '"+gevondenKofferID+"'";
+            st.execute(updateStatusVerl);
+            st.execute(updateStatusGev);
+            
+            
         }catch (SQLException ed) {
                   
         }

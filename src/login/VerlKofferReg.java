@@ -414,9 +414,9 @@ public class VerlKofferReg {
                     }
                     if(count == 0){
                     System.out.println(bagagelabel + kleur + merk + hoogte + lengte + breedte + luchthavenVertrekEntry + luchthavenAankomstEntry + bijzonderheden + countryEntry + city + straat + huisnummer + toevoeging + postcode);
-                    String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, softhard)"
+                    String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, softhard, status)"
                             + "VALUES ('" + bagagelabel + "','" + kleur + "','" + hoogte + "','" + lengte + "','" + breedte + "','" + luchthavenVertrekEntry + "','" + luchthavenAankomstEntry
-                            + "',curdate(),'" + bijzonderheden + "','" + merk + "', '" + customerID + "', '" + hardSoftCase + "')";
+                            + "',curdate(),'" + bijzonderheden + "','" + merk + "', '" + customerID + "', '" + hardSoftCase + "', 'notSolved')";
                     stmt.execute(insert);
                     actiontarget.setFill(Color.GREEN);
                     actiontarget.setText("Lugage added");

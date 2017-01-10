@@ -1,17 +1,14 @@
 package login;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.chart.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -23,13 +20,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.scene.chart.*;
-import javafx.scene.Group;
 
 public class ManagerStartScherm extends Application{
     
@@ -251,7 +241,10 @@ public class ManagerStartScherm extends Application{
             eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
         opgelostBagage.setOnAction((ActionEvent e) -> {
                                             
-            pieChar.start(primaryStage, beginDatum, eindDatum, AirportList);
+            try {
+                pieChar.start(primaryStage, beginDatum, eindDatum, AirportList);
+            } catch (SQLException ex) {    
+            }
         });
         
         nietopgelostBagage.setOnAction((ActionEvent e) -> {

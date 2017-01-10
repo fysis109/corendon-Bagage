@@ -129,15 +129,20 @@ public class WachtwoordVergeten {
                             for (int i = 0; i < 8; i++) {
                                 randomGetal += String.valueOf((int) (Math.random() * ((10 - 1) + 1)));
                             }
+                            Encrypt encrypt = new Encrypt();
                             //voer het nieuwe wachtwoord in, in de database
-                            String updateQuary = "UPDATE users SET wachtwoord='" + randomGetal + "' WHERE userID='" + customerId + "'";
-                            st.executeUpdate(updateQuary);
+                            String updateQuary;
+                            try {
+                                updateQuary = "UPDATE users SET wachtwoord='" + encrypt.createHash(String.valueOf(randomGetal)) + "' WHERE userID='" + customerId + "'";
+                                st.executeUpdate(updateQuary);
+                            } catch (Encrypt.CannotPerformOperationException ex) {
+                            }
                             String RECIPIENT = emailadress;
                             String from = EMAIL_USER_NAME;
                             String pass = EMAIL_PASSWORD;
                             String[] to = {RECIPIENT};
-                            String subject = "Corendon wachtwoord reset.";
-                            String body = "Welkom. Hier bij is een nieuwe wachtwoord. Wachtwoord is:" + randomGetal;
+                            String subject = "Corendon password reset.";
+                            String body = "Hello, here is your new password: " + randomGetal;
                             //send mail
                             sendFromGMail(from, pass, to, subject, body);
                         } else {

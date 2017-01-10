@@ -113,7 +113,13 @@ public class Login extends Application {
         buttonWachtwoordVergeten.setOnAction((ActionEvent e) -> {
             wachtwoordVergeten.start(primaryStage);
         });
-
+        
+        Encrypt a = new Encrypt();
+        try{
+        System.out.println("Hash voor wachtwoord 1: "+a.createHash("1"));
+        }catch(Encrypt.CannotPerformOperationException ex){
+            
+        }
         //button ActionEvent inloggen
         btn.setOnAction((ActionEvent e) -> {
             String username = userTextField.getText();

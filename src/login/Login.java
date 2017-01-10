@@ -26,6 +26,10 @@ import javafx.stage.Stage;
 
 public class Login extends Application {
 
+    
+    
+    
+    
     //Aanmaken van objecten
     Home home = new Home();
     WachtwoordVergeten wachtwoordVergeten = new WachtwoordVergeten();
@@ -42,6 +46,7 @@ public class Login extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        
         
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);

@@ -39,7 +39,7 @@ public class GevKofferReg {
 
     //Strings
     private String kofferKleur, merkKoffer, breedteKoffer, lengteKoffer,
-            dikteKoffer, locatieKoffer, softHardCase, BagageNummer;
+            dikteKoffer, locatieKoffer, softHardCase;
 
     //mysql connectie
     Mysql mysql = new Mysql();
@@ -362,7 +362,7 @@ public class GevKofferReg {
                 //maak connectie met het database
                 conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 
-                Person[] person = new Person[bagageIdArray.length];
+                //Person[] person = new Person[bagageIdArray.length];
                 Statement st = conn.createStatement();
 
                 String selectString = "SELECT * FROM verlorenbagage WHERE verlorenkofferID = '" + bagageIdArray[0] + "'";

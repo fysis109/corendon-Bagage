@@ -28,7 +28,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -74,8 +73,7 @@ public class KlantenAanpassen extends Application {
         root.setTop(menuBar);
         root.setCenter(table);
         
-        int rij = 1;
-        
+     
         try{           
                         //maak connectie met het database
                         conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);

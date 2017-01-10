@@ -21,4 +21,6 @@ public class Mysql {
     String getUrlmysql(){
         return "jdbc:mysql://"+IPADDRESS+":"+POORT+"/"+DATABASENAAM+"?autoReconnect="+AUTORECONNECT+"&useSSL="+SSL;
     };
+
+
 }

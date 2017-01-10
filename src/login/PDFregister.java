@@ -6,6 +6,7 @@
 package login;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -23,15 +24,21 @@ public class PDFregister {
     /**
      * @param args the command line arguments
      */
+    Mysql mysql = new Mysql(); 
+    
+    private final String USERNAME = mysql.getUsername();
+    private final String PASSWORD = mysql.getPassword();
+    private final String CONN_STRING = mysql.getUrlmysql();
+    
     public static void main(String[] args) {
-        Mysql mysql = new Mysql(); 
         // Create a new empty document
         PDDocument document = new PDDocument();
 
         // Create a new blank page and add it to the document
         PDPage blankPage = new PDPage();
         document.addPage( blankPage );
-
+         Connection conn;
+         
         try {
             PDFont font = PDType1Font.HELVETICA_BOLD;
             PDFont font2 = PDType1Font.TIMES_ROMAN;

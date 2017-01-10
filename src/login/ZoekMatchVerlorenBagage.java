@@ -189,8 +189,8 @@ public class ZoekMatchVerlorenBagage {
             
             table.setEditable(true);
             table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-            table.setMinSize(1200, 800);
-            table.setMaxSize(1200, 800);
+            table.setMinHeight(800);
+            table.setMaxHeight(800);
             
             
             

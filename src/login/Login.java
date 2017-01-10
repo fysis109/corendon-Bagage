@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -136,8 +138,8 @@ public class Login extends Application {
                         while (rs.next()) {
                             String pass = rs.getString("wachtwoord");
                             rol = rs.getString("rol");
-                            //kijkt of de wachtwoorden overeen komen
-                            if (pass.equals(password)) {
+                            Encrypt encrypt = new Encrypt();
+                            if (encrypt.verifyPassword(password, pass)) {
                                 home.start(primaryStage);
                             } else {
                                 actiontarget.setText("Wrong password or uername try again!");
@@ -148,6 +150,12 @@ public class Login extends Application {
                     }
                 } catch (SQLException ed) {
                     System.err.println(ed);
+                } 
+                //2 catches voor het encrypten
+                catch (Encrypt.CannotPerformOperationException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Encrypt.InvalidHashException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });

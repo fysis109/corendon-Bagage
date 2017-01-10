@@ -3,11 +3,13 @@ package login;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Home {
@@ -21,6 +23,7 @@ public class Home {
         VerlKofferReg verlKofferReg = new VerlKofferReg();
         ManagerStartScherm managerStartScherm = new ManagerStartScherm();
         KlantenAanpassen klantenAanpassen = new KlantenAanpassen();
+        GebruikersTable gebruikersTable = new GebruikersTable();
 
         //Hier wordt de menubar bovenin aangemaakt
         MenuB menuB = new MenuB();
@@ -40,8 +43,8 @@ public class Home {
         //Alle Buttons
         Button buttonGebruikerAanmaken = new Button("Create new user");
         buttonGebruikerAanmaken.setMaxWidth(220);
-        Button buttonGebruikerAanpassen = new Button("Adjust user");
-        buttonGebruikerAanpassen.setMaxWidth(220);
+        Button buttonGebruikersTable = new Button("Adjust user");
+        buttonGebruikersTable.setMaxWidth(220);
         Button buttonGevondenKofferRegistreren = new Button("Register found luggage");
         buttonGevondenKofferRegistreren.setMaxWidth(220);
         Button buttonVerlKofferReg = new Button("Register lost luggage");
@@ -55,9 +58,10 @@ public class Home {
         switch (Login.rol) {
             case "Admin":
                 grid.add(buttonGebruikerAanmaken, 0, 0);
-                grid.add(buttonGebruikerAanpassen, 1, 0);
+                grid.add(buttonGebruikersTable, 1, 0);
                 grid.add(buttonGevondenKofferRegistreren, 0, 1);
                 grid.add(buttonVerlKofferReg, 1, 1);
+                grid.add(buttonKlantenAanpassen, 2,1);
                 break;
             case "Manager":
                 grid.add(buttonStatistics, 0, 0);
@@ -70,8 +74,8 @@ public class Home {
         }
 
         //alle ActionEvent handlers van de buttons
-        buttonGebruikerAanpassen.setOnAction((ActionEvent e) -> {
-            gebruikerAanpassen.star(primaryStage);
+        buttonGebruikersTable.setOnAction((ActionEvent e) -> {
+            gebruikersTable.start(primaryStage);
         });
 
         buttonGebruikerAanmaken.setOnAction((ActionEvent e) -> {
@@ -96,6 +100,14 @@ public class Home {
         Scene scene = new Scene(root, 1220, 920);
         primaryStage.setTitle("Home");
         primaryStage.setScene(scene);
+        
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+
+        //set Stage boundaries to visible bounds of the main screen
+        primaryStage.setX(primaryScreenBounds.getMinX());
+        primaryStage.setY(primaryScreenBounds.getMinY());
+        primaryStage.setWidth(primaryScreenBounds.getWidth());
+        primaryStage.setHeight(primaryScreenBounds.getHeight());
         primaryStage.show();
     }
 

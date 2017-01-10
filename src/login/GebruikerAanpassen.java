@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package login;
 
 import java.sql.Connection;
@@ -30,6 +35,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ *
+ * @author Joljin Verwest
+ */
 public class GebruikerAanpassen {
 
     Mysql mysql = new Mysql();
@@ -40,7 +49,7 @@ public class GebruikerAanpassen {
     private final String CONN_STRING = mysql.getUrlmysql();
     String gebruikersRol = null;
     //test
-    public void start(Stage primaryStage) {
+    public void star(Stage primaryStage, String userName, String wachtwoord, String role, String mail, String userID) {
         
          // deze vijf regels om een homeknop aan te roepen
         MenuB menuB = new MenuB();
@@ -66,20 +75,12 @@ public class GebruikerAanpassen {
 
         int rij = 1;
         //Username text
-        Label userName = new Label("Username:");
-        grid.add(userName, 0, rij);
+        Label username = new Label("Username:");
+        grid.add(username, 0, rij);
 
         //Text veld na Username
-        TextField userTextField = new TextField();
+        TextField userTextField = new TextField(userName);
         grid.add(userTextField, 1, rij++);
-
-        //newUsername text
-        Label userName2 = new Label("New username:");
-        grid.add(userName2, 0, rij);
-
-        //Text veld na newUsername
-        TextField userTextField2 = new TextField();
-        grid.add(userTextField2, 1, rij++);
 
         //Password: text
         Label pw = new Label("Password:");
@@ -178,7 +179,6 @@ public class GebruikerAanpassen {
                 System.out.println(gebruikersRol);
                 String username = userTextField.getText();
                 String password = pwBox.getText();
-                String username2 = userTextField2.getText();
                 String password2 = pwBox2.getText();
                 if (gebruikersRol == null ||pwBox.getText().trim().isEmpty() || pwBox2.getText().trim().isEmpty() || 
                         userTextField.getText().trim().isEmpty())
@@ -213,7 +213,7 @@ public class GebruikerAanpassen {
 
                                     String sql = "UPDATE users SET username=?, wachtwoord=?, rol=? WHERE userID=?";
                                     PreparedStatement statement = conn.prepareStatement(sql);
-                                    statement.setString(1, username2);
+                                    statement.setString(1, username);
                                     statement.setString(2, password2);
                                     statement.setString(3, gebruikersRol);
                                     statement.setInt(4, userID);

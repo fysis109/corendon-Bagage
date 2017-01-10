@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package login;
 
 import java.sql.Connection;
@@ -5,8 +10,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -32,31 +35,27 @@ public class VerlKofferReg {
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
-    
     private int customerID;
     private String kleur, merk, hoogte, lengte, breedte, luchthavenVertrekEntry,
-            luchthavenAankomstEntry, countryEntry, softHard;
+            luchthavenAankomstEntry, countryEntry, hardSoftCase;
 
-    public void klantRegistreren(Stage primaryStage) {
+    public void start(Stage primaryStage) {
 
-        //Menubar aan de bovenkant
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
-        
-        //Gridpane
+
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
-        
+
         int rij = 1;
 
-        //Alle labels en textfields
         Text scenetitle = new Text("Customer Information");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -98,6 +97,7 @@ public class VerlKofferReg {
         grid.add(emailEntry, 1, rij++);
 
         Button registreerKlant = new Button("Register customer");
+        registreerKlant.setPrefWidth(150);
         HBox bwvbox = new HBox(10);
         bwvbox.setAlignment(Pos.BOTTOM_RIGHT);
         bwvbox.getChildren().add(registreerKlant);
@@ -105,9 +105,10 @@ public class VerlKofferReg {
 
         Text actiontarget = new Text();
         actiontarget.setFill(Color.FIREBRICK);
-        grid.add(actiontarget, 1, 10);
+        grid.add(actiontarget, 1, rij++);
 
         Button verderNaarBagage = new Button("Register Lugage");
+        verderNaarBagage.setPrefWidth(150);
 
         registreerKlant.setOnAction((ActionEvent e) -> {
             String lastName1 = lastNameEntry.getText();
@@ -116,50 +117,43 @@ public class VerlKofferReg {
             String email1 = emailEntry.getText();
             String tussenvoegsel = tussenVoegselEntry.getText();
             String geb_datum = geboorteDatumEntry.getText();
-            //kijkt of alle velden zijn ingevuld
-            if (lastNameEntry.getText().trim().isEmpty() || firstNameEntry.getText().trim().isEmpty() 
-                    || geboorteDatumEntry.getText().trim().isEmpty() || emailEntry.getText().trim().isEmpty()
-                    || phonenumberEntry.getText().trim().isEmpty()) {
+            if (lastNameEntry.getText().trim().isEmpty() || firstNameEntry.getText().trim().isEmpty() || geboorteDatumEntry.getText().trim().isEmpty()
+                    || emailEntry.getText().trim().isEmpty() || phonenumberEntry.getText().trim().isEmpty()) {
                 actiontarget.setText("Lastname, Firstname,\ndate of birth, phonenumber\n and email can't\n be left open");
             } else {
                 Connection conn;
                 try {
                     conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-                    //eerst wordt er gekeken of de klant al bestaat, zo ja dan wordt de customersid opgezocht
-                    //zo nee dan wordt de klant aangemaakt
                     Statement stmt = (Statement) conn.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM customers WHERE voornaam = '" + firstName1 + "' AND achternaam = '" + lastName1 + "' AND tussenvoegsel = '" + tussenvoegsel + "' AND geb_datum = '" + geb_datum + "'");
                     int count = 0;
                     while (rs.next()) {
                         count = rs.getInt("total");
-                        System.out.println(count);
                     }
                     if (count == 0) {
                         String insert = "insert into customers (voornaam, achternaam, tussenvoegsel, telefoonnummer, email, geb_datum) "
                                 + "VALUES ('" + firstName1 + "','" + lastName1 + "', '" + tussenvoegsel + "' , '" + phoneNumber + "', '" + email1 + "','" + geb_datum + "' )";
                         stmt.execute(insert);
                         actiontarget.setFill(Color.GREEN);
-                        actiontarget.setText("Klant Toegevoegd");
+                        actiontarget.setText("Customer added");
                     } else {
                         actiontarget.setFill(Color.FIREBRICK);
-                        actiontarget.setText("Klant bestaat al,\nklik op ga verder\nom aan deze klant\neen koffer toe\nte voegen");
+                        actiontarget.setText("Customer already exists,\nclick register luggage to\ncontinue");
                     }
                     ResultSet rs2 = stmt.executeQuery("SELECT customersID FROM customers WHERE voornaam = '" + firstName1 + "' AND achternaam = '" + lastName1 + "' AND tussenvoegsel = '" + tussenvoegsel + "' AND geb_datum = '" + geb_datum + "'");
                     while (rs2.next()) {
                         customerID = rs2.getInt("customersID");
                     }
-                    System.out.println(customerID);
                     HBox bwvbox1 = new HBox(10);
                     bwvbox1.setAlignment(Pos.BOTTOM_RIGHT);
                     bwvbox1.getChildren().add(verderNaarBagage);
                     grid.add(bwvbox1, 1, 10);
-                }catch (SQLException ed) {
+                } catch (SQLException ed) {
                     System.out.println(ed);
                 }
             }
         });
 
-        //Dan naar het volgende scherm, om bagage toe te voegen
         verderNaarBagage.setOnAction((ActionEvent event) -> {
             BagageToevoegen(primaryStage);
         });
@@ -172,14 +166,12 @@ public class VerlKofferReg {
 
     private void BagageToevoegen(Stage primaryStage) {
 
-        //Menubar aan de bonvenkant
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
-        
-        //Gridpane aanmaken
+
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -187,10 +179,8 @@ public class VerlKofferReg {
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
 
-        //deze integer wordt gebruikt om alles steeds een rij naar beneneden te schuiven
         int rij = 1;
-        
-        //alle labels en textfields
+
         Text scenetitle = new Text("Register lost Lugage");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -207,130 +197,108 @@ public class VerlKofferReg {
 
         ComboBox kleurKofferComboBox = new ComboBox();
         kleurKofferComboBox.getItems().addAll(
-            "Blauw", "Geel", "Zwart", "Grijs", "Bruin", "Other"
+                "Blue", "Yellow", "Black", "Gray", "Brown", "Other"
         );
         kleurKofferComboBox.setPrefWidth(225);
         grid.add(kleurKofferComboBox, 1, rij++, 2, 1);
 
         //eventhandler kleurKofferComboBox
-        kleurKofferComboBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                kleur = t1;
-            }
+        kleurKofferComboBox.setOnAction((event) -> {
+            kleur = (String) kleurKofferComboBox.getSelectionModel().getSelectedItem();
         });
-        
+
         Label merkKoffer = new Label("Brand:");
         grid.add(merkKoffer, 0, rij);
 
         ComboBox merkKofferComboBox = new ComboBox();
         merkKofferComboBox.getItems().addAll(
-            "American Tourister", "Eastpak ", "March", "Porsche Design", "Rimowa",
-            "Samsonite", "Swiss Wenger", "Ted Baker", "The North Face", 
-            "Tumi", "Victorinox", "Other"
+                "American Tourister", "Eastpak", "March", "Porsche Design", "Rimowa",
+                "Samsonite", "Swiss Wenger", "Ted Baker", "The North Face",
+                "Tumi", "Victorinox", "Other"
         );
         merkKofferComboBox.setPrefWidth(225);
         grid.add(merkKofferComboBox, 1, rij++, 2, 1);
 
-        //eventhandler merkkoffercombobox
-        merkKofferComboBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                merk = t1;
-            }
+        //eventhandler merkkoffercombobox      
+        merkKofferComboBox.setOnAction((event) -> {
+            merk = (String) merkKofferComboBox.getSelectionModel().getSelectedItem();
         });
 
-        Label hoogteKoffer = new Label("Height of Lugage:");
+        Label hoogteKoffer = new Label("Height of luggage:");
         grid.add(hoogteKoffer, 0, rij);
 
         ComboBox hoogteKofferComboBox = new ComboBox();
         hoogteKofferComboBox.getItems().addAll(
-            "10cm-15cm", "15cm-20cm", "20cm-25cm", "25cm-30cm",
-            "35cm-40cm", "40cm-45cm", "Unknown"
+                "10cm-15cm", "15cm-20cm", "20cm-25cm", "25cm-30cm",
+                "35cm-40cm", "40cm-45cm", "Unknown"
         );
         hoogteKofferComboBox.setPrefWidth(225);
         grid.add(hoogteKofferComboBox, 1, rij++, 2, 1);
 
         //eventhandler hoogtekoffercombobox
-        hoogteKofferComboBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                hoogte = t1;
-            }
+        hoogteKofferComboBox.setOnAction((event) -> {
+            hoogte = (String) hoogteKofferComboBox.getSelectionModel().getSelectedItem();
         });
 
-        Label lengteKoffer = new Label("Length of Lugage:");
+        Label lengteKoffer = new Label("Length of luggage:");
         grid.add(lengteKoffer, 0, rij);
 
         ComboBox lengteKofferComboBox = new ComboBox();
         lengteKofferComboBox.getItems().addAll(
-            "30cm-40cm", "40cm-50cm", "50cm-60cm",
-            "60cm-70cm", "70cm-80cm", "Unknown"
+                "30cm-40cm", "40cm-50cm", "50cm-60cm",
+                "60cm-70cm", "70cm-80cm", "Unknown"
         );
         lengteKofferComboBox.setPrefWidth(225);
         grid.add(lengteKofferComboBox, 1, rij++, 2, 1);
 
-        lengteKofferComboBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                lengte = t1;
-            }
+        //eventhandler lengte combobox
+        lengteKofferComboBox.setOnAction((event) -> {
+            lengte = (String) lengteKofferComboBox.getSelectionModel().getSelectedItem();
         });
 
-        Label breedteKoffer = new Label("Width of Lugage:");
+        Label breedteKoffer = new Label("Width of luggage:");
         grid.add(breedteKoffer, 0, rij);
 
         ComboBox breedteKofferComboBox = new ComboBox();
         breedteKofferComboBox.getItems().addAll(
-            "20cm-30cm", "30cm-40cm", "40cm-50cm",
-            "50cm-60cm", "Unknown"
+                "20cm-30cm", "30cm-40cm", "40cm-50cm", "50cm-60cm", "Unknown"
         );
         breedteKofferComboBox.setPrefWidth(225);
         grid.add(breedteKofferComboBox, 1, rij++, 2, 1);
 
-        //eventhandler breedtekoffercombobox
-        breedteKofferComboBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                breedte = t1;
-            }
+        //eventhandler breedtekoffercombobox      
+        breedteKofferComboBox.setOnAction((event) -> {
+            breedte = (String) breedteKofferComboBox.getSelectionModel().getSelectedItem();
         });
-        
-        Label softHardCase = new Label("Soft or hard case");
-        grid.add(softHardCase, 0, rij);
-        
-        ComboBox softHardComboBox = new ComboBox();
-        softHardComboBox.getItems().addAll(
-                "Soft", "Hard"  
-        );
-        softHardComboBox.setPrefWidth(225);
-        grid.add(softHardComboBox, 1, rij++, 2, 1);
 
-        //eventhandler breedtekoffercombobox
-        softHardComboBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                softHard = t1;
-            }
+        Label hardSoftCaseLabel = new Label("Soft/hard case:");
+        grid.add(hardSoftCaseLabel, 0, rij);
+
+        ComboBox hardSoftCaseComboBox = new ComboBox();
+        hardSoftCaseComboBox.getItems().addAll(
+                "Soft", "Hard"
+        );
+        hardSoftCaseComboBox.setPrefWidth(225);
+        grid.add(hardSoftCaseComboBox, 1, rij++, 2, 1);
+
+        //eventhandler hardSoftCaseComboBox
+        hardSoftCaseComboBox.setOnAction((event) -> {
+            hardSoftCase = (String) hardSoftCaseComboBox.getSelectionModel().getSelectedItem();
         });
-        
 
         Label luchthavenVertrek = new Label("Airport of departure:");
         grid.add(luchthavenVertrek, 0, rij);
 
         ComboBox vliegveldVertrekComboBox = new ComboBox();
         vliegveldVertrekComboBox.getItems().addAll(
-            "Schiphol, Amsterdam", "El Prat, Barcelona", "Atatürk, Istanbul" 
+                "Schiphol, Amsterdam", "El Prat, Barcelona", "Atatürk, Istanbul"
         );
         vliegveldVertrekComboBox.setPrefWidth(225);
         grid.add(vliegveldVertrekComboBox, 1, rij++, 2, 1);
 
         //eventhandler luchthavenvertrek
-        vliegveldVertrekComboBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                luchthavenVertrekEntry = t1;
-            }
+        vliegveldVertrekComboBox.setOnAction((event) -> {
+            luchthavenVertrekEntry = (String) vliegveldVertrekComboBox.getSelectionModel().getSelectedItem();
         });
 
         Label luchthavenAankomst = new Label("Airport of arrival:");
@@ -338,20 +306,17 @@ public class VerlKofferReg {
 
         ComboBox vliegveldAankomstComboBox = new ComboBox();
         vliegveldAankomstComboBox.getItems().addAll(
-            "Schiphol, Amsterdam", "El Prat, Barcelona", "Atatürk, Istanbul"
+                "Schiphol, Amsterdam", "El Prat, Barcelona", "Atatürk, Istanbul"
         );
         vliegveldAankomstComboBox.setPrefWidth(225);
         grid.add(vliegveldAankomstComboBox, 1, rij++, 2, 1);
 
         //eventhandler vliegveld aankomst
-        vliegveldAankomstComboBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                luchthavenAankomstEntry = t1;
-            }
+        vliegveldAankomstComboBox.setOnAction((event) -> {
+            luchthavenAankomstEntry = (String) vliegveldAankomstComboBox.getSelectionModel().getSelectedItem();
         });
 
-        Label bijzonderhedenLabel = new Label("Characteristics");
+        Label bijzonderhedenLabel = new Label("Characteristics: ");
         grid.add(bijzonderhedenLabel, 0, rij);
 
         TextArea bijzonderhedenEntry = new TextArea();
@@ -369,16 +334,13 @@ public class VerlKofferReg {
 
         ComboBox countryComboBox = new ComboBox();
         countryComboBox.getItems().addAll(
-            "Netherlands", "Spain", "Turkey"       
+                "Netherlands", "Spain", "Turkey"
         );
         countryComboBox.setPrefWidth(225);
         grid.add(countryComboBox, 1, rij++, 2, 1);
 
-        countryComboBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                countryEntry = t1;
-            }
+        countryComboBox.setOnAction((event) -> {
+            countryEntry = (String) countryComboBox.getSelectionModel().getSelectedItem();
         });
 
         Label plaats = new Label("City/town:");
@@ -435,44 +397,60 @@ public class VerlKofferReg {
                     bijzonderheden = null;
                 }
                 int huisnummer = 0;
-                if (huisnummerEntry.getText() != null) {
+                if (huisnummerEntry.getText() == null) {
                     huisnummer = Integer.valueOf(huisnummerEntry.getText());
                 }
                 String toevoeging = huisnummerToevoeging.getText();
                 String postcode = postcodeEntry.getText();
-                //kijkt of alle velden zijn ingevuld
+                Statement stmt = (Statement) conn.createStatement();
                 if (countryEntry == null || bagageLabelEntry.getText().trim().isEmpty() || city == null || straat == null || huisnummerEntry.getText().trim().isEmpty() || postcodeEntry.getText().trim().isEmpty() || merk == null
-                        || kleur == null || hoogte == null || lengte == null || breedte == null || luchthavenAankomstEntry == null || luchthavenVertrekEntry == null || softHard == null) {
-                    actiontarget.setText("All fields must be filled in except Characteristics");
+                        || kleur == null || hoogte == null || lengte == null || breedte == null || luchthavenAankomstEntry == null || luchthavenVertrekEntry == null || hardSoftCase == null) {
+                    actiontarget.setText("All fields must be\nfilled in except\nCharacteristics"); 
                 } else {
-                    //insert de bagage in de database
-                    Statement stmt = (Statement) conn.createStatement();
-                    String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, softhard)"
+                    ResultSet bagagelabelExistsCheck = stmt.executeQuery("SELECT COUNT(*) AS total FROM verlorenbagage WHERE bagagelabel = '"+bagagelabel+"'");
+                    int count = 0;
+                    while(bagagelabelExistsCheck.next()){
+                        count = bagagelabelExistsCheck.getInt("total");
+                    }
+                    if(count == 0){
+                    System.out.println(bagagelabel + kleur + merk + hoogte + lengte + breedte + luchthavenVertrekEntry + luchthavenAankomstEntry + bijzonderheden + countryEntry + city + straat + huisnummer + toevoeging + postcode);
+                    String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, softhard, status)"
                             + "VALUES ('" + bagagelabel + "','" + kleur + "','" + hoogte + "','" + lengte + "','" + breedte + "','" + luchthavenVertrekEntry + "','" + luchthavenAankomstEntry
-                            + "',curdate(),'" + bijzonderheden + "','" + merk + "', '" + customerID + "','"+softHard+"')";
+                            + "',curdate(),'" + bijzonderheden + "','" + merk + "', '" + customerID + "', '" + hardSoftCase + "', 'notSolved')";
                     stmt.execute(insert);
                     actiontarget.setFill(Color.GREEN);
                     actiontarget.setText("Lugage added");
-                    //Select de verlorenkoffer id en koppen deze aan de customer
-                    ResultSet rs = stmt.executeQuery("SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '" + bagagelabel + "' AND kleur = '" + kleur + "' AND dikte = '" + hoogte + "' AND lengte ='"
+                    ResultSet result1232 = stmt.executeQuery("SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '" + bagagelabel + "' AND kleur = '" + kleur + "' AND dikte = '" + hoogte + "' AND lengte ='"
                             + lengte + "' AND breedte = '" + breedte + "' AND luchthavenvertrokken = '" + luchthavenVertrekEntry + "' AND luchthavenaankomst = '" + luchthavenAankomstEntry
-                            + "' AND datum = curdate() AND bijzonderheden = '" + bijzonderheden + "' AND merk = '" + merk + "' AND customersID = '" + customerID + "' AND softhard = '"+softHard+"'");
+                            + "' AND datum = curdate() AND bijzonderheden = '" + bijzonderheden + "' AND merk = '" + merk + "' AND customersID = '" + customerID + "'");
 
                     int verlorenKofferID = 0;
-                    while (rs.next()) {
-                        verlorenKofferID = rs.getInt("verlorenkofferID");
+
+                    while (result1232.next()) {
+                        verlorenKofferID = result1232.getInt("verlorenkofferID");
                     }
+
                     stmt.execute("INSERT INTO afleveradres (verlorenkofferID, Land, Straat, Huisnummer, Toevoeging, Postcode, Plaats) VALUES "
                             + "('" + verlorenKofferID + "','" + countryEntry + "','" + straat + "','" + huisnummer + "','" + toevoeging + "','" + postcode + "','" + city + "')");
+                        ZoekMatchVerlorenBagage zoekMatchVerlorenBagage = new ZoekMatchVerlorenBagage();
+                        zoekMatchVerlorenBagage.maakZoekString(customerID ,primaryStage, verlorenKofferID, bagagelabel, kleur, hoogte, lengte, breedte, 
+                                luchthavenVertrekEntry, luchthavenAankomstEntry, bijzonderheden, merk, hardSoftCase);
+                                                               
+                    }else{
+                        actiontarget.setFill(Color.FIREBRICK);
+                        actiontarget.setText("Luggage label already exists");
+                    }
                 }
             } catch (SQLException ed) {
                 System.out.println(ed);
             }
-        });        
+        });
 
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Register Lost Lugage");
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
+
 }

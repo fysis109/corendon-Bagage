@@ -65,11 +65,11 @@ public class WachtwoordVergeten {
         info.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         grid.add(info, 0, 1, 2, 1);
 
-        //Username text
+        //email text
         Label eMailAdress = new Label("E-mail address:");
         grid.add(eMailAdress, 0, 2);
 
-        //Text veld na Username
+        //Text veld na email
         TextField rawEMailTextField = new TextField();
         grid.add(rawEMailTextField, 1, 2);
 

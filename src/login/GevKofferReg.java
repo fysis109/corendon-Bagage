@@ -258,7 +258,7 @@ public class GevKofferReg {
 
         registreerInformatie.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent e) {
+        public void handle(ActionEvent e) {
                 //registreerInformatie.star(primaryStage);
                 String BagageNummer2 = InputBagageNummer.getText().trim(); 
                 //maak connectie met het database
@@ -469,7 +469,7 @@ public class GevKofferReg {
 
             table.getColumns().addAll(gevondenkofferIDcol, bagagelabelcol, kleurcol, diktecol, lengtecol, breedtecol, luchthavengevondencol, luchthavenaankomstcol, datumcol, softhardcol, merkcol, bijzonderhedecol);
 
-            Scene scene = new Scene(new Group(), 1200, 920);
+            Scene scene = new Scene(new Group(), 1250, 920);
             primaryStage.setTitle("Table");
 
             final VBox vbox = new VBox(root);

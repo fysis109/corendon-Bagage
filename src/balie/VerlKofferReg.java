@@ -5,6 +5,8 @@
  */
 package balie;
 
+import global.MenuB;
+import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -28,8 +30,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import global.MenuB;
-import global.Mysql;
 
 public class VerlKofferReg {
 
@@ -415,7 +415,6 @@ public class VerlKofferReg {
                         count = bagagelabelExistsCheck.getInt("total");
                     }
                     if(count == 0){
-                    System.out.println(bagagelabel + kleur + merk + hoogte + lengte + breedte + luchthavenVertrekEntry + luchthavenAankomstEntry + bijzonderheden + countryEntry + city + straat + huisnummer + toevoeging + postcode);
                     String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, softhard, status)"
                             + "VALUES ('" + bagagelabel + "','" + kleur + "','" + hoogte + "','" + lengte + "','" + breedte + "','" + luchthavenVertrekEntry + "','" + luchthavenAankomstEntry
                             + "',curdate(),'" + bijzonderheden + "','" + merk + "', '" + customerID + "', '" + hardSoftCase + "', 'notSolved')";

@@ -85,7 +85,7 @@ public class GebruikerAanpassen {
         grid.add(userTextField, 1, rij++);
 
         //Password: text
-        Label pw = new Label("Password:");
+        Label pw = new Label("New password:");
         grid.add(pw, 0, rij);
 
         //text veld na password + bullets
@@ -93,7 +93,7 @@ public class GebruikerAanpassen {
         grid.add(pwBox, 1, rij++);
 
         //newPassword: text
-        Label pw2 = new Label("New password:");
+        Label pw2 = new Label("Confirm new password:");
         grid.add(pw2, 0, rij);
 
         //text veld na newpassword + bullets
@@ -101,35 +101,7 @@ public class GebruikerAanpassen {
         grid.add(pwBox2, 1, rij++);
 
         Connection conn;
-        /*
-        try {
-                            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-                            System.out.println("Connected!");
-                            Statement stmt = (Statement) conn.createStatement();
-                            String recQuery = ("select * from users");
-                            
-                            ResultSet rs5 = stmt.executeQuery(recQuery);
-                            while (rs5.next()) {
-                                String usernameUitDatabase = rs5.getString("username");
-                                rollen.getItems().add(usernameUitDatabase);
-
-            }
-                            
-            
-            rollen.setPrefWidth(150);
-        grid.add(rollen , 1 , rij++);
         
-        
-        rollen.valueProperty().addListener(new ChangeListener<String>() {
-            @Override public void changed(ObservableValue ov, String t, String t1) {                
-                gebruikersRol = t1;                
-            }});
-
-        } catch (SQLException ed) {
-                            System.err.println(ed);
-                    }*/
-        
-        //Rol: text
         Label rol = new Label("Rol:");
         grid.add(rol, 0, rij);
         
@@ -182,8 +154,7 @@ public class GebruikerAanpassen {
                 String username = userTextField.getText();
                 String password = pwBox.getText();
                 String password2 = pwBox2.getText();
-                if (gebruikersRol == null ||pwBox.getText().trim().isEmpty() || pwBox2.getText().trim().isEmpty() || 
-                        userTextField.getText().trim().isEmpty())
+                if (gebruikersRol == null )
                 {
                     actiontarget.setText("Fields can't be left open");
                 } else {
@@ -203,7 +174,7 @@ public class GebruikerAanpassen {
                         if (count > 0) {
                             while (rs3.next()) {
                                 String pass = rs3.getString("wachtwoord");
-                                if (pass.equals(password)) {
+                                if (password.equals(password2)) {
                                     actiontarget.setText("");
                                     System.out.println("Gebruiker bestaat en kan aangepast worden");
                                     Statement stmt = (Statement) conn.createStatement();
@@ -226,7 +197,6 @@ public class GebruikerAanpassen {
 
                                 } else {
                                     actiontarget.setText("Wrong password or username\ntry again!");
-                                    System.out.println("Gebruiker bestaat niet");
                                 }
                             }
                         } else {

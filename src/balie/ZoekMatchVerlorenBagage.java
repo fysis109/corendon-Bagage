@@ -5,6 +5,9 @@
  */
 package balie;
 
+import global.Home;
+import global.MenuB;
+import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -34,9 +37,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import global.Home;
-import global.MenuB;
-import global.Mysql;
 
 public class ZoekMatchVerlorenBagage {
     
@@ -192,10 +192,6 @@ public class ZoekMatchVerlorenBagage {
             
             table.setEditable(true);
             table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-            table.setMinHeight(800);
-            table.setMaxHeight(800);
-            
-            
             
             //Label voor boven de table
             Label matchesLabel = new Label("Matches:");
@@ -271,6 +267,12 @@ public class ZoekMatchVerlorenBagage {
             @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
                 table.setMinWidth(((double)newSceneWidth - 10));
                 table.setMaxWidth(((double)newSceneWidth - 10));
+            }
+        });
+        scene.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                table.setMinHeight((double)newSceneHeight - 200);
+                table.setMaxHeight((double)newSceneHeight - 200);
             }
         });
         

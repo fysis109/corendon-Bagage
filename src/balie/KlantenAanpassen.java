@@ -5,14 +5,17 @@
  */
 package balie;
 
+import global.MenuB;
+import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,39 +37,28 @@ import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import global.MenuB;
-import global.Mysql;
 
 /**
  *
  * @author Joljin Verwest
  */
 public class KlantenAanpassen extends Application {
-      
-      AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
-      Mysql mysql = new Mysql();
-      Connection conn;
-      private final String USERNAME = mysql.getUsername();
-      private final String PASSWORD = mysql.getPassword();
-      private final String CONN_STRING = mysql.getUrlmysql();
-      private String firstName;
-      private String lastName;
-      private String tussenvoegsel;
-      private String mail;
-      private String gebDatum;
-      private String telefoon;
-      private String customersID;
-      private int idcounter;
-      private TableView<Person> table = new TableView<Person>();
+
+    private AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
+    private Mysql mysql = new Mysql();
+    private Connection conn;
+    private final String USERNAME = mysql.getUsername();
+    private final String PASSWORD = mysql.getPassword();
+    private final String CONN_STRING = mysql.getUrlmysql();
+    private String firstName, lastName, tussenvoegsel, mail, gebDatum, telefoon, customersID;
+    private int idcounter;
+    private TableView<Person> table = new TableView<Person>();
       
     
    
-    public static void main(String[] args) {
-        
-        launch(args);
-    }
+   
  
-    @Override
+   
     public void start(Stage stage) {
         
         //Menubar aan de bovenkant
@@ -79,55 +71,54 @@ public class KlantenAanpassen extends Application {
         
      
         try{           
-                        //maak connectie met het database
-                        conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-                        // querry voor aantal koffers
-                        String query1 = "select count(*) AS count from customers";
-                        System.out.println(query1);
-                        
-                        // create the java statement
-                        Statement st1 = conn.createStatement();
-                        
-                        // execute the query, and get a java resultset
-                        ResultSet databaseResponse = st1.executeQuery(query1);
-                        while (databaseResponse.next())
-                        { 
-                             this.idcounter = databaseResponse.getInt("count");
-                            
-                        }
-                        Person[] person = new Person[this.idcounter];
-                        
-                       
-                        
-                            String query2 =  "select * from customers";
-                        System.out.println(query2);
-                            Statement st2 = conn.createStatement();
-                            ResultSet databaseResponse2 = st2.executeQuery(query2);
-                            
-                        ObservableList<Person> data = FXCollections.observableArrayList();
-                        
-                        while (databaseResponse2.next())
-                        {   
-                            
-                                
-                            //database response verwerken
-                            this.customersID = databaseResponse2.getString("customersID");
-                            this.firstName = databaseResponse2.getString("voornaam");
-                            this.lastName = databaseResponse2.getString("achternaam");
-                            this.tussenvoegsel = databaseResponse2.getString("tussenvoegsel");
-                            this.mail = databaseResponse2.getString("email");
-                            this.gebDatum = databaseResponse2.getString("geb_datum");
-                            this.telefoon = databaseResponse2.getString("telefoonnummer");
-                            
-                             data.add(new Person(firstName, lastName, tussenvoegsel, mail, gebDatum, telefoon, customersID));
-                             
-                             table.setItems(data);
-                            
-                        }
+            //maak connectie met het database
+            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+            // querry voor aantal koffers
+            String query1 = "select count(*) AS count from customers";
+            System.out.println(query1);
+
+            // create the java statement
+            Statement st1 = conn.createStatement();
+
+            // execute the query, and get a java resultset
+            ResultSet databaseResponse = st1.executeQuery(query1);
+            while (databaseResponse.next())
+            { 
+                 this.idcounter = databaseResponse.getInt("count");
+
+            }
+            Person[] person = new Person[this.idcounter];
+
+
+
+                String query2 =  "select * from customers";
+            System.out.println(query2);
+                Statement st2 = conn.createStatement();
+                ResultSet databaseResponse2 = st2.executeQuery(query2);
+
+            ObservableList<Person> data = FXCollections.observableArrayList();
+
+            while (databaseResponse2.next())
+            {   
+
+
+                //database response verwerken
+                this.customersID = databaseResponse2.getString("customersID");
+                this.firstName = databaseResponse2.getString("voornaam");
+                this.lastName = databaseResponse2.getString("achternaam");
+                this.tussenvoegsel = databaseResponse2.getString("tussenvoegsel");
+                this.mail = databaseResponse2.getString("email");
+                this.gebDatum = databaseResponse2.getString("geb_datum");
+                this.telefoon = databaseResponse2.getString("telefoonnummer");
+
+                 data.add(new Person(firstName, lastName, tussenvoegsel, mail, gebDatum, telefoon, customersID));
+
+                 table.setItems(data);
+
+            }
         }
-                        catch (SQLException ed) {
-                        System.err.println(ed);
-                        }
+        catch (SQLException ed) {
+        }
         
         
         Scene scene = new Scene(new Group());
@@ -138,43 +129,47 @@ public class KlantenAanpassen extends Application {
         
         final Label label = new Label("Adjust customers");
         label.setFont(new Font("Arial", 20));
-        table.setMinSize(690, 645);
-        table.setMaxSize(700, 1000);
+        
         table.setEditable(true);
- 
-        TableColumn gevondenkofferIDcol = new TableColumn("firstname");
-        gevondenkofferIDcol.setMinWidth(20);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        scene.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+                table.setMinWidth(((double)newSceneWidth - 10));
+                table.setMaxWidth(((double)newSceneWidth - 10));
+            }
+        });
+        scene.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                table.setMinHeight((double)newSceneHeight - 200);
+                table.setMaxHeight((double)newSceneHeight - 200);
+            }
+        });
+        
+        TableColumn gevondenkofferIDcol = new TableColumn("Firstname");
         gevondenkofferIDcol.setCellValueFactory(
                 new PropertyValueFactory<>("firstName"));
         
-        TableColumn bagagelabelcol = new TableColumn("lastname");
-        bagagelabelcol.setMinWidth(100);
+        TableColumn bagagelabelcol = new TableColumn("Lastname");
         bagagelabelcol.setCellValueFactory(
                 new PropertyValueFactory<>("lastName"));
         
-        TableColumn tussenvoegselCol = new TableColumn("insertion");
-        bagagelabelcol.setMinWidth(100);
+        TableColumn tussenvoegselCol = new TableColumn("Insertion");
         tussenvoegselCol.setCellValueFactory(
                 new PropertyValueFactory<>("tussenvoegsel"));
         
-        TableColumn mailcol = new TableColumn("mailadress");
-        mailcol.setMinWidth(100);
-        mailcol.setMaxWidth(200);
+        TableColumn mailcol = new TableColumn("Mailadress");
         mailcol.setCellValueFactory(
                 new PropertyValueFactory<>("mail"));
         
-        TableColumn gebdatumcol = new TableColumn("date of birth");
-        bagagelabelcol.setMinWidth(100);
+        TableColumn gebdatumcol = new TableColumn("Date of birth");
         gebdatumcol.setCellValueFactory(
                 new PropertyValueFactory<>("gebDatum"));
         
-        TableColumn telefooncol = new TableColumn("phone number");
-        bagagelabelcol.setMinWidth(100);
+        TableColumn telefooncol = new TableColumn("Phone number");
         telefooncol.setCellValueFactory(
                 new PropertyValueFactory<>("telefoon"));
         
-        TableColumn actionCol = new TableColumn( "Action" );
-        actionCol.setMinWidth(125);
+        TableColumn actionCol = new TableColumn( "Adjust" );
         actionCol.setCellValueFactory( 
                 new PropertyValueFactory<>( "" ));
         
@@ -205,7 +200,7 @@ public class KlantenAanpassen extends Application {
                                                 Person person = getTableView().getItems().get( getIndex() );
                                                 aanpassenKlanten.AanpassenKlanten(stage,person.getFirstName(), person.getLastName(), person.getTussenvoegsel(),
                                                         person.getTelefoon(), person.getMail(),person.getGebDatum(),person.getCustomersID()); 
-                                                System.out.println( person.getFirstName() + "   " + person.getLastName() );
+                                                
                                     } );
                                     setGraphic( btn );
                                     btn.setPrefWidth(125);
@@ -219,7 +214,7 @@ public class KlantenAanpassen extends Application {
                 };
 
         actionCol.setCellFactory( cellFactory );
-        //table.prefWidthProperty().bind(scene.widthProperty());
+        
         table.getColumns().addAll(gevondenkofferIDcol,bagagelabelcol,tussenvoegselCol, gebdatumcol,
                 mailcol,telefooncol, actionCol);
         

@@ -5,12 +5,12 @@
  */
 package balie;
 
+import global.MenuB;
+import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -29,8 +29,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import global.MenuB;
-import global.Mysql;
 
 /**
  *
@@ -38,7 +36,7 @@ import global.Mysql;
  */
 public class AanpassenKlanten {
     
-    Mysql mysql = new Mysql();
+    private Mysql mysql = new Mysql();
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();

@@ -414,7 +414,6 @@ public class GevKofferReg {
                 System.err.println(ed);
             }
 
-            table.setEditable(true);
             
             //Label voor boven de table
             Label matchesLabel = new Label("Matches:");
@@ -481,10 +480,28 @@ public class GevKofferReg {
             merkcol.setCellValueFactory(
                     new PropertyValueFactory<>("merk"));
 
-            table.getColumns().addAll(gevondenkofferIDcol, bagagelabelcol, kleurcol, diktecol, lengtecol, breedtecol, luchthavengevondencol, luchthavenaankomstcol, datumcol, softhardcol, merkcol, bijzonderhedecol);
-
             Scene scene = new Scene(new Group(), 1250, 920);
             primaryStage.setTitle("Table");
+            
+            table.getColumns().addAll(gevondenkofferIDcol, bagagelabelcol, kleurcol, diktecol, lengtecol, breedtecol, luchthavengevondencol, luchthavenaankomstcol, datumcol, softhardcol, merkcol, bijzonderhedecol);
+
+            table.setEditable(true);
+            table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            scene.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+                table.setMinWidth(((double)newSceneWidth - 10));
+                table.setMaxWidth(((double)newSceneWidth - 10));
+            }
+            });
+            
+            scene.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                table.setMinHeight((double)newSceneHeight - 200);
+                table.setMaxHeight((double)newSceneHeight - 200);
+            }
+            });
+
+            
             
             
             Button match = new Button("Match");

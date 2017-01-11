@@ -5,6 +5,7 @@
  */
 package login;
 
+import global.Mysql;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.logging.Level;

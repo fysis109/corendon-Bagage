@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login;
+package admin;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,6 +33,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import global.Encrypt;
+import global.MenuB;
+import global.Mysql;
 
 /**
  *
@@ -168,8 +171,6 @@ public class GebruikerAanmaken {
 
         //Button event text
         btn.setOnAction(new EventHandler<ActionEvent>() {
-            private String[] test;
-            @Override
             public void handle(ActionEvent e) {
                 System.out.println(gebruikersRol);
                 String username = userTextField.getText();
@@ -202,24 +203,25 @@ public class GebruikerAanmaken {
                                count = rs2.getInt("total");
                             }
                             if(count == 0){
-                            
-                            
-                            String insert="INSERT INTO users (username, wachtwoord, rol, email) VALUES('"+username+"','"+password+"','"
-                                    +gebruikersRol+"','"+mail+"')";
-                            stmt.execute(insert);
-                            actiontarget.setFill(Color.GREEN);
-                            actiontarget.setText("User has been added");
-                            System.out.println("Gebruiker toegevoegd");
+                                Encrypt encrypt = new Encrypt();
+                                try {
+                                    password = encrypt.createHash(password);
+                                } catch (Encrypt.CannotPerformOperationException ex) {
+                                   
+                                }
+                                String insert="INSERT INTO users (username, wachtwoord, rol, email) VALUES('"+username+"','"+password+"','"
+                                        +gebruikersRol+"','"+mail+"')";
+                                stmt.execute(insert);
+                                actiontarget.setFill(Color.GREEN);
+                                actiontarget.setText("User has been added");
+                                System.out.println("Gebruiker toegevoegd");
                             }else{
                                 actiontarget.setText("Username already exists");
                                 System.out.println("bestaat al");}
-                                
-
-
                         } catch (SQLException ed) {
                             System.err.println(ed);
-                    }}
-                    
+                        }
+                    }  
                 }
             }
         });
@@ -227,7 +229,6 @@ public class GebruikerAanmaken {
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setScene(scene);
         primaryStage.show();
-    
     }
     
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package login;
+package global;
 
 public class Mysql {
 
@@ -10,15 +10,15 @@ public class Mysql {
     private final boolean AUTORECONNECT = true;
     private final boolean SSL = false;
   
-    String getUsername(){
+    public String getUsername(){
         return USENAME;
     };
         
-    String getPassword(){
+    public String getPassword(){
         return PASSWORD;
     };
     
-    String getUrlmysql(){
+    public String getUrlmysql(){
         return "jdbc:mysql://"+IPADDRESS+":"+POORT+"/"+DATABASENAAM+"?autoReconnect="+AUTORECONNECT+"&useSSL="+SSL;
     };
 

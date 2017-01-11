@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login;
+package balie;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,6 +34,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import global.Home;
+import global.MenuB;
+import global.Mysql;
 
 public class ZoekMatchVerlorenBagage {
     

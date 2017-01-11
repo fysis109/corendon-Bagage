@@ -1,4 +1,4 @@
-package login;
+package manager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,6 +31,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.chart.*;
 import javafx.scene.Group;
+import global.MenuB;
+import global.Mysql;
 
 public class PieChar extends Application {
     

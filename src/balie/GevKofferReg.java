@@ -1,4 +1,4 @@
-package login;
+package balie;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,6 +34,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import global.Home;
+import global.MenuB;
+import global.Mysql;
 
 public class GevKofferReg {
 

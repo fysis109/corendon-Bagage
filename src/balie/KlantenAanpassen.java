@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package login;
+package balie;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -26,43 +27,46 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import global.MenuB;
+import global.Mysql;
 
 /**
  *
  * @author Joljin Verwest
  */
-public class GebruikersTable {
- 
-GebruikerAanpassen gebruikerAanpassen = new GebruikerAanpassen();
-AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
+public class KlantenAanpassen extends Application {
+      
+      AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
       Mysql mysql = new Mysql();
       Connection conn;
       private final String USERNAME = mysql.getUsername();
       private final String PASSWORD = mysql.getPassword();
       private final String CONN_STRING = mysql.getUrlmysql();
-      private String userName;
-      private String password;
-      private String role;
+      private String firstName;
+      private String lastName;
+      private String tussenvoegsel;
       private String mail;
       private String gebDatum;
       private String telefoon;
-      private String userID;
+      private String customersID;
       private int idcounter;
       private TableView<Person> table = new TableView<Person>();
       
+    
+   
+    public static void main(String[] args) {
+        
+        launch(args);
+    }
+ 
+    @Override
     public void start(Stage stage) {
         
         //Menubar aan de bovenkant
@@ -73,13 +77,12 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         root.setTop(menuBar);
         root.setCenter(table);
         
-        int rij = 1;
-        
+     
         try{           
                         //maak connectie met het database
                         conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                         // querry voor aantal koffers
-                        String query1 = "select count(*) AS count from users";
+                        String query1 = "select count(*) AS count from customers";
                         System.out.println(query1);
                         
                         // create the java statement
@@ -96,7 +99,7 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
                         
                        
                         
-                            String query2 =  "select * from users";
+                            String query2 =  "select * from customers";
                         System.out.println(query2);
                             Statement st2 = conn.createStatement();
                             ResultSet databaseResponse2 = st2.executeQuery(query2);
@@ -108,14 +111,15 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
                             
                                 
                             //database response verwerken
-                            
-                            this.userName = databaseResponse2.getString("username");
-                            this.password = databaseResponse2.getString("wachtwoord");
-                            this.role = databaseResponse2.getString("rol");
+                            this.customersID = databaseResponse2.getString("customersID");
+                            this.firstName = databaseResponse2.getString("voornaam");
+                            this.lastName = databaseResponse2.getString("achternaam");
+                            this.tussenvoegsel = databaseResponse2.getString("tussenvoegsel");
                             this.mail = databaseResponse2.getString("email");
-                            this.userID = databaseResponse2.getString("userID");
+                            this.gebDatum = databaseResponse2.getString("geb_datum");
+                            this.telefoon = databaseResponse2.getString("telefoonnummer");
                             
-                             data.add(new Person(userName, password, role, mail, userID));
+                             data.add(new Person(firstName, lastName, tussenvoegsel, mail, gebDatum, telefoon, customersID));
                              
                              table.setItems(data);
                             
@@ -132,32 +136,42 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         stage.setHeight(800);
  
         
-        final Label label = new Label("Adjust users");
+        final Label label = new Label("Adjust customers");
         label.setFont(new Font("Arial", 20));
         table.setMinSize(690, 645);
         table.setMaxSize(700, 1000);
         table.setEditable(true);
  
-        TableColumn gevondenkofferIDcol = new TableColumn("Username");
+        TableColumn gevondenkofferIDcol = new TableColumn("firstname");
         gevondenkofferIDcol.setMinWidth(20);
         gevondenkofferIDcol.setCellValueFactory(
-                new PropertyValueFactory<>("userName"));
+                new PropertyValueFactory<>("firstName"));
         
-        TableColumn bagagelabelcol = new TableColumn("Password");
+        TableColumn bagagelabelcol = new TableColumn("lastname");
         bagagelabelcol.setMinWidth(100);
         bagagelabelcol.setCellValueFactory(
-                new PropertyValueFactory<>("wachtwoord"));
+                new PropertyValueFactory<>("lastName"));
         
-        TableColumn tussenvoegselCol = new TableColumn("Role");
+        TableColumn tussenvoegselCol = new TableColumn("insertion");
         bagagelabelcol.setMinWidth(100);
         tussenvoegselCol.setCellValueFactory(
-                new PropertyValueFactory<>("role"));
+                new PropertyValueFactory<>("tussenvoegsel"));
         
-        TableColumn mailcol = new TableColumn("Mailadress");
+        TableColumn mailcol = new TableColumn("mailadress");
         mailcol.setMinWidth(100);
         mailcol.setMaxWidth(200);
         mailcol.setCellValueFactory(
                 new PropertyValueFactory<>("mail"));
+        
+        TableColumn gebdatumcol = new TableColumn("date of birth");
+        bagagelabelcol.setMinWidth(100);
+        gebdatumcol.setCellValueFactory(
+                new PropertyValueFactory<>("gebDatum"));
+        
+        TableColumn telefooncol = new TableColumn("phone number");
+        bagagelabelcol.setMinWidth(100);
+        telefooncol.setCellValueFactory(
+                new PropertyValueFactory<>("telefoon"));
         
         TableColumn actionCol = new TableColumn( "Action" );
         actionCol.setMinWidth(125);
@@ -173,7 +187,7 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
                         final TableCell<Person, String> cell = new TableCell<Person, String>()
                         {
 
-                            Button btn = new Button( "Adjust user" );
+                            Button btn = new Button( "Adjust customer" );
 
                             @Override
                             public void updateItem( String item, boolean empty )
@@ -189,7 +203,9 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
                                     btn.setOnAction( ( ActionEvent event ) ->
                                             {
                                                 Person person = getTableView().getItems().get( getIndex() );
-                                                gebruikerAanpassen.star(stage,person.getUserName(),person.getWachtwoord(),person.getRole(),person.getMail(),person.getCustomersID());
+                                                aanpassenKlanten.AanpassenKlanten(stage,person.getFirstName(), person.getLastName(), person.getTussenvoegsel(),
+                                                        person.getTelefoon(), person.getMail(),person.getGebDatum(),person.getCustomersID()); 
+                                                System.out.println( person.getFirstName() + "   " + person.getLastName() );
                                     } );
                                     setGraphic( btn );
                                     btn.setPrefWidth(125);
@@ -204,8 +220,8 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
 
         actionCol.setCellFactory( cellFactory );
         //table.prefWidthProperty().bind(scene.widthProperty());
-        table.getColumns().addAll(gevondenkofferIDcol,bagagelabelcol,tussenvoegselCol,
-                mailcol, actionCol);
+        table.getColumns().addAll(gevondenkofferIDcol,bagagelabelcol,tussenvoegselCol, gebdatumcol,
+                mailcol,telefooncol, actionCol);
         
         final VBox vbox = new VBox(root);
         
@@ -213,7 +229,7 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         vbox.setPadding(new Insets(10, 0, 0, 10));
         vbox.getChildren().addAll(label, table);
         ((Group) scene.getRoot()).getChildren().addAll(vbox);
- 
+        
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
         //set Stage boundaries to visible bounds of the main screen
@@ -224,33 +240,41 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         
         stage.setScene(scene);
         stage.show();
-        
-        stage.setScene(scene);
-        stage.show();
     }
  
     public static class Person {
  
-        private final SimpleStringProperty username;
-        private final SimpleStringProperty wachtwoord;
-        private final SimpleStringProperty role;
+        private final SimpleStringProperty firstName;
+        private final SimpleStringProperty lastName;
+        private final SimpleStringProperty tussenvoegsel;
         private final SimpleStringProperty mail;
-        private final SimpleStringProperty userID;
+        private final SimpleStringProperty gebDatum;
+        private final SimpleStringProperty telefoon;
+        private final SimpleStringProperty customersID;
         //private final Button btn = new Button();
  
-        private Person(String username, String wachtwoord, String role, String mail, String userID) {
-            this.username = new SimpleStringProperty(username);
-            this.wachtwoord = new SimpleStringProperty(wachtwoord);
-            this.role = new SimpleStringProperty(role);
+        private Person(String firstName, String lastName, String tussenvoegsel, String mail, String gebDatum, String telefoon,
+                String customersID) {
+            this.firstName = new SimpleStringProperty(firstName);
+            this.lastName = new SimpleStringProperty(lastName);
+            this.tussenvoegsel = new SimpleStringProperty(tussenvoegsel);
             this.mail = new SimpleStringProperty(mail);
-            this.userID = new SimpleStringProperty(userID);
+            this.gebDatum = new SimpleStringProperty(gebDatum);
+            this.telefoon = new SimpleStringProperty(telefoon);
+            this.customersID = new SimpleStringProperty(customersID);
             
         }
         public String getCustomersID(){
-            return userID.get();
+            return customersID.get();
         }
-        public void setCustomersID(String userID){
-            this.userID.set(userID);
+        public void setCustomersID(String customersID){
+            this.customersID.set(customersID);
+        }
+        public String getTelefoon(){
+            return telefoon.get();
+        }
+        public void setTelefoon(String telefoon){
+            this.telefoon.set(telefoon);
         }
         public String getMail(){
             return mail.get();
@@ -258,27 +282,34 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         public void setMail(String mail){
             this.mail.set(mail);
         }
-        public String getRole(){
-            return role.get();
+        public String getGebDatum(){
+            return gebDatum.get();
         }
-        public void setRole(String role){
-            this.role.set(role);
+        public void setGebDatum(String gebDatum){
+            this.gebDatum.set(gebDatum);
         }
-        public String getUserName() {
-            return username.get();
+        public String getTussenvoegsel(){
+            return tussenvoegsel.get();
         }
- 
-        public void setUserName(String username) {
-            this.username.set(username);
+        public void setTussenvoegsel(String tussenvoegsel){
+            this.tussenvoegsel.set(tussenvoegsel);
         }
- 
-        public String getWachtwoord() {
-            return wachtwoord.get();
+        public String getFirstName() {
+            return firstName.get();
         }
  
-        public void setWachtwoord(String wachtwoord) {
-            this.wachtwoord.set(wachtwoord);
+        public void setFirstName(String firstName) {
+            this.firstName.set(firstName);
+        }
+ 
+        public String getLastName() {
+            return lastName.get();
+        }
+ 
+        public void setLastName(String lastName) {
+            this.lastName.set(lastName);
         }
         
     }
 }
+

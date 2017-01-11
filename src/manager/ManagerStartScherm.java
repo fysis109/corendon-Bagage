@@ -1,4 +1,4 @@
-package login;
+package manager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,6 +20,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import global.MenuB;
+import global.Mysql;
 
 public class ManagerStartScherm extends Application{
     

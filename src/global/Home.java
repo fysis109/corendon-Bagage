@@ -1,5 +1,12 @@
-package login;
+package global;
 
+import admin.GebruikerAanmaken;
+import admin.GebruikersTable;
+import admin.GebruikerAanpassen;
+import balie.KlantenAanpassen;
+import manager.ManagerStartScherm;
+import balie.VerlKofferReg;
+import balie.GevKofferReg;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import login.Login;
 
 public class Home {
 

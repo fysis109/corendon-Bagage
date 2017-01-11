@@ -1,5 +1,7 @@
 package login;
 
+import global.Mysql;
+import global.Encrypt;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;

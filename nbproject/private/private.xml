@@ -5,5 +5,12 @@
         <group name="FYS">
             <file>file:/C:/Users/tim/Documents/NetBeansProjects/Login/src/login/Login.java</file>
         </group>
+        <group>
+            <file>file:/C:/Users/Jiorgos/Desktop/School/Fys/Github/corendon-Bagage/src/login/VerlKofferReg.java</file>
+            <file>file:/C:/Users/Jiorgos/Desktop/School/Fys/Github/corendon-Bagage/src/login/WachtwoordVergeten.java</file>
+            <file>file:/C:/Users/Jiorgos/Desktop/School/Fys/Github/corendon-Bagage/src/login/PDFregister.java</file>
+            <file>file:/C:/Users/Jiorgos/Desktop/School/Fys/Github/corendon-Bagage/src/login/ZoekMatchVerlorenBagage.java</file>
+            <file>file:/C:/Users/Jiorgos/Desktop/School/Fys/Github/corendon-Bagage/src/login/Mysql.java</file>
+        </group>
     </open-files>
 </project-private>

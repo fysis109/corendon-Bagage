@@ -555,10 +555,7 @@ public class GevKofferReg {
             /* Jiorgos hier een mailtje naar de klant dat er een match is.
                 en pdf voor vliegveld om terug te sturen
             */
-            
-            
-            
-            
+        
         } catch (SQLException ed) {
             
         }

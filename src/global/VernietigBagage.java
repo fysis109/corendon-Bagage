@@ -35,14 +35,16 @@ public class VernietigBagage {
     public void start(Stage primaryStage){
         int count = 0;
         ArrayList<Integer> bagageToDeleteVerloren = new ArrayList<>();
+        ArrayList<Integer> bagageToDeleteGevonden = new ArrayList<>();
         
         Connection conn;
         
         try {
             conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             Statement stm = conn.createStatement();
-            String selectString = "select verlorenkofferID from verlorenbagage where datum <= DATE_SUB(current_date(), INTERVAL 1 YEAR) AND status = 'notSolved' "; 
-            ResultSet rs = stm.executeQuery(selectString);
+            String selectStringVer = "SELECT verlorenkofferID FROM verlorenbagage WHERE datum <= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AND status = 'notSolved' ";
+            String selectStringGev = "SELECT gevondenkofferID FROM gevondenbagage WHERE datum <= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AND status = 'notSolved' ";
+            ResultSet rs = stm.executeQuery(selectStringVer); 
             while(rs.next()){
                 bagageToDeleteVerloren.add(rs.getInt("verlorenkofferID"));
             }
@@ -51,13 +53,19 @@ public class VernietigBagage {
                 stm.execute("UPDATE verlorenbagage SET status = 'deleted' WHERE verlorenkofferID = '"+bagageToDeleteVerloren.get(i)+"'");
                 count++;
             }
-            
+            ResultSet rs1 = stm.executeQuery(selectStringGev);
+            while(rs1.next()){
+                bagageToDeleteGevonden.add(rs1.getInt("gevondenkofferID"));
+            }
+            for(int i = 0; i < bagageToDeleteGevonden.size(); i++){
+                stm.execute("INSERT INTO nietopgelost (gevondenkofferID, datum) VALUES ('"+bagageToDeleteGevonden.get(i)+"', CURRENT_DATE())");
+                stm.execute("UPDATE gevondenbagage SET status = 'deleted' WHERE gevondenkofferID = '"+bagageToDeleteGevonden.get(i)+"'");
+                count++;
+            }
             
         }catch(SQLException ed){
             System.out.println(ed);
         }
-        
-        
         
         Home home = new Home();
         
@@ -66,7 +74,7 @@ public class VernietigBagage {
         dialog.initOwner(primaryStage);
         VBox dialogVbox = new VBox(20);
         Button test = new Button("Home");
-        Text text = new Text(count+" Luggage have been removed from the database.");
+        Text text = new Text(count+" Luggage have been removed /nfrom the database.");
         dialogVbox.getChildren().addAll(text, test);
         Scene dialogScene = new Scene(dialogVbox, 300, 200);
         dialog.setScene(dialogScene);

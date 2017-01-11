@@ -311,7 +311,10 @@ public class ZoekMatchVerlorenBagage {
             String updateStatusGev = "UPDATE gevondenbagage SET status = 'pending' WHERE gevondenkofferID = '"+gevondenKofferID+"'";
             st.execute(updateStatusVerl);
             st.execute(updateStatusGev);
-            
+            /*
+             * JIORGOS mail naar klant dat koffer is gevonden en dat ie wordt opgestuurd naar zijn of haar afleveradres, dat afleveradres er dus ook even bij zetten
+             * en pdf voor vliegtuig welk bagage stuk waar heen moet
+            */
             
         }catch (SQLException ed) {
                   

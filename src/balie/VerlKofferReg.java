@@ -433,9 +433,15 @@ public class VerlKofferReg {
 
                     stmt.execute("INSERT INTO afleveradres (verlorenkofferID, Land, Straat, Huisnummer, Toevoeging, Postcode, Plaats) VALUES "
                             + "('" + verlorenKofferID + "','" + countryEntry + "','" + straat + "','" + huisnummer + "','" + toevoeging + "','" + postcode + "','" + city + "')");
-                        ZoekMatchVerlorenBagage zoekMatchVerlorenBagage = new ZoekMatchVerlorenBagage();
-                        zoekMatchVerlorenBagage.maakZoekString(customerID ,primaryStage, verlorenKofferID, bagagelabel, kleur, hoogte, lengte, breedte, 
-                                luchthavenVertrekEntry, luchthavenAankomstEntry, bijzonderheden, merk, hardSoftCase);
+                    /*
+                     * JIORGOS, pdf dat de koffer in de database is gezet en met welke gegevens allemaal.
+                    */
+                    
+                    
+                    
+                    ZoekMatchVerlorenBagage zoekMatchVerlorenBagage = new ZoekMatchVerlorenBagage();
+                    zoekMatchVerlorenBagage.maakZoekString(customerID ,primaryStage, verlorenKofferID, bagagelabel, kleur, hoogte, lengte, breedte, 
+                            luchthavenVertrekEntry, luchthavenAankomstEntry, bijzonderheden, merk, hardSoftCase);
                                                                
                     }else{
                         actiontarget.setFill(Color.FIREBRICK);

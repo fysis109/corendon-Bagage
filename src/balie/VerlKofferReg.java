@@ -510,7 +510,7 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font, 15 );
             contentStream.moveTextPositionByAmount( 75, 700 );
-            contentStream.drawString( "Missing lugage registration form" );
+            contentStream.drawString( "Missing luggage registration form" );
             contentStream.endText();
             
             //Datum 
@@ -585,7 +585,7 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 455 );
-            contentStream.drawString( "Lugage label information: " );
+            contentStream.drawString( "Luggage label information: " );
             contentStream.endText();
             //Label nummer
             contentStream.beginText();
@@ -610,7 +610,7 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 380 );
-            contentStream.drawString( "Lugage information: " );
+            contentStream.drawString( "Luggage information: " );
             contentStream.endText();
             //Type
             contentStream.beginText();

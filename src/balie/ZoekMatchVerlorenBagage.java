@@ -453,7 +453,7 @@ public class ZoekMatchVerlorenBagage {
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 455 );
-            contentStream.drawString( "Lugage label information: " );
+            contentStream.drawString( "Luggage label information: " );
             contentStream.endText();
             //Label nummer
             contentStream.beginText();
@@ -478,7 +478,7 @@ public class ZoekMatchVerlorenBagage {
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 380 );
-            contentStream.drawString( "Lugage information: " );
+            contentStream.drawString( "Luggage information: " );
             contentStream.endText();
             //Type
             contentStream.beginText();

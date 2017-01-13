@@ -2,6 +2,7 @@ package global;
 
 import admin.GebruikerAanmaken;
 import admin.GebruikersTable;
+import balie.BagageAanpassen;
 import balie.GevKofferReg;
 import balie.KlantenAanpassen;
 import balie.VerlKofferReg;
@@ -31,6 +32,7 @@ public class Home {
         KlantenAanpassen klantenAanpassen = new KlantenAanpassen();
         GebruikersTable gebruikersTable = new GebruikersTable();
         VernietigBagage vernietigBagage = new VernietigBagage();
+        BagageAanpassen bagageAanpassen = new BagageAanpassen();
 
         //Hier wordt de menubar bovenin aangemaakt
         MenuB menuB = new MenuB();
@@ -63,6 +65,8 @@ public class Home {
         buttonStatistics.setMinWidth(175);
         Button buttonVerwijderBagage = new Button("Delete luggage");
         buttonVerwijderBagage.setMinWidth(175);
+        Button buttonBagageAanpassen = new Button("Adjust luggage");
+        buttonBagageAanpassen.setMinWidth(175);
 
         //kijkt welke buttons er op de homepage moeten afhankeijk van de rol 
         switch (Login.rol) {
@@ -79,9 +83,10 @@ public class Home {
                 grid.add(buttonStatistics, 0, 0);
                 break;
             default:
-                grid.add(buttonKlantenAanpassen, 7, 6 );
-                grid.add(buttonGevondenKofferRegistreren, 3, 6);
-                grid.add(buttonVerlKofferReg, 5, 6);
+                grid.add(buttonKlantenAanpassen, 0,0);
+                grid.add(buttonGevondenKofferRegistreren, 0,1);
+                grid.add(buttonVerlKofferReg, 1,0);
+                grid.add(buttonBagageAanpassen, 1,1);
                 break;
         }
 
@@ -112,6 +117,10 @@ public class Home {
         buttonVerwijderBagage.setOnAction((ActionEvent e) ->{
            vernietigBagage.start(primaryStage);
          
+        });
+        
+        buttonBagageAanpassen.setOnAction((ActionEvent e) ->{
+           bagageAanpassen.start(primaryStage); 
         });
 
         Scene scene = new Scene(root, 1220, 920);

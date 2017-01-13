@@ -423,10 +423,6 @@ public class VerlKofferReg {
                 if (bijzonderheden.equals("null")) {
                     bijzonderheden = null;
                 }
-                int huisnummer = 0;
-                if (huisnummerEntry.getText() == null) {
-                    huisnummer = Integer.valueOf(huisnummerEntry.getText());
-                }
                 String toevoeging = huisnummerToevoeging.getText();
                 String postcode = postcodeEntry.getText();
                 Statement stmt = (Statement) conn.createStatement();
@@ -477,7 +473,7 @@ public class VerlKofferReg {
                     }
 
                     stmt.execute("INSERT INTO afleveradres (verlorenkofferID, Land, Straat, Huisnummer, Toevoeging, Postcode, Plaats) VALUES "
-                            + "('" + verlorenKofferID + "','" + countryEntry + "','" + straat + "','" + huisnummer + "','" + toevoeging + "','" + postcode + "','" + city + "')");
+                            + "('" + verlorenKofferID + "','" + countryEntry + "','" + straat + "','" + Integer.valueOf(huisnummerEntry.getText()) + "','" + toevoeging + "','" + postcode + "','" + city + "')");
                     /*
                      * JIORGOS, pdf dat de koffer in de database is gezet en met welke gegevens allemaal.
                     */

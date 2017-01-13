@@ -82,29 +82,19 @@ public class ZoekMatchVerlorenBagage {
         String zoekCriteria = "SELECT * FROM gevondenbagage WHERE bagagelabel = '' ";
         if (!kleur.equals("Other")) {
             zoekCriteria += " AND (kleur = '" + kleur + "' OR kleur = 'Other' )";
-        } else {
-            zoekCriteria += " AND kleur = 'Other'";
         }
         if (!hoogte.equals("Unknown")) {
             zoekCriteria += " AND (dikte = '" + hoogte + "' OR dikte = 'Unknown' )";
-        } else {
-            zoekCriteria += " AND dikte = 'Unknown'";
-        }
+        } 
         if (!lengte.equals("Unknown")) {
             zoekCriteria += " AND (lengte = '" + lengte + "' OR lengte = 'Unknown' )";
-        } else {
-            zoekCriteria += " AND lengte = 'Unknown'";
         }
         if (!breedte.equals("Unknown")) {
             zoekCriteria += " AND (breedte = '" + breedte + "' OR breedte = 'Unknown' )";
-        } else {
-            zoekCriteria += " AND breedte = 'Unknown'";
-        }
+        } 
         if (!merk.equals("Other")) {
             zoekCriteria += " AND (merk = '" + merk + "' OR merk = 'Other' )";
-        } else {
-            zoekCriteria += " AND merk = 'Other'";
-        }
+        } 
         zoekCriteria += " AND softhard = '" + hardSoftCase + "'";
         zoekCriteria += " AND (luchthavengevonden = '" + luchthavenAankomst + "' OR luchthavengevonden = '" + luchthavenVertrek + "' )";
         zoekCriteria += " AND status = 'notSolved'";

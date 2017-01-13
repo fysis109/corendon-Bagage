@@ -331,7 +331,7 @@ public class zoekBagage {
             /* Jiorgos hier een mailtje naar de klant dat er een match is.
                 en pdf voor vliegveld om terug te sturen
             */
-            Statement kofferinfo = conn.createStatement();
+       Statement kofferinfo = conn.createStatement();
             String insertString2 = "SELECT * FROM gevondenbagage,customers WHERE gevondenkofferID =" + verlorenKofferID +  "AND customersID =" + klantID;
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
@@ -375,69 +375,69 @@ public class zoekBagage {
             contentStream.beginText();
             contentStream.setFont( font, 15 );
             contentStream.moveTextPositionByAmount( 75, 700 );
-            contentStream.drawString( "Vermiste bagage registratie formulier" );
+            contentStream.drawString( "Found luggage registration form" );
             contentStream.endText();
             
             //Datum 
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 175, 650 );
-            contentStream.drawString( "Datum: " );
+            contentStream.drawString( "Date: " );
             contentStream.endText();
             //tijd
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 187, 635 );
-            contentStream.drawString( "Tijd: " );
+            contentStream.drawString( "Time: " );
             contentStream.endText();
             //luchthaven
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 150, 620 );
-            contentStream.drawString( "Luchthaven: " );
+            contentStream.drawString( "Airport: " );
             contentStream.endText();
             
             //begin reiziger informatie
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 590 );
-            contentStream.drawString( "Reiziger informatie: " );
+            contentStream.drawString( "Traveler information: " );
             contentStream.endText();
             //Naam
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 575 );
-            contentStream.drawString( "Naam: " );
+            contentStream.drawString( "Name: " );
             contentStream.endText();
             //Adres
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 560 );
-            contentStream.drawString( "Adres: " );
+            contentStream.drawString( "Address: " );
             contentStream.endText();
             //Woonplaats
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 152, 545 );
-            contentStream.drawString( "Woonplaats: " );
+            contentStream.drawString( "Home town: " );
             contentStream.endText();
             //Postcode
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 165, 530 );
-            contentStream.drawString( "Postcode: " );
+            contentStream.drawString( "Zip code: " );
             contentStream.endText();
             //Land
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 185, 515 );
-            contentStream.drawString( "Land: " );
+            contentStream.drawString( "Country: " );
             contentStream.endText();
             //Telefoon
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 167, 500 );
-            contentStream.drawString( "Telefoon: " );
+            contentStream.drawString( "Telephone: " );
             contentStream.endText();
             //E-mail
             contentStream.beginText();
@@ -450,32 +450,32 @@ public class zoekBagage {
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 455 );
-            contentStream.drawString( "Bagage label informatie: " );
+            contentStream.drawString( "Luggage label information: " );
             contentStream.endText();
             //Label nummer
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 140, 440 );
-            contentStream.drawString( "Label nummer: " );
+            contentStream.drawString( "Label number: " );
             contentStream.endText();
             //Vluchtnummer
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 138, 425 );
-            contentStream.drawString( "Vluchtnummer: " );
+            contentStream.drawString( "flightnumber: " );
             contentStream.endText();
             //Bestemming
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 150, 410 );
-            contentStream.drawString( "Bestemming: " );
+            contentStream.drawString( "Destination: " );
             contentStream.endText();
             
             //Bagage informatie
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 380 );
-            contentStream.drawString( "Bagage informatie: " );
+            contentStream.drawString( "Luggage information: " );
             contentStream.endText();
             //Type
             contentStream.beginText();
@@ -487,32 +487,32 @@ public class zoekBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 185, 350);
-            contentStream.drawString( "Merk: " );
+            contentStream.drawString( "Brand: " );
             contentStream.endText();
             //Kleur
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 184, 335 );
-            contentStream.drawString( "Kleur: " );
+            contentStream.drawString( "Colour: " );
             contentStream.endText();
             //Kenmerken
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 155, 320 );
-            contentStream.drawString( "Kenmerken: " );
+            contentStream.drawString( "Features: " );
             contentStream.endText();
             
             //handtekening reiziger
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 220 );
-            contentStream.drawString( "Handtekening reiziger: " );
+            contentStream.drawString( "Autograph traveler: " );
             contentStream.endText();
             //Handtekening klantenservice
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 140 );
-            contentStream.drawString( "Handtekening klantenservice: " );
+            contentStream.drawString( "Autograph customer service: " );
             contentStream.endText();
             
             //input Datum

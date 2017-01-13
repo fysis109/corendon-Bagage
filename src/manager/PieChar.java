@@ -6,27 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
+import java.util.HashMap;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.chart.*;
@@ -46,30 +33,19 @@ public class PieChar extends Application {
     
     private String beginDatum;
     private String eindDatum;
-    private ArrayList QueryList;
+    private ArrayList AirportList;
+    private int total = 0;
+    private int totalKoffer = 0; 
+    //pieChart
+    
+    HashMap<Integer, String> TempArray= new HashMap<Integer, String>();
      
-    public void start(Stage primaryStage, String beginDatum, String eindDatum, ArrayList AirportList) throws SQLException {
+    public void start(Stage primaryStage, String beginDatum, String eindDatum, String zoekOpDracht ,ArrayList AirportList) throws SQLException {
         
         //private variable vullen
         this.beginDatum = beginDatum;
         this.eindDatum = eindDatum;
-        this.QueryList = AirportList;
-        
-        
-        Connection conn;
-        try {
-            
-            //connect to mysql
-            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-            Statement st = conn.createStatement();
-
-            //loop door alle aangeven luchthaven
-        }catch (SQLException ex) {
-            System.out.println("Code kan geen connectie maken met het database.");
-        }
-        
-        
-        
+        this.AirportList = AirportList;
         
         // deze vijf regels om de menubar aan te roepen
         MenuB menuB = new MenuB();
@@ -85,24 +61,179 @@ public class PieChar extends Application {
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
         
+        //scence
         Scene scene = new Scene(new Group());
-        primaryStage.setTitle("Pie char");
-        primaryStage.setWidth(500);
-        primaryStage.setHeight(500);
- 
-        ObservableList<PieChart.Data> pieChartData =
-            FXCollections.observableArrayList(
-                new PieChart.Data("Grapefruit", 13),
-                new PieChart.Data("Oranges", 25),
-                new PieChart.Data("Plums", 10),
-                new PieChart.Data("Pears", 12),
-                new PieChart.Data("Apples", 50));
-        final PieChart chart = new PieChart(pieChartData);
-        chart.setTitle("Imported Fruits");
+        primaryStage.setTitle("");
+        primaryStage.setWidth(1200);
+        primaryStage.setHeight(920);
+        
+        //mysql
+        Connection conn;
+        try {
+            
+            //connect to mysql
+            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+            Statement st = conn.createStatement();
+       
+            
+            //Maak een array aan
+            int[]pieCharDoubleArray = new int[AirportList.size()];
+            String[]pieCharStringArray = new String[AirportList.size()];
+            
+            //laat piechar zien als de bagage is terug gevonnden
+            if("opgelostBagage".equals(zoekOpDracht)) {
+                
+                //for loop
+                for (int i = 0; i < AirportList.size(); i++) {
+                    System.out.println("AirportList "+AirportList.size());
 
-        ((Group) scene.getRoot()).getChildren().add(chart);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+
+                    //query
+                    String query = "select count(luchthavengevonden) as count from gevondenbagage a inner join opgelost b on a.gevondenkofferID = b.gevondenkofferID" +
+                        " where luchthavengevonden = '"+AirportList.get(i)+"' AND b.datum between '"+beginDatum+"' and '"+eindDatum+"'" +
+                        " group by luchthavengevonden";
+
+                    System.out.println(query);
+                    ResultSet databaseResponse = st.executeQuery(query);
+                    while (databaseResponse.next()) {
+
+                        System.out.println(databaseResponse.getInt("count"));
+                        pieCharDoubleArray[i] = databaseResponse.getInt("count");
+                        
+                        //tel de nieuwe hoeveel koffers op
+                        totalKoffer = totalKoffer + databaseResponse.getInt("count");
+                        pieCharStringArray[i]= (String) AirportList.get(i);
+                    }
+                }
+                
+                //fxcollection
+                ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
+                //loop om alles data in pieChart te zetten
+                for (int b = 0; b < pieCharDoubleArray.length; b++) {
+
+
+                    double tempkofferLuchthaven = pieCharDoubleArray[b];
+                    double lol = tempkofferLuchthaven/totalKoffer*100;
+                    System.out.println(lol);
+
+                    //Gooi data in Piechar    
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b],tempkofferLuchthaven/totalKoffer*100));
+                }
+
+                //piechart
+                final PieChart chart = new PieChart(pieChartData);
+                chart.setTitle("Found bagage back");
+
+                //maak het beschikbaar in scene
+                ((Group) scene.getRoot()).getChildren().add(chart);
+                primaryStage.setScene(scene);
+                primaryStage.show();
+            }
+            
+            System.out.println(zoekOpDracht);
+            
+            //kijken naar niet terug gevonden bagage
+            if("nietTerugGevonden".equals(zoekOpDracht)){
+                System.out.println("AirportList "+AirportList.size());
+                 //for loop
+                for (int i = 0; i < AirportList.size(); i++) {
+                    System.out.println("project");
+                    System.out.println("airport: "+AirportList.get(i));
+
+                    //query
+                    String query = "SELECT count(bagagelabel) as count FROM corendonbagagesystem.verlorenbagage where luchthavenvertrokken = '"+AirportList.get(i)+"' AND status='notSolved';";
+
+                    System.out.println(query);
+                    ResultSet databaseResponse = st.executeQuery(query);
+                    while (databaseResponse.next()) {
+                        System.out.println("fakse "+databaseResponse);
+                        System.out.println(databaseResponse.getInt("count"));
+                        pieCharDoubleArray[i] = databaseResponse.getInt("count");
+                        
+                        //tel de nieuwe hoeveel koffers op
+                        totalKoffer = totalKoffer + databaseResponse.getInt("count");
+                        pieCharStringArray[i]= (String) AirportList.get(i);
+                    }
+                }
+                
+                //fxcollection
+                ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
+                //loop om alles data in pieChart te zetten
+                for (int b = 0; b < pieCharDoubleArray.length; b++) {
+
+
+                    double tempkofferLuchthaven = pieCharDoubleArray[b];
+                    double lol = tempkofferLuchthaven/totalKoffer*100;
+                    System.out.println(lol);
+
+                    //Gooi data in Piechar    
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b],tempkofferLuchthaven/totalKoffer*100));
+                }
+
+                //piechart
+                final PieChart chart = new PieChart(pieChartData);
+                chart.setTitle("Bagage that not found back.");
+
+                //maak het beschikbaar in scene
+                ((Group) scene.getRoot()).getChildren().add(chart);
+                primaryStage.setScene(scene);
+                primaryStage.show();
+            }
+            
+            //bagage wat naar de sloop is gegaan
+            if("verwijderdBagage".equals(zoekOpDracht)){
+                System.out.println("AirportList "+AirportList.size());
+                 //for loop
+                for (int i = 0; i < AirportList.size(); i++) {
+                    System.out.println("project");
+                    System.out.println("airport: "+AirportList.get(i));
+
+                    //query
+                    String query = "SELECT count(bagagelabel) as count FROM corendonbagagesystem.verlorenbagage where luchthavenvertrokken = '"+AirportList.get(i)+"' AND status='deleted';";
+
+                    System.out.println(query);
+                    ResultSet databaseResponse = st.executeQuery(query);
+                    while (databaseResponse.next()) {
+                        System.out.println("fakse "+databaseResponse);
+                        System.out.println(databaseResponse.getInt("count"));
+                        pieCharDoubleArray[i] = databaseResponse.getInt("count");
+                        
+                        //tel de nieuwe hoeveel koffers op
+                        totalKoffer = totalKoffer + databaseResponse.getInt("count");
+                        pieCharStringArray[i]= (String) AirportList.get(i);
+                    }
+                }
+                
+                //fxcollection
+                ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
+                //loop om alles data in pieChart te zetten
+                for (int b = 0; b < pieCharDoubleArray.length; b++) {
+
+
+                    double tempkofferLuchthaven = pieCharDoubleArray[b];
+                    double lol = tempkofferLuchthaven/totalKoffer*100;
+                    System.out.println(lol);
+
+                    //Gooi data in Piechar    
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b],tempkofferLuchthaven/totalKoffer*100));
+                }
+
+                //piechart
+                final PieChart chart = new PieChart(pieChartData);
+                chart.setTitle("Bagage that not found back.");
+
+                //maak het beschikbaar in scene
+                ((Group) scene.getRoot()).getChildren().add(chart);
+                primaryStage.setScene(scene);
+                primaryStage.show();
+
+            }
+        }catch (SQLException ex) {
+            System.out.println("Code kan geen connectie maken met het database.");
+        }
     }
 
     @Override

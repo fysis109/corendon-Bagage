@@ -1,15 +1,20 @@
 package balie;
 
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
 import global.Home;
 import global.MenuB;
 import global.Mysql;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
@@ -53,6 +58,7 @@ public class zoekBagage {
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();   
     private int gevKofID;
+
     
     public void maakZoekString(Stage primaryStage, int gevondenKofferID, String bagageLabel, 
             String kleur, String hoogte, String lengte, String breedte, String luchthaven, 
@@ -296,8 +302,8 @@ public class zoekBagage {
     }
     
     // Bagage info
-    private String Bagagelabel, Kleur, Lengte, Dikte, Breedte, 
-               Luchthavengevonden, Merk, Softhard, Bijzonderhede;
+    private String Bagagelabel, Kleur, Land, Plaats, Straat, 
+               Luchthavengevonden, Merk, Softhard, Bijzonderhede,Huisnr,Postcode;
     
    
     
@@ -332,15 +338,12 @@ public class zoekBagage {
                 en pdf voor vliegveld om terug te sturen
             */
        Statement kofferinfo = conn.createStatement();
-            String insertString2 = "SELECT * FROM gevondenbagage,customers WHERE gevondenkofferID =" + verlorenKofferID +  "AND customersID =" + klantID;
+            String insertString2 = "SELECT * FROM verlorenbagage v left join customers c ON c.customersID = v.customersID left join afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID =" + verlorenKofferID ;
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
                     this.Bagagelabel = rs.getString("bagagelabel");
                     this.Kleur = rs.getString("kleur");
-                    this.Lengte = rs.getString("lengte");
-                    this.Dikte = rs.getString("dikte");
-                    this.Breedte = rs.getString("breedte");
-                    this.Luchthavengevonden = rs.getString("luchthavengevonden");
+                    this.Luchthavengevonden = rs.getString("luchthavenaankomst");
                     this.Bijzonderhede = rs.getString("bijzonderhede");
                     this.Merk = rs.getString("merk");
                     this.Softhard = rs.getString("softhard");
@@ -349,6 +352,11 @@ public class zoekBagage {
                     this.Achternaam = rs.getString("achternaam");
                     this.Telefoonnummer = rs.getString("telefoonnummer");
                     this.Email = rs.getString("email");
+                    this.Plaats = rs.getString("Plaats");
+                    this.Land = rs.getString("Land");
+                    this.Huisnr = rs.getString("Huisnumer");
+                    this.Postcode = rs.getString("Postcode");
+                    this.Straat = rs.getString("Straat");
                     }
             
            
@@ -364,13 +372,23 @@ public class zoekBagage {
         // Create a new blank page and add it to the document
         PDPage blankPage = new PDPage();
         document.addPage( blankPage );
-
+ 
         try {
             PDFont font = PDType1Font.HELVETICA_BOLD;
             PDFont font2 = PDType1Font.TIMES_ROMAN;
+            // Create an instance of SimpleDateFormat used for formatting 
+            // the string representation of date (month/day/year)
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+            // Get the date today using Calendar object.
+            java.util.Date today = Calendar.getInstance().getTime();        
+            // Using DateFormat format method we can create a string 
+            // representation of a date with the defined format.
+            String reportDate = df.format(today);
 
             // Start a new content stream which will "hold" the to be created content
             PDPageContentStream contentStream = new PDPageContentStream(document, blankPage);
+            
             // headline
             contentStream.beginText();
             contentStream.setFont( font, 15 );
@@ -382,18 +400,12 @@ public class zoekBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 175, 650 );
-            contentStream.drawString( "Date: " );
-            contentStream.endText();
-            //tijd
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 187, 635 );
-            contentStream.drawString( "Time: " );
+            contentStream.drawString( "Date and time: " );
             contentStream.endText();
             //luchthaven
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 150, 620 );
+            contentStream.moveTextPositionByAmount( 150, 635 );
             contentStream.drawString( "Airport: " );
             contentStream.endText();
             
@@ -458,16 +470,10 @@ public class zoekBagage {
             contentStream.moveTextPositionByAmount( 140, 440 );
             contentStream.drawString( "Label number: " );
             contentStream.endText();
-            //Vluchtnummer
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 138, 425 );
-            contentStream.drawString( "flightnumber: " );
-            contentStream.endText();
             //Bestemming
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 150, 410 );
+            contentStream.moveTextPositionByAmount( 150, 425 );
             contentStream.drawString( "Destination: " );
             contentStream.endText();
             
@@ -519,19 +525,13 @@ public class zoekBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 650 );
-            contentStream.drawString( "Teks" );
-            contentStream.endText();
-            //input tijd
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 635 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( reportDate );
             contentStream.endText();
             //input luchthaven
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 620 );
-            contentStream.drawString( "Teks" );
+            contentStream.moveTextPositionByAmount( 215, 635 );
+            contentStream.drawString( this.luchthavengevonden );
             contentStream.endText();
             //input Naam
             contentStream.beginText();
@@ -543,25 +543,25 @@ public class zoekBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 560 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( this.Straat + " " + this.Huisnr );
             contentStream.endText();
             //input Woonplaats
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 545 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( this.Plaats );
             contentStream.endText();
             //input Postcode
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 530 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( this.Postcode );
             contentStream.endText();
             //input Land
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 515 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( this.Land );
             contentStream.endText();
             //input Telefoon
             contentStream.beginText();
@@ -580,16 +580,10 @@ public class zoekBagage {
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 440 );
             contentStream.drawString(this.Bagagelabel );
-            //input Vluchtnummer
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 425 );
-            contentStream.drawString( "Teks" );
-            contentStream.endText();
             //input Bestemming
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 410 );
+            contentStream.moveTextPositionByAmount( 215, 425 );
             contentStream.drawString( this.Luchthavengevonden );
             contentStream.endText();
             //input Type

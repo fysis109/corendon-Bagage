@@ -13,6 +13,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -52,19 +55,21 @@ public class VerlKofferReg {
     // Bagage info
     private String Bagagelabel;
     private String Kleur;
-    private String Lengte;
-    private String Dikte;
-    private String Breedte;
-    private String Luchthavengevonden;
     private String Bijzonderhede;
     private String Merk;
     private String Softhard;
+    private String Luchthavenaankomst;
     //klanten info
     private String Voornaam;
     private String Tussenvoegsel;
     private String Achternaam;
     private String Telefoonnummer;
     private String Email;
+    private String Plaats;
+    private String Land;
+    private String Huisnr;
+    private String Straat;
+    private String Postcode;
 
     public void start(Stage primaryStage) {
 
@@ -449,15 +454,11 @@ public class VerlKofferReg {
                     int verlorenKofferID = 0;
                     
                     Statement kofferinfo = conn.createStatement();
-            String insertString2 = "SELECT * FROM verlorenbagage,customers WHERE gevondenkofferID =" + verlorenKofferID +  "AND customersID =" + customerID;
+            String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.bagagelabel == " +bagagelabel ;
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
                     this.Bagagelabel = rs.getString("bagagelabel");
                     this.Kleur = rs.getString("kleur");
-                    this.Lengte = rs.getString("lengte");
-                    this.Dikte = rs.getString("dikte");
-                    this.Breedte = rs.getString("breedte");
-                    this.Luchthavengevonden = rs.getString("luchthavengevonden");
                     this.Bijzonderhede = rs.getString("bijzonderhede");
                     this.Merk = rs.getString("merk");
                     this.Softhard = rs.getString("softhard");
@@ -466,6 +467,12 @@ public class VerlKofferReg {
                     this.Achternaam = rs.getString("achternaam");
                     this.Telefoonnummer = rs.getString("telefoonnummer");
                     this.Email = rs.getString("email");
+                    this.Plaats = rs.getString("Plaats");
+                    this.Land = rs.getString("Land");
+                    this.Huisnr = rs.getString("Huisnumer");
+                    this.Postcode = rs.getString("Postcode");
+                    this.Straat = rs.getString("Straat"); 
+                    this.Luchthavenaankomst = rs.getString("luchthavenaankomst");
                     }
 
                     while (result1232.next()) {
@@ -503,6 +510,16 @@ public class VerlKofferReg {
         try {
             PDFont font = PDType1Font.HELVETICA_BOLD;
             PDFont font2 = PDType1Font.TIMES_ROMAN;
+            
+            // Create an instance of SimpleDateFormat used for formatting 
+            // the string representation of date (month/day/year)
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+            // Get the date today using Calendar object.
+            java.util.Date today = Calendar.getInstance().getTime();        
+            // Using DateFormat format method we can create a string 
+            // representation of a date with the defined format.
+            String reportDate = df.format(today);
 
             // Start a new content stream which will "hold" the to be created content
             PDPageContentStream contentStream = new PDPageContentStream(document, blankPage);
@@ -517,18 +534,12 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 175, 650 );
-            contentStream.drawString( "Date: " );
-            contentStream.endText();
-            //tijd
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 187, 635 );
-            contentStream.drawString( "Time: " );
+            contentStream.drawString( "Date and time: " );
             contentStream.endText();
             //luchthaven
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 150, 620 );
+            contentStream.moveTextPositionByAmount( 150, 635 );
             contentStream.drawString( "Airport: " );
             contentStream.endText();
             
@@ -593,16 +604,10 @@ public class VerlKofferReg {
             contentStream.moveTextPositionByAmount( 140, 440 );
             contentStream.drawString( "Label number: " );
             contentStream.endText();
-            //Vluchtnummer
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 138, 425 );
-            contentStream.drawString( "Flightnumber: " );
-            contentStream.endText();
             //Bestemming
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 150, 410 );
+            contentStream.moveTextPositionByAmount( 150, 425 );
             contentStream.drawString( "Destination: " );
             contentStream.endText();
             
@@ -654,19 +659,13 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 650 );
-            contentStream.drawString( "Teks" );
-            contentStream.endText();
-            //input tijd
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 635 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( reportDate );
             contentStream.endText();
             //input luchthaven
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 620 );
-            contentStream.drawString( "Teks" );
+            contentStream.moveTextPositionByAmount( 215, 635 );
+            contentStream.drawString( this.Luchthavenaankomst );
             contentStream.endText();
             //input Naam
             contentStream.beginText();
@@ -678,25 +677,25 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 560 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( this.Straat + " " + this.Huisnr );
             contentStream.endText();
             //input Woonplaats
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 545 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( this.Plaats );
             contentStream.endText();
             //input Postcode
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 530 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( this.Postcode );
             contentStream.endText();
             //input Land
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 515 );
-            contentStream.drawString( "Teks" );
+            contentStream.drawString( this.Land );
             contentStream.endText();
             //input Telefoon
             contentStream.beginText();
@@ -715,17 +714,11 @@ public class VerlKofferReg {
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 440 );
             contentStream.drawString(this.Bagagelabel );
-            //input Vluchtnummer
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 425 );
-            contentStream.drawString( "Teks" );
-            contentStream.endText();
             //input Bestemming
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 410 );
-            contentStream.drawString( "tekst" );
+            contentStream.moveTextPositionByAmount( 215, 425 );
+            contentStream.drawString( this.Luchthavenaankomst );
             contentStream.endText();
             //input Type
             contentStream.beginText();

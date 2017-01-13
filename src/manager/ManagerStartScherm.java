@@ -38,7 +38,7 @@ public class ManagerStartScherm extends Application{
     private String beginJaarString, beginMaandString, beginDagString,eindJaarString,
         eindMaandString,eindDagString, beginDatum, eindDatum,
         SchipholAmsterdam, ElPratBarcelona, AtatürkIstanbul, requestQuery, stringAmsterdamSelected,
-        stringBarcelonaSelected, stringIstanbulSelected, tabelZoeken;
+        stringBarcelonaSelected, stringIstanbulSelected, zoekOpDracht;
 
     //ArrayList
     private ArrayList<String> AirportList = new ArrayList<String>();
@@ -49,13 +49,17 @@ public class ManagerStartScherm extends Application{
     private int opgelostCount, opgelostAmsterdam, opgelostBarcelona, opgelostIstanbul, tempAirportCount = 0;
     private boolean amsterdamSelected, barcelonaSelected, istanbulSelected, opgelostBagageSelected, nietopgelostBagageSelected, bagagevernietigdSelected;
 
+    //finals
+    private final String ZOEKENOPGELOSTBAGAGE= "opgelostBagage";
+    private final String ZOEKENNIETTERUGGEVONDEN= "nietTerugGevonden";
+    private final String ZOEKENNAARBAGAGEWATVERWIJDERDIS= "verwijderdBagage";
     
     public void start(Stage primaryStage) {
 
         //airport list
         stringAmsterdamSelected = "Schiphol, Amsterdam";
         stringBarcelonaSelected = "El Prat, Barcelona";
-        stringBarcelonaSelected = "stringIstanbulSelected";
+        //stringBarcelonaSelected = "stringIstanbulSelected";
         
         // deze vijf regels om de menubar aan te roepen
         MenuB menuB = new MenuB();
@@ -163,19 +167,18 @@ public class ManagerStartScherm extends Application{
         Label nietopgelostLabel = new Label("Baggage not found back.");
         grid.add(nietopgelostLabel, 11, 3);
         
-        Button nietopgelostBagage = new Button();
+        Button nietopgelostBagage = new Button("Show");
         grid.add(nietopgelostBagage, 12, 3);
 
         Label bagagevernietigdLabel = new Label("Luggage destroyed.");
         grid.add(bagagevernietigdLabel, 11, 4);
         
-        Button bagagevernietigd = new Button();
+        Button bagagevernietigd = new Button("Show");
         grid.add(bagagevernietigd, 12, 4);   
         
         //eventhandlers voor de begindatum
         beginJaar.setOnAction((event) -> {
             beginJaarString = (String) beginJaar.getSelectionModel().getSelectedItem();
-            System.out.println("begin data "+ beginJaarString);
         });
         
         beginMaand.setOnAction((event) -> {
@@ -201,8 +204,6 @@ public class ManagerStartScherm extends Application{
         
         
         showLostAndFound.setOnAction((ActionEvent e) -> {
-            //beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
-            //eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
         });
         
         //eventhandlers voor de checkboxes
@@ -210,6 +211,7 @@ public class ManagerStartScherm extends Application{
             amsterdamSelected = new_val;
             if(amsterdamSelected == true){
                 AirportList.add(stringAmsterdamSelected);
+                System.out.println(AirportList.size());
             } else {
                 AirportList.remove(stringAmsterdamSelected);
             }
@@ -219,8 +221,10 @@ public class ManagerStartScherm extends Application{
             barcelonaSelected = new_val;
             if(amsterdamSelected == true){
                 AirportList.add(stringBarcelonaSelected);
+                System.out.println("barcelona"+AirportList.size());
             } else {
                 AirportList.remove(stringBarcelonaSelected);
+                System.out.println("barcelona"+AirportList.size());
             }
         });        
         
@@ -232,29 +236,48 @@ public class ManagerStartScherm extends Application{
                 AirportList.remove(stringIstanbulSelected);
             }
         });
-        //tabel zoeken
-            tabelZoeken = "opgelostBagage";
-            //System.out.println(stringAmsterdamSelected);
-            //PieChar.start(primaryStage);
-            //creatQuerys();
-            //connectie
+            
+        opgelostBagage.setOnAction((ActionEvent e) -> {
             
             beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
             eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
-        opgelostBagage.setOnAction((ActionEvent e) -> {
-                                            
+            
+            zoekOpDracht = ZOEKENOPGELOSTBAGAGE;
             try {
-                pieChar.start(primaryStage, beginDatum, eindDatum, AirportList);
+                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, AirportList);
             } catch (SQLException ex) {    
+            
             }
         });
         
         nietopgelostBagage.setOnAction((ActionEvent e) -> {
-        
+            
+            //Bagage wat niet is opgelost
+            beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
+            eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
+            
+            zoekOpDracht = ZOEKENNIETTERUGGEVONDEN;
+            
+            try {
+                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, AirportList);
+            } catch (SQLException ex) {    
+            
+            }
         });        
         
         bagagevernietigd.setOnAction((ActionEvent e) -> {
-        
+            
+            //Bagage wat niet is opgelost
+            beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
+            eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
+            
+            zoekOpDracht = ZOEKENNAARBAGAGEWATVERWIJDERDIS;
+            
+            try {
+                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, AirportList);
+            } catch (SQLException ex) {    
+            
+            }
         });
         
         // deze aanpassen van grid naar root..
@@ -264,93 +287,4 @@ public class ManagerStartScherm extends Application{
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    /*
-    public void creatQuerys() {
-        
-        //Datum
-        beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
-        eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
-        
-        //for loop
-        for (int i = 0; i < AirportList.size(); i++) {
-            System.out.println(AirportList.get(i));
-
-            //query
-            String query = "select count(luchthavengevonden) as count from gevondenbagage a inner join opgelost b on a.gevondenkofferID = b.gevondenkofferID" +
-                " where luchthavengevonden = '"+AirportList.get(i)+"' AND b.datum between '"+beginDatum+"' and '"+eindDatum+"'" +
-                " group by luchthavengevonden";
-
-            QueryList.add(query);
-        }
-        
-        //connectie
-        PieChar.start(primaryStage);
-    }*/
-    /*
-    //database request
-    String databaseRequest(String luchthaven){
-        
-        //Datum
-        beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
-        eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
-        
-        //for loop
-        for (int i = 0; i < AirportList.size(); i++) {
-            System.out.println(AirportList.get(i));
-
-            //query
-            String query = "select count(luchthavengevonden) as count from gevondenbagage a inner join opgelost b on a.gevondenkofferID = b.gevondenkofferID" +
-                " where luchthavengevonden = '"+AirportList.get(i)+"' AND b.datum between '"+beginDatum+"' and '"+eindDatum+"'" +
-                " group by luchthavengevonden";
-
-            QueryList.add(query);
-        }
-        
-        
-        /*
-        //mysql
-        Connection conn;
-        try {
-            
-            //connect to mysql
-            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-            Statement st = conn.createStatement();
-
-            //loop door alle aangeven luchthaven
-            
-            System.out.println(AirportList);
-            for (int i = 0; i < AirportList.size(); i++) {
-                System.out.println(AirportList.get(i));
-                
-                //query
-                String query = "select count(luchthavengevonden) as count from gevondenbagage a inner join opgelost b on a.gevondenkofferID = b.gevondenkofferID" +
-                    " where luchthavengevonden = '"+AirportList.get(i)+"' AND b.datum between '"+beginDatum+"' and '"+eindDatum+"'" +
-                    " group by luchthavengevonden";
-                
-                QueryList.add(query);
-                
-                
-                
-                //ResultSet
-                ResultSet databaseResponse = st.executeQuery(query);
-                while (databaseResponse.next()) {
-
-                    requestQuery = String.valueOf(databaseResponse.getInt("count"));
-                    System.out.println("Hoeveel koffers was je kwijt"+requestQuery);
-                    
-                    String lol = AirportList.get(i);
-                    pieChartData = FXCollections.observableArrayList();
-                    FXCollections.observableArrayList(new PieChart.Data(AirportList.get(i), databaseResponse.getDouble("count")));
-                    
-                    //System.out.println("pieChartData"+pieChartData);
-                    //AirportCount.add(, databaseResponse.getString("count"));
-                    //tempAirportCount + databaseResponse.getInt("count");
-                }
-        
-            }
-        }catch (SQLException ex) {
-            System.out.println("Code kan geen connectie maken met het database.");
-        }*/
-        //return "lol";
-    //};
 }

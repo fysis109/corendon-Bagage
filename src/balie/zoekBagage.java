@@ -400,7 +400,7 @@ public class zoekBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 175, 650 );
-            contentStream.drawString( "Date and time: " );
+            contentStream.drawString( "Date: " );
             contentStream.endText();
             //luchthaven
             contentStream.beginText();

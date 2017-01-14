@@ -71,7 +71,7 @@ public class GebruikerAanmaken {
         root.setCenter(grid);
         
         //Welkom + Letter type
-        Text scenetitle = new Text("Welcome");
+        Text scenetitle = new Text("Make a new user");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
 

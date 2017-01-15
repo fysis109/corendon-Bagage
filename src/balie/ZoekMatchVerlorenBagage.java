@@ -630,7 +630,7 @@ public class ZoekMatchVerlorenBagage {
             // Make sure that the content stream is closed:
             contentStream.close();
 
-            document.save("Match bagage.pdf");
+            document.save("Match luggage " + this.Bagagelabel + ".pdf");
             document.close();
         } catch (IOException ex) {
             Logger.getLogger(PDFregister.class.getName()).log(Level.SEVERE, null, ex);

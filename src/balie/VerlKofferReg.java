@@ -753,7 +753,7 @@ public class VerlKofferReg {
             // Make sure that the content stream is closed:
             contentStream.close();
 
-            document.save("Gevonden bagage.pdf");
+            document.save("Luggage in database " + this.Bagagelabel + ".pdf");
             document.close();
         } catch (IOException ex) {
             Logger.getLogger(PDFregister.class.getName()).log(Level.SEVERE, null, ex);

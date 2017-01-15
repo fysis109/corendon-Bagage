@@ -619,7 +619,7 @@ public class zoekBagage {
             // Make sure that the content stream is closed:
             contentStream.close();
 
-            document.save("Gevonden bagage.pdf");
+            document.save("Send luggage back" + this.Bagagelabel + ".pdf");
             document.close();
         } catch (IOException ex) {
             Logger.getLogger(PDFregister.class.getName()).log(Level.SEVERE, null, ex);

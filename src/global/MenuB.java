@@ -55,7 +55,7 @@ public class MenuB {
     userManual.setOnAction((ActionEvent e) -> {
         if (Desktop.isDesktopSupported()) {
             try {
-                File myFile = new File("src/images/UserManual.pdf");
+                File myFile = new File("src/images/Handleiding.pdf");
                 Desktop.getDesktop().open(myFile);
             } catch (IOException ex) {
                 // no application registered for PDFs

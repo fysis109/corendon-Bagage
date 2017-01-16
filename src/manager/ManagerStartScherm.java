@@ -29,6 +29,7 @@ public class ManagerStartScherm extends Application{
     Mysql mysql = new Mysql();  
     
     PieChar pieChar = new PieChar();
+    LineChar lineChar = new LineChar();
     
     //private mqsql
     private final String USERNAME = mysql.getUsername();
@@ -37,17 +38,13 @@ public class ManagerStartScherm extends Application{
     
     private String beginJaarString, beginMaandString, beginDagString,eindJaarString,
         eindMaandString,eindDagString, beginDatum, eindDatum,
-        SchipholAmsterdam, ElPratBarcelona, AtatürkIstanbul, requestQuery, stringAmsterdamSelected,
-        stringBarcelonaSelected, stringIstanbulSelected, zoekOpDracht;
+        stringAmsterdamSelected, stringBarcelonaSelected, stringIstanbulSelected, zoekOpDracht;
 
     //ArrayList
-    private ArrayList<String> AirportList = new ArrayList<String>();
-    private ArrayList<String> AirportCount = new ArrayList<String>();
-    private ArrayList<String> QueryList = new ArrayList<String>();
+    private ArrayList<String> airportList = new ArrayList<String>();
     
     private ObservableList<PieChart.Data> pieChartData;
-    private int opgelostCount, opgelostAmsterdam, opgelostBarcelona, opgelostIstanbul, tempAirportCount = 0;
-    private boolean amsterdamSelected, barcelonaSelected, istanbulSelected, opgelostBagageSelected, nietopgelostBagageSelected, bagagevernietigdSelected;
+    private boolean amsterdamSelected, barcelonaSelected, istanbulSelected;
 
     //finals
     private final String ZOEKENOPGELOSTBAGAGE= "opgelostBagage";
@@ -59,7 +56,7 @@ public class ManagerStartScherm extends Application{
         //airport list
         stringAmsterdamSelected = "Schiphol, Amsterdam";
         stringBarcelonaSelected = "El Prat, Barcelona";
-        //stringBarcelonaSelected = "stringIstanbulSelected";
+        stringIstanbulSelected = "Atatürk, Istanbul";
         
         // deze vijf regels om de menubar aan te roepen
         MenuB menuB = new MenuB();
@@ -155,26 +152,29 @@ public class ManagerStartScherm extends Application{
         CheckBox istanbulAirport = new CheckBox();
         grid.add(istanbulAirport, 10 ,4 );
         
-        Button showLostAndFound = new Button("Show");
-        grid.add(showLostAndFound, 20, 0);
-        
         Label opgelostLabel = new Label("Luggage found back.");
         grid.add(opgelostLabel, 11, 2);
         
         Button opgelostBagage = new Button("Show");
         grid.add(opgelostBagage, 12, 2);
         
-        Label nietopgelostLabel = new Label("Baggage not found back.");
+        Label nietopgelostLabel = new Label("Luggage not found back.");
         grid.add(nietopgelostLabel, 11, 3);
         
         Button nietopgelostBagage = new Button("Show");
         grid.add(nietopgelostBagage, 12, 3);
 
-        Label bagagevernietigdLabel = new Label("Luggage destroyed.");
-        grid.add(bagagevernietigdLabel, 11, 4);
+        Label bagageVernietigdLabel = new Label("Luggage destroyed.");
+        grid.add(bagageVernietigdLabel, 11, 4);
         
-        Button bagagevernietigd = new Button("Show");
-        grid.add(bagagevernietigd, 12, 4);   
+        Button bagageVernietigd = new Button("Show");
+        grid.add(bagageVernietigd, 12, 4);
+        
+        Label bagagewWtIsZoekGeraaktLabel = new Label("Luggage that is lost.");
+        grid.add(bagagewWtIsZoekGeraaktLabel, 11, 5);
+        
+        Button bagagewWtIsZoekGeraakt = new Button("Show");
+        grid.add(bagagewWtIsZoekGeraakt, 12, 5); 
         
         //eventhandlers voor de begindatum
         beginJaar.setOnAction((event) -> {
@@ -202,38 +202,34 @@ public class ManagerStartScherm extends Application{
             eindDagString = (String) eindDag.getSelectionModel().getSelectedItem();
         });
         
-        
-        showLostAndFound.setOnAction((ActionEvent e) -> {
-        });
-        
         //eventhandlers voor de checkboxes
         amsterdamAirport.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             amsterdamSelected = new_val;
             if(amsterdamSelected == true){
-                AirportList.add(stringAmsterdamSelected);
-                System.out.println(AirportList.size());
+                airportList.add(stringAmsterdamSelected);
+                System.out.println(airportList.size());
             } else {
-                AirportList.remove(stringAmsterdamSelected);
+                airportList.remove(stringAmsterdamSelected);
             }
         });
         
         barcelonaAirport.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             barcelonaSelected = new_val;
-            if(amsterdamSelected == true){
-                AirportList.add(stringBarcelonaSelected);
-                System.out.println("barcelona"+AirportList.size());
+            if(barcelonaSelected == true){
+                airportList.add(stringBarcelonaSelected);
+                System.out.println("barcelona"+airportList.size());
             } else {
-                AirportList.remove(stringBarcelonaSelected);
-                System.out.println("barcelona"+AirportList.size());
+                airportList.remove(stringBarcelonaSelected);
+                System.out.println("barcelona"+airportList.size());
             }
         });        
         
         istanbulAirport.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             istanbulSelected = new_val;
-            if(amsterdamSelected == true){
-                AirportList.add(stringIstanbulSelected);
+            if(istanbulSelected == true){
+                airportList.add(stringIstanbulSelected);
             } else {
-                AirportList.remove(stringIstanbulSelected);
+                airportList.remove(stringIstanbulSelected);
             }
         });
             
@@ -244,7 +240,7 @@ public class ManagerStartScherm extends Application{
             
             zoekOpDracht = ZOEKENOPGELOSTBAGAGE;
             try {
-                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, AirportList);
+                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
             } catch (SQLException ex) {    
             
             }
@@ -259,13 +255,13 @@ public class ManagerStartScherm extends Application{
             zoekOpDracht = ZOEKENNIETTERUGGEVONDEN;
             
             try {
-                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, AirportList);
+                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
             } catch (SQLException ex) {    
             
             }
         });        
         
-        bagagevernietigd.setOnAction((ActionEvent e) -> {
+        bagageVernietigd.setOnAction((ActionEvent e) -> {
             
             //Bagage wat niet is opgelost
             beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
@@ -274,10 +270,15 @@ public class ManagerStartScherm extends Application{
             zoekOpDracht = ZOEKENNAARBAGAGEWATVERWIJDERDIS;
             
             try {
-                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, AirportList);
+                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
             } catch (SQLException ex) {    
             
             }
+        });
+
+        /** =========== lineChar =========== */
+        bagagewWtIsZoekGeraakt.setOnAction((ActionEvent e) -> {
+            lineChar.start(primaryStage, beginJaarString, beginMaandString, eindJaarString, eindMaandString, airportList);
         });
         
         // deze aanpassen van grid naar root..

@@ -1,12 +1,10 @@
 package balie;
 
-import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
 import global.Home;
 import global.MenuB;
 import global.Mysql;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -580,6 +578,7 @@ public class zoekBagage {
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 440 );
             contentStream.drawString(this.Bagagelabel );
+            contentStream.endText();
             //input Bestemming
             contentStream.beginText();
             contentStream.setFont( font2, 12 );

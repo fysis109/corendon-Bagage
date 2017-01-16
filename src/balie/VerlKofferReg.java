@@ -36,7 +36,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import login.PDFregister;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -452,14 +451,59 @@ public class VerlKofferReg {
                             + "' AND datum = curdate() AND bijzonderheden = '" + bijzonderheden + "' AND merk = '" + merk + "' AND customersID = '" + customerID + "'");
 
                     int verlorenKofferID = 0;
+                    while (result1232.next()) {
+                        verlorenKofferID = result1232.getInt("verlorenkofferID");
+                    }
                     
-                    Statement kofferinfo = conn.createStatement();
-            String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.bagagelabel == " +bagagelabel ;
+                    stmt.execute("INSERT INTO afleveradres (verlorenkofferID, Land, Straat, Huisnummer, Toevoeging, Postcode, Plaats) VALUES "
+                            + "('" + verlorenKofferID + "','" + countryEntry + "','" + straat + "','" + Integer.valueOf(huisnummerEntry.getText()) + "','" + toevoeging + "','" + postcode + "','" + city + "')");
+                    
+                    
+                    
+
+                    
+                    
+                    
+                    maakPDF(verlorenKofferID);
+                    ZoekMatchVerlorenBagage zoekMatchVerlorenBagage = new ZoekMatchVerlorenBagage();
+                    zoekMatchVerlorenBagage.maakZoekString(customerID ,primaryStage, verlorenKofferID, bagagelabel, kleur, hoogte, lengte, breedte, 
+                            luchthavenVertrekEntry, luchthavenAankomstEntry, bijzonderheden, merk, hardSoftCase);
+                                                               
+                    }else{
+                        actiontarget.setFill(Color.FIREBRICK);
+                        actiontarget.setText("Luggage label already exists");
+                    }
+                
+            
+            // pdf verloren kofffer match
+           // Create a new empty document
+          
+        }
+        } catch (SQLException ed) {
+                System.out.println(ed);
+          
+        
+        } 
+        });
+
+        Scene scene = new Scene(root, 1200, 920);
+        primaryStage.setTitle("Register Lost Lugage");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+    }
+    
+    private void maakPDF(int verlorenBagageID){
+        
+        try{
+            Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+            Statement kofferinfo = conn.createStatement();
+            String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID = '" +verlorenBagageID+" '" ;
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
                     this.Bagagelabel = rs.getString("bagagelabel");
                     this.Kleur = rs.getString("kleur");
-                    this.Bijzonderhede = rs.getString("bijzonderhede");
+                    this.Bijzonderhede = rs.getString("bijzonderheden");
                     this.Merk = rs.getString("merk");
                     this.Softhard = rs.getString("softhard");
                     this.Voornaam = rs.getString("voornaam");
@@ -469,45 +513,21 @@ public class VerlKofferReg {
                     this.Email = rs.getString("email");
                     this.Plaats = rs.getString("Plaats");
                     this.Land = rs.getString("Land");
-                    this.Huisnr = rs.getString("Huisnumer");
+                    this.Huisnr = rs.getString("Huisnummer");
                     this.Postcode = rs.getString("Postcode");
                     this.Straat = rs.getString("Straat"); 
                     this.Luchthavenaankomst = rs.getString("luchthavenaankomst");
+                    System.out.println(Bagagelabel + Kleur + Bijzonderhede + Merk+ Softhard+ Voornaam + Tussenvoegsel + Achternaam + Telefoonnummer + Email + Plaats + Land + Huisnr + Postcode + Straat + Luchthavenaankomst);
                     }
 
-                    while (result1232.next()) {
-                        verlorenKofferID = result1232.getInt("verlorenkofferID");
-                    }
-
-                    stmt.execute("INSERT INTO afleveradres (verlorenkofferID, Land, Straat, Huisnummer, Toevoeging, Postcode, Plaats) VALUES "
-                            + "('" + verlorenKofferID + "','" + countryEntry + "','" + straat + "','" + Integer.valueOf(huisnummerEntry.getText()) + "','" + toevoeging + "','" + postcode + "','" + city + "')");
-                    /*
-                     * JIORGOS, pdf dat de koffer in de database is gezet en met welke gegevens allemaal.
-                    */
-                    
-                    
-                    
-                    ZoekMatchVerlorenBagage zoekMatchVerlorenBagage = new ZoekMatchVerlorenBagage();
-                    zoekMatchVerlorenBagage.maakZoekString(customerID ,primaryStage, verlorenKofferID, bagagelabel, kleur, hoogte, lengte, breedte, 
-                            luchthavenVertrekEntry, luchthavenAankomstEntry, bijzonderheden, merk, hardSoftCase);
-                                                               
-                    }else{
-                        actiontarget.setFill(Color.FIREBRICK);
-                        actiontarget.setText("Luggage label already exists");
-                    }
-                }
-            } catch (SQLException ed) {
-                System.out.println(ed);
-            }
-            // pdf verloren kofffer match
-           // Create a new empty document
+           
         PDDocument document = new PDDocument();
 
         // Create a new blank page and add it to the document
         PDPage blankPage = new PDPage();
         document.addPage( blankPage );
 
-        try {
+        
             PDFont font = PDType1Font.HELVETICA_BOLD;
             PDFont font2 = PDType1Font.TIMES_ROMAN;
             
@@ -536,6 +556,7 @@ public class VerlKofferReg {
             contentStream.moveTextPositionByAmount( 175, 650 );
             contentStream.drawString( "Date: " );
             contentStream.endText();
+            
             //luchthaven
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
@@ -661,6 +682,7 @@ public class VerlKofferReg {
             contentStream.moveTextPositionByAmount( 215, 650 );
             contentStream.drawString( reportDate );
             contentStream.endText();
+            
             //input luchthaven
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
@@ -714,6 +736,7 @@ public class VerlKofferReg {
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 440 );
             contentStream.drawString(this.Bagagelabel );
+            contentStream.endText();
             //input Bestemming
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
@@ -755,17 +778,14 @@ public class VerlKofferReg {
 
             document.save("Luggage in database " + this.Bagagelabel + ".pdf");
             document.close();
-        } catch (IOException ex) {
-            Logger.getLogger(PDFregister.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            
-        });
-
-        Scene scene = new Scene(root, 1200, 920);
-        primaryStage.setTitle("Register Lost Lugage");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
+            } catch (SQLException ed) {
+                System.out.println(ed);
+            } catch (IOException ex) {
+                Logger.getLogger(VerlKofferReg.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+        
+        
     }
 
 }

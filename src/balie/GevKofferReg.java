@@ -306,8 +306,8 @@ public class GevKofferReg {
                         Statement st = conn.createStatement();
                         
                         //SQL query
-                        String INSERTINFOQuary = "INSERT INTO gevondenbagage (kleur, dikte, lengte, breedte, luchthavengevonden, datum, bijzonderhede, merk, softhard)"
-                                + "VALUES ('" + kofferKleur + "', '" + dikteKoffer + "', '" + lengteKoffer + "', '" + breedteKoffer + "', '" + locatieKoffer + "', CURDATE(), '" + Bijzonderheden.getText() + "', '" + merkKoffer + "', '" + softHardCase + "')";
+                        String INSERTINFOQuary = "INSERT INTO gevondenbagage (kleur, dikte, lengte, breedte, luchthavengevonden, datum, bijzonderhede, merk, softhard, status)"
+                                + "VALUES ('" + kofferKleur + "', '" + dikteKoffer + "', '" + lengteKoffer + "', '" + breedteKoffer + "', '" + locatieKoffer + "', CURDATE(), '" + Bijzonderheden.getText() + "', '" + merkKoffer + "', '" + softHardCase + "', 'notSolved' )";
                         st.executeUpdate(INSERTINFOQuary);
                         String selectGevKofferID = "SELECT gevondenKofferID FROM gevondenbagage ORDER BY gevondenkofferID DESC LIMIT 1" ;                                 
                         ResultSet gevKofferIdRes = st.executeQuery(selectGevKofferID);

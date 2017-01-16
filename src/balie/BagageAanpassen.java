@@ -227,8 +227,7 @@ public class BagageAanpassen {
                 pasBagageAan(primaryStage, selected.getVerlorenkofferID(), selected.getBagagelabel(), 
                         selected.getKleur(), selected.getDikte(), selected.getLengte(), selected.getBreedte(),
                         selected.getLuchthavenvertrokken(), selected.getLuchthavenaankomst(),
-                        selected.getBijzonderheden(), selected.getMerk(), selected.getSofthard(),
-                        selected.getStatus());
+                        selected.getBijzonderheden(), selected.getMerk(), selected.getSofthard());
             }
         });
         
@@ -476,7 +475,7 @@ public class BagageAanpassen {
     private void pasBagageAan(Stage primaryStage, String verlorenKofferID, 
                     String bagageLabel, String kleur, String dikte, String lengte, 
                     String breedte, String luchthavenVertrokken, String luchthavenAankomst, 
-                    String bijzonderheden, String merk, String softhard, String status){
+                    String bijzonderheden, String merk, String softhard){
         
         
         

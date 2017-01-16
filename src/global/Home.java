@@ -4,6 +4,7 @@ import admin.GebruikerAanmaken;
 import admin.GebruikersTable;
 import balie.BagageAanpassen;
 import balie.GevKofferReg;
+import balie.GevondenBagageAanpassen;
 import balie.KlantenAanpassen;
 import balie.VerlKofferReg;
 import javafx.event.ActionEvent;
@@ -33,6 +34,7 @@ public class Home {
         GebruikersTable gebruikersTable = new GebruikersTable();
         VernietigBagage vernietigBagage = new VernietigBagage();
         BagageAanpassen bagageAanpassen = new BagageAanpassen();
+        GevondenBagageAanpassen gevBagAanpassen = new GevondenBagageAanpassen();
 
         //Hier wordt de menubar bovenin aangemaakt
         MenuB menuB = new MenuB();
@@ -65,8 +67,10 @@ public class Home {
         buttonStatistics.setMinWidth(175);
         Button buttonVerwijderBagage = new Button("Delete luggage");
         buttonVerwijderBagage.setMinWidth(175);
-        Button buttonBagageAanpassen = new Button("Adjust luggage");
+        Button buttonBagageAanpassen = new Button("Adjust lost luggage");
         buttonBagageAanpassen.setMinWidth(175);
+        Button buttonGevBagageAanpassen = new Button("Adjust found luggage");
+        buttonGevBagageAanpassen.setMinWidth(175);
 
         //kijkt welke buttons er op de homepage moeten afhankeijk van de rol 
         switch (Login.rol) {
@@ -84,9 +88,10 @@ public class Home {
                 break;
             default:
                 grid.add(buttonKlantenAanpassen, 0,0);
-                grid.add(buttonGevondenKofferRegistreren, 0,1);
-                grid.add(buttonVerlKofferReg, 1,0);
-                grid.add(buttonBagageAanpassen, 1,1);
+                grid.add(buttonGevondenKofferRegistreren, 1,0);
+                grid.add(buttonVerlKofferReg, 1,1);
+                grid.add(buttonBagageAanpassen, 2,0);
+                grid.add(buttonGevBagageAanpassen, 2, 1);
                 break;
         }
 
@@ -122,6 +127,10 @@ public class Home {
         buttonBagageAanpassen.setOnAction((ActionEvent e) ->{
            bagageAanpassen.start(primaryStage); 
         });
+        
+        buttonGevBagageAanpassen.setOnAction((ActionEvent e) -> {
+            gevBagAanpassen.start(primaryStage);
+        });
 
         Scene scene = new Scene(root, 1220, 920);
         primaryStage.setTitle("Home");
@@ -136,8 +145,5 @@ public class Home {
         primaryStage.setHeight(primaryScreenBounds.getHeight());
         primaryStage.show();
     }
-
-    public static void main(String[] args) {
-    }
-
+    
 }

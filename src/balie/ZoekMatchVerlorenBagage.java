@@ -92,7 +92,7 @@ public class ZoekMatchVerlorenBagage {
         this.customerId = customerId;
         
         String zoekOpBagagelabel = "SELECT COUNT(*) AS result FROM gevondenbagage WHERE bagagelabel = '" + bagagelabel + "'";
-        String zoekCriteria = "SELECT * FROM gevondenbagage WHERE bagagelabel = '' ";
+        String zoekCriteria = "SELECT * FROM gevondenbagage WHERE softhard = '" + hardSoftCase + "'";
         if (!kleur.equals("Other")) {
             zoekCriteria += " AND (kleur = '" + kleur + "' OR kleur = 'Other' )";
         }
@@ -107,11 +107,9 @@ public class ZoekMatchVerlorenBagage {
         } 
         if (!merk.equals("Other")) {
             zoekCriteria += " AND (merk = '" + merk + "' OR merk = 'Other' )";
-        } 
-        zoekCriteria += " AND softhard = '" + hardSoftCase + "'";
+        }
         zoekCriteria += " AND (luchthavengevonden = '" + luchthavenAankomst + "' OR luchthavengevonden = '" + luchthavenVertrek + "' )";
         zoekCriteria += " AND status = 'notSolved'";
-        System.out.println(zoekCriteria);
         zoekOpCriteria(zoekCriteria, zoekOpBagagelabel, bagagelabel);
     }
 
@@ -341,13 +339,13 @@ public class ZoekMatchVerlorenBagage {
              * en pdf voor vliegtuig welk bagage stuk waar heen moet
             */
             
-        Statement kofferinfo = conn.createStatement();
-            String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID == " +verlorenKofferID;
+            Statement kofferinfo = conn.createStatement();
+            String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID = '" +verlorenKofferID +"'";
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
                     this.Bagagelabel = rs.getString("bagagelabel");
                     this.Kleur = rs.getString("kleur");
-                    this.Bijzonderhede = rs.getString("bijzonderhede");
+                    this.Bijzonderhede = rs.getString("bijzonderheden");
                     this.Merk = rs.getString("merk");
                     this.Softhard = rs.getString("softhard");
                     this.Voornaam = rs.getString("voornaam");
@@ -357,7 +355,7 @@ public class ZoekMatchVerlorenBagage {
                     this.Email = rs.getString("email");
                     this.Plaats = rs.getString("Plaats");
                     this.Land = rs.getString("Land");
-                    this.Huisnr = rs.getString("Huisnumer");
+                    this.Huisnr = rs.getString("Huisnummer");
                     this.Postcode = rs.getString("Postcode");
                     this.Straat = rs.getString("Straat"); 
                     this.Luchthavenaankomst = rs.getString("luchthavenaankomst");
@@ -372,9 +370,7 @@ public class ZoekMatchVerlorenBagage {
            
 
                  
-        }catch (SQLException ed) {
-                  
-        }
+     
         // pdf verloren kofffer match
            // Create a new empty document
         PDDocument document = new PDDocument();
@@ -382,9 +378,9 @@ public class ZoekMatchVerlorenBagage {
         // Create a new blank page and add it to the document
         PDPage blankPage = new PDPage();
         document.addPage( blankPage );
-         Connection conn;
+       
          
-        try {
+        
             PDFont font = PDType1Font.HELVETICA_BOLD;
             PDFont font2 = PDType1Font.TIMES_ROMAN;
             
@@ -591,6 +587,7 @@ public class ZoekMatchVerlorenBagage {
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 215, 440 );
             contentStream.drawString(this.Bagagelabel );
+            contentStream.endText();
             //input Bestemming
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
@@ -634,6 +631,8 @@ public class ZoekMatchVerlorenBagage {
             document.close();
         } catch (IOException ex) {
             Logger.getLogger(PDFregister.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ZoekMatchVerlorenBagage.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

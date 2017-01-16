@@ -5,6 +5,7 @@
  */
 package admin;
 
+import global.Encrypt;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -36,6 +37,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import global.MenuB;
 import global.Mysql;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -158,6 +161,7 @@ public class GebruikerAanpassen {
                 {
                     actiontarget.setText("Fields can't be left open");
                 } else {
+                    Encrypt encrypt = new Encrypt();
                     try {
                         Connection conn;
                         conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
@@ -183,16 +187,21 @@ public class GebruikerAanpassen {
                                     while (rs1.next()) {
                                         userID = rs1.getInt("userID");
                                     }
-
+                                    try {
+                                        password2 = encrypt.createHash(password2);
+                                    } catch (Encrypt.CannotPerformOperationException ex) {
+                                        Logger.getLogger(GebruikerAanpassen.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
                                     String sql = "UPDATE users SET username=?, wachtwoord=?, rol=? WHERE userID=?";
                                     PreparedStatement statement = conn.prepareStatement(sql);
                                     statement.setString(1, username);
                                     statement.setString(2, password2);
                                     statement.setString(3, gebruikersRol);
                                     statement.setInt(4, userID);
+                                    
                                     int rowsUpdated = statement.executeUpdate();
                                     if (rowsUpdated > 0) {
-                                        System.out.println("An existing user was updated successfully!");
+                                        actiontarget.setText("An existing user was updated successfully!");
                                     }
 
                                 } else {
@@ -204,6 +213,7 @@ public class GebruikerAanpassen {
                         }
 
                     } catch (SQLException ed) {
+                        Encrypt.CannotPerformOperationException ex;
                         System.err.println(ed);
                     }
 

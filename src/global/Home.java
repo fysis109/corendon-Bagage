@@ -82,6 +82,7 @@ public class Home {
                 grid.add(buttonKlantenAanpassen, 2,0);
                 grid.add(buttonStatistics,2,1);
                 grid.add(buttonVerwijderBagage,3,0);
+                grid.add(buttonBagageAanpassen, 3,1);
                 break;
             case "Manager":
                 grid.add(buttonStatistics, 0, 0);

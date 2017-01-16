@@ -233,6 +233,7 @@ public class KlantenAanpassen extends Application {
         stage.setWidth(primaryScreenBounds.getWidth());
         stage.setHeight(primaryScreenBounds.getHeight());
         
+        scene.getStylesheets().add("global/Style2.css");
         stage.setScene(scene);
         stage.show();
     }

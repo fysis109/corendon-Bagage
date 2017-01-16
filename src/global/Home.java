@@ -135,6 +135,7 @@ public class Home {
 
         Scene scene = new Scene(root, 1220, 920);
         primaryStage.setTitle("Home");
+        scene.getStylesheets().add("global/Style.css");
         primaryStage.setScene(scene);
         
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();

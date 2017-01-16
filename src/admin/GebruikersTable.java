@@ -225,6 +225,7 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         stage.setWidth(primaryScreenBounds.getWidth());
         stage.setHeight(primaryScreenBounds.getHeight());
         
+        scene.getStylesheets().add("global/Style2.css");
         stage.setScene(scene);
         stage.show();
         

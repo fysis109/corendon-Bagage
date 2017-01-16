@@ -64,11 +64,11 @@ public class Login extends Application {
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         //Plaatje linksonder
-        Image logo = new Image("file:src/images/corendon_logo.jpg");
+        Image logo = new Image("file:src/images/corendon_logo.png");
         ImageView imgpic = new ImageView();
         imgpic.setImage(logo);
-        imgpic.setFitHeight(50);
-        imgpic.setFitWidth(150);
+        imgpic.setFitHeight(150);
+        imgpic.setFitWidth(170);
         grid.add(imgpic, 0, 6);
 
         //Welkom + Letter type
@@ -181,6 +181,7 @@ public class Login extends Application {
         primaryStage.setTitle("Corendon Bagage");
         Scene scene = new Scene(grid, 1200, 920);
         primaryStage.setScene(scene);
+        scene.getStylesheets().add("global/Style2.css");
         primaryStage.show();
         
     }

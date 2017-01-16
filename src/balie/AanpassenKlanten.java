@@ -162,6 +162,7 @@ public class AanpassenKlanten {
 
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Register Customer");
+        scene.getStylesheets().add("global/Style2.css");
         primaryStage.setScene(scene);
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 

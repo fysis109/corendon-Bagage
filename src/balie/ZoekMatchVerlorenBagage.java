@@ -310,6 +310,7 @@ public class ZoekMatchVerlorenBagage {
         vbox.getChildren().addAll(matchesLabel, table, match);
 
         ((Group) scene.getRoot()).getChildren().addAll(vbox);
+        scene.getStylesheets().add("global/Style2.css");
         primaryStage.setScene(scene);
         primaryStage.show();
             

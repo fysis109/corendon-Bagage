@@ -110,6 +110,7 @@ public class VernietigBagage {
         Text text1 = new Text(countPermantlyVerwijderd+" Luggage has been permantly \ndeleted from the database ");
         dialogVbox.getChildren().addAll(text, text1, test);
         Scene dialogScene = new Scene(dialogVbox, 300, 200);
+        
         dialog.setScene(dialogScene);
         dialog.show();
 

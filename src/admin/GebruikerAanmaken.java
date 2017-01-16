@@ -227,6 +227,7 @@ public class GebruikerAanmaken {
         });
 
         Scene scene = new Scene(root, 1200, 920);
+        scene.getStylesheets().add("global/Style2.css");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

@@ -34,8 +34,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import global.Encrypt;
+import global.Home;
 import global.MenuB;
 import global.Mysql;
+import javafx.scene.input.MouseEvent;
 
 /**
  *
@@ -44,6 +46,7 @@ import global.Mysql;
 public class GebruikerAanmaken {
     
     Mysql mysql = new Mysql();
+    Home home = new Home();
      
     //private mqsql
     private final String USERNAME = mysql.getUsername();
@@ -62,6 +65,8 @@ public class GebruikerAanmaken {
         root.setTop(menuBar);
         
         primaryStage.setTitle("Gebruiker aanmaken");
+        Image logo = new Image("file:src/images/corendon_logo.jpg");
+        primaryStage.getIcons().add(logo);
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -156,13 +161,21 @@ public class GebruikerAanmaken {
         grid.add(actiontarget, 1, rij++);
 
         //Plaatje linksonder
-        Image logo = new Image("file:src/images/corendon_logo.jpg");
+        
         ImageView imgpic = new ImageView(logo);
         imgpic.setImage(logo);
         imgpic.setFitHeight(50);
         imgpic.setFitWidth(150);
         grid.add(imgpic, 1, rij++ , 1 , 1);
         
+        imgpic.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+                home.start(primaryStage);
+                System.out.println("Logo clicked");
+            }
+            
+        });
         Button btn5 = new Button();
         btn5.setGraphic(new ImageView(logo));
         
@@ -182,13 +195,16 @@ public class GebruikerAanmaken {
                 if(pwBox.getText().trim().isEmpty() || pwBox2.getText().trim().isEmpty() ||
                    userTextField.getText().trim().isEmpty()|| userTextField2.getText().trim().isEmpty()||
                    mailbox.getText().trim().isEmpty()||mailbox2.getText().trim().isEmpty()||gebruikersRol == null){
+                   actiontarget.setFill(Color.RED);
                    actiontarget.setText("Fields can't be left open");
+                   
                 } else {
                     System.out.print(username + "\n" + password);
                     actiontarget.setText("");
                     Connection conn;
                     if(!username.equals(username2) || !password.equals(password2) || !mail.equals(mail2)){
                         System.out.println("Username, password and/or mailadress are not the same");
+                        actiontarget.setFill(Color.RED);
                         actiontarget.setText("Username, password and/or\n mailadress are not the same");
                     }else{
                     
@@ -216,6 +232,7 @@ public class GebruikerAanmaken {
                                 actiontarget.setText("User has been added");
                                 System.out.println("Gebruiker toegevoegd");
                             }else{
+                                actiontarget.setFill(Color.RED);
                                 actiontarget.setText("Username already exists");
                                 System.out.println("bestaat al");}
                         } catch (SQLException ed) {

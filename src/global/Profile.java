@@ -133,23 +133,6 @@ public class Profile {
 
         Connection conn;
         
-        Label rol = new Label("Rol:");
-        grid.add(rol, 0, rij);
-        
-        final ComboBox rollen = new ComboBox();
-        rollen.getItems().addAll(
-        "Admin",
-        "Balie",
-        "Manager"
-                                   );
-        rollen.setPrefWidth(150);
-        grid.add(rollen , 1 , rij++);
-        
-        rollen.valueProperty().addListener(new ChangeListener<String>() {
-            @Override public void changed(ObservableValue ov, String t, String t1) {                
-                gebruikersRol = t1;                
-            }});
-        
         //De Sign in 
         Button btn = new Button("Adjust info");
         HBox hbBtn = new HBox(10);
@@ -187,10 +170,6 @@ public class Profile {
                 String emailcon = emailconText.getText();
                 String voornaam = voornaamTextField.getText();
                 String achternaam = lastnameTextField.getText();
-                if (gebruikersRol == null )
-                {
-                    actiontarget.setText("Role can't be left open");
-                } else {
                     Encrypt encrypt = new Encrypt();
                     try {
                         Connection conn;
@@ -205,7 +184,6 @@ public class Profile {
                         }
                         System.out.println(count);
                         ResultSet rs3 = stmt3.executeQuery("SELECT * FROM users WHERE username = '" + username + "'");
-                        if (count > 0) {
                             while (rs3.next()) {
                                 String pass = rs3.getString("wachtwoord");
                                 if (password.equals(password2) && email.equals(emailcon)) {
@@ -235,22 +213,21 @@ public class Profile {
                                     int rowsUpdated = statement.executeUpdate();
                                     if (rowsUpdated > 0) {
                                         actiontarget.setText("An existing user was updated successfully!");
+                                        actiontarget.setFill(Color.GREEN);
                                     }
 
                                 } else {
                                     actiontarget.setText("Password or emailaddress fields \nare not the same");
+                                    actiontarget.setFill(Color.RED);
                                 }
                             }
-                        } else {
-                            actiontarget.setText("Password or emailaddress fields \nare not the same");
-                        }
 
                     } catch (SQLException ed) {
                         Encrypt.CannotPerformOperationException ex;
                         System.err.println(ed);
                     }
 
-                }
+                
             }
         });
 

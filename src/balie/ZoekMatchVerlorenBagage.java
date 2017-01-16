@@ -108,6 +108,7 @@ public class ZoekMatchVerlorenBagage {
         if (!merk.equals("Other")) {
             zoekCriteria += " AND (merk = '" + merk + "' OR merk = 'Other' )";
         }
+        zoekCriteria += " AND bagagelabel IS null ";
         zoekCriteria += " AND (luchthavengevonden = '" + luchthavenAankomst + "' OR luchthavengevonden = '" + luchthavenVertrek + "' )";
         zoekCriteria += " AND status = 'notSolved'";
         zoekOpCriteria(zoekCriteria, zoekOpBagagelabel, bagagelabel);
@@ -407,13 +408,13 @@ public class ZoekMatchVerlorenBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 175, 650 );
-            contentStream.drawString( "Date: " );
+            contentStream.drawString( "Date: ");
             contentStream.endText();
             //luchthaven
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 150, 635 );
-            contentStream.drawString( "Airport: " );
+            contentStream.drawString( "Airport: ");
             contentStream.endText();
             
             //begin reiziger informatie

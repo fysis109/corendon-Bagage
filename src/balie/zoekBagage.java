@@ -332,17 +332,16 @@ public class zoekBagage {
             st.execute(updateStatusVerl);
             st.execute(updateStatusGev);
             
-            /* Jiorgos hier een mailtje naar de klant dat er een match is.
-                en pdf voor vliegveld om terug te sturen
-            */
-       Statement kofferinfo = conn.createStatement();
+           
+            Statement kofferinfo = conn.createStatement();
             String insertString2 = "SELECT * FROM verlorenbagage v left join customers c ON c.customersID = v.customersID left join afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID =" + verlorenKofferID ;
+            System.out.println(insertString2);
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
                     this.Bagagelabel = rs.getString("bagagelabel");
                     this.Kleur = rs.getString("kleur");
                     this.Luchthavengevonden = rs.getString("luchthavenaankomst");
-                    this.Bijzonderhede = rs.getString("bijzonderhede");
+                    this.Bijzonderhede = rs.getString("bijzonderheden");
                     this.Merk = rs.getString("merk");
                     this.Softhard = rs.getString("softhard");
                     this.Voornaam = rs.getString("voornaam");
@@ -352,7 +351,7 @@ public class zoekBagage {
                     this.Email = rs.getString("email");
                     this.Plaats = rs.getString("Plaats");
                     this.Land = rs.getString("Land");
-                    this.Huisnr = rs.getString("Huisnumer");
+                    this.Huisnr = rs.getString("Huisnummer");
                     this.Postcode = rs.getString("Postcode");
                     this.Straat = rs.getString("Straat");
                     }
@@ -360,9 +359,7 @@ public class zoekBagage {
            
 
                  
-        }catch (SQLException ed) {
-                  
-        }
+        
         // pdf verloren kofffer match
            // Create a new empty document
         PDDocument document = new PDDocument();
@@ -371,7 +368,6 @@ public class zoekBagage {
         PDPage blankPage = new PDPage();
         document.addPage( blankPage );
  
-        try {
             PDFont font = PDType1Font.HELVETICA_BOLD;
             PDFont font2 = PDType1Font.TIMES_ROMAN;
             // Create an instance of SimpleDateFormat used for formatting 
@@ -622,6 +618,8 @@ public class zoekBagage {
             document.close();
         } catch (IOException ex) {
             Logger.getLogger(PDFregister.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(zoekBagage.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

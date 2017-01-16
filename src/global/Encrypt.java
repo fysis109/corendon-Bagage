@@ -50,13 +50,13 @@ public class Encrypt {
     public static final int SALT_INDEX = 3;
     public static final int PBKDF2_INDEX = 4;
 
-    public static String createHash(String password)
+    public String createHash(String password)
         throws CannotPerformOperationException
     {
         return createHash(password.toCharArray());
     }
 
-    public static String createHash(char[] password)
+    public String createHash(char[] password)
         throws CannotPerformOperationException
     {
         // Generate a random salt
@@ -79,7 +79,7 @@ public class Encrypt {
         return parts;
     }
 
-    public static boolean verifyPassword(String password, String correctHash)
+    public boolean verifyPassword(String password, String correctHash)
         throws CannotPerformOperationException, InvalidHashException
     {
         return verifyPassword(password.toCharArray(), correctHash);

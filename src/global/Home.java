@@ -65,7 +65,7 @@ public class Home {
         buttonKlantenAanpassen.setMinWidth(175);
         Button buttonStatistics = new Button("Statistics");
         buttonStatistics.setMinWidth(175);
-        Button buttonVerwijderBagage = new Button("Delete luggage");
+        Button buttonVerwijderBagage = new Button("Update destroyed luggage");
         buttonVerwijderBagage.setMinWidth(175);
         Button buttonBagageAanpassen = new Button("Adjust lost luggage");
         buttonBagageAanpassen.setMinWidth(175);

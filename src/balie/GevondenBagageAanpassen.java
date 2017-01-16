@@ -222,10 +222,17 @@ public class GevondenBagageAanpassen {
         pasAan.setOnAction((ActionEvent e) -> {
             if(table.getSelectionModel().isEmpty() == false){
                 Table selected = table.getSelectionModel().getSelectedItem();
+                if(selected.getBagagelabel() == null){
+                    pasBagageAan(primaryStage, selected.getVerlorenkofferID(), null, 
+                        selected.getKleur(), selected.getDikte(), selected.getLengte(), selected.getBreedte(),
+                        selected.getLuchthavenvertrokken(), selected.getBijzonderheden(), selected.getMerk(), selected.getSofthard()
+                        );
+                }else{
                 pasBagageAan(primaryStage, selected.getVerlorenkofferID(), selected.getBagagelabel(), 
                         selected.getKleur(), selected.getDikte(), selected.getLengte(), selected.getBreedte(),
                         selected.getLuchthavenvertrokken(), selected.getBijzonderheden(), selected.getMerk(), selected.getSofthard()
                         );
+                }
             }
         });
         
@@ -430,9 +437,11 @@ public class GevondenBagageAanpassen {
             if(hardSoftEntry == null){hardSoftEntry = softhard;}
             
             try{
+                
+                
                 Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                 Statement stmt = (Statement) conn.createStatement();
-                if(!bagageLabel.equals(bagageLabelEntry.getText()) && !bagageLabelEntry.getText().trim().isEmpty()){
+                if(!bagageLabelEntry.getText().trim().isEmpty() && !bagageLabel.equals(bagageLabelEntry.getText().trim())){
                     ResultSet bagagelabelExistsCheck = stmt.executeQuery("SELECT COUNT(*) AS total FROM gevondenbagage WHERE bagagelabel = '"+bagageLabelEntry.getText().trim()+"'");
                     int count = 0;
                     while(bagagelabelExistsCheck.next()){

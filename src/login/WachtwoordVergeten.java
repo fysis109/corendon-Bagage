@@ -1,7 +1,7 @@
 package login;
 
-import global.Mysql;
 import global.Encrypt;
+import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -22,12 +22,19 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 
 
@@ -42,8 +49,8 @@ public class WachtwoordVergeten {
     private final String CONN_STRING = mysql.getUrlmysql();
 
     //Dit is om in te loggen op de mail
-    private static final String EMAIL_USER_NAME = "is1092016";
-    private static final String EMAIL_PASSWORD = "Pulsar11";
+    public static final String EMAIL_USER_NAME = "is1092016";
+    public static final String EMAIL_PASSWORD = "Pulsar11";
 
     public void start(Stage primaryStage) {
 
@@ -146,7 +153,7 @@ public class WachtwoordVergeten {
                             String subject = "Corendon password reset.";
                             String body = "Hello, here is your new password: " + randomGetal;
                             //send mail
-                            sendFromGMail(from, pass, to, subject, body);
+                            sendEmail(from, pass, emailadress, subject, body, null);
                         } else {
                             actiontarget.setText("If you entered the right\nusername and email an email\nhas been sent.");
                         }
@@ -167,36 +174,57 @@ public class WachtwoordVergeten {
         primaryStage.show();
     }
 
-    private static void sendFromGMail(String from, String pass, String[] to, String subject, String body) {
-               
-        Properties props = System.getProperties();
-        String host = "smtp.gmail.com";
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.user", from);
-        props.put("mail.smtp.password", pass);
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.auth", "true");
+    
+    
+    public void sendEmail(String username, String password, String to, String subject, String body, String filePath){
+    
 
-        Session session = Session.getDefaultInstance(props);
-        MimeMessage message = new MimeMessage(session);
-        try {
-            message.setFrom(new InternetAddress(from));
-            InternetAddress[] toAddress = new InternetAddress[to.length];
-            for (int i = 0; i < to.length; i++) {
-                toAddress[i] = new InternetAddress(to[i]);
-            }
-            for (int i = 0; i < toAddress.length; i++) {
-                message.addRecipient(Message.RecipientType.TO, toAddress[i]);
-            }
-            message.setSubject(subject);
-            message.setText(body);
-            Transport transport = session.getTransport("smtp");
-            transport.connect(host, from, pass);
-            transport.sendMessage(message, message.getAllRecipients());
-            transport.close();
+    Properties props = new Properties();
+    props.put("mail.smtp.auth", true);
+    props.put("mail.smtp.starttls.enable", true);
+    props.put("mail.smtp.host", "smtp.gmail.com");
+    props.put("mail.smtp.port", "587");
+
+    Session session = Session.getInstance(props,
+            new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password);
+                }
+            });
+
+    try {
+
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(username));
+        message.setRecipients(Message.RecipientType.TO,
+                InternetAddress.parse(to));
+        message.setSubject(subject);
+        message.setText(body);
+        
+        if(filePath != null){
+            MimeBodyPart messageBodyPart = new MimeBodyPart();
+
+            Multipart multipart = new MimeMultipart();
+
+            messageBodyPart = new MimeBodyPart();
+            String fileName = "DHL form.pdf";
+           
+            
+            DataSource source = new FileDataSource(filePath);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(fileName);
+            multipart.addBodyPart(messageBodyPart);
+
+            message.setContent(multipart);
         }
-            catch (MessagingException me) {
-            }
+        Transport.send(message);
+        
+
+    } catch (MessagingException e) {
+        e.printStackTrace();
     }
-}
+  }
+    }
+    
+    
+

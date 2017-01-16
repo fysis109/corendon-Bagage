@@ -8,7 +8,11 @@ package balie;
 import global.Home;
 import global.MenuB;
 import global.Mysql;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -41,6 +45,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
+import login.WachtwoordVergeten;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -57,13 +64,9 @@ public class ZoekMatchVerlorenBagage {
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
     // Bagage info
-    private String Bagagelabel;
-    private String Kleur;
-    private String Bijzonderhede;
-    private String Merk;
-    private String Softhard;
+    
     private String Luchthavenaankomst;
-    private String Luchthavengevonden;
+    
     //klanten info
     private String Voornaam;
     private String Tussenvoegsel;
@@ -331,11 +334,12 @@ public class ZoekMatchVerlorenBagage {
             st.execute(updateStatusVerl);
             st.execute(updateStatusGev);
             
-            
+            String bagagelabelVerloren = "";
             Statement kofferinfo = conn.createStatement();
             String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID = '" +verlorenKofferID +"'";
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
+                    bagagelabelVerloren = rs.getString("bagagelabel");
                     this.Voornaam = rs.getString("voornaam");
                     this.Tussenvoegsel = rs.getString("tussenvoegsel");
                     this.Achternaam = rs.getString("achternaam");
@@ -347,7 +351,7 @@ public class ZoekMatchVerlorenBagage {
                     this.Postcode = rs.getString("Postcode");
                     this.Straat = rs.getString("Straat"); 
                     this.Luchthavenaankomst = rs.getString("luchthavenaankomst");
-                    }
+                }
             
             
            
@@ -443,7 +447,7 @@ public class ZoekMatchVerlorenBagage {
             contentStream.beginText();
             contentStream.setFont( font, 12 );
             contentStream.moveTextPositionByAmount( 100, 590 );
-            contentStream.drawString( "Traveler information: " );
+            contentStream.drawString( "Customer information: " );
             contentStream.endText();
             //Naam
             contentStream.beginText();
@@ -479,7 +483,7 @@ public class ZoekMatchVerlorenBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 500 );
-            contentStream.drawString( "Telephone: " + Telefoonnummer );
+            contentStream.drawString( "Phonenumber: " + Telefoonnummer );
             contentStream.endText();
             //E-mail
             contentStream.beginText();
@@ -539,15 +543,60 @@ public class ZoekMatchVerlorenBagage {
             
             // Make sure that the content stream is closed:
             contentStream.close();
+            
+            JFileChooser fr = new JFileChooser();
+            FileSystemView fw = fr.getFileSystemView();
+            System.out.println(fw.getDefaultDirectory());
 
-            document.save("Match luggage " + gevondenKofferID + "matches with "+ verlorenKofferID+ ".pdf");
+                 
+            Path test = Paths.get(fw.getDefaultDirectory() + "\\pdfopslaan" );
+            if(!Files.exists(test)){
+               File file = new File(fw.getDefaultDirectory() + "\\pdfopslaan");
+               file.mkdir();
+            }
+            
+            
+            
+            String opslaanAls = fw.getDefaultDirectory() + "\\pdfopslaan\\Match luggage " + gevondenKofferID + "matches with "+ verlorenKofferID+ ".pdf";
+            document.save(opslaanAls);
             document.close();
+            
+            
+            
+            String body = "Dear Sir/Madam, \nYour luggage may have been found and will be sent to: "+stuurNaarLuchthaven+"\n Luggage label: "
+                    + bagagelabelVerloren + "\nPlease visit the customer service of Corendon at "+ stuurNaarLuchthaven + " to verify it's your luggage \n\n"
+                    + "Yours faithfully \nCorendon";
+            WachtwoordVergeten sendMail = new WachtwoordVergeten();
+            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, Email, "Luggage might be found", body, null);
+            
+            String luchthavenEmail = "";
+            if(luchthavenGevonden.equals("Schiphol, Amsterdam")){
+                //luchthavenEmail = "schiphol@corendonbalie.com";
+                luchthavenEmail = "tim-vlaar@hotmail.com";
+            }if(luchthavenGevonden.equals("El prat, Barcelona")){
+                //luchthavenEmail = "elprat@corendonbalie.com";
+                luchthavenEmail = "tim-vlaar@hotmail.com";
+            }if(luchthavenGevonden.equals("Atatürk, Istanbul")){
+                //luchthavenEmail = "atatürk@corendonbalie.com";
+                luchthavenEmail = "tim-vlaar@hotmail.com";
+            }
+            
+            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, Email, "Send luggage back", "Send this back", opslaanAls);
+
+            
+            
+            
         } catch (IOException ex) {
             System.out.println(ex);
         } catch (SQLException ex) {
             System.out.println(ex);
         }
+        
+        
     }
+    
+    
+    
     
      
     private TableView<Table> table = new TableView<>();

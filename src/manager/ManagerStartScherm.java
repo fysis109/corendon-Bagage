@@ -22,6 +22,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import global.MenuB;
 import global.Mysql;
+import javafx.scene.paint.Color;
 
 public class ManagerStartScherm extends Application{
     
@@ -176,6 +177,11 @@ public class ManagerStartScherm extends Application{
         Button bagagewWtIsZoekGeraakt = new Button("Show");
         grid.add(bagagewWtIsZoekGeraakt, 12, 5); 
         
+        //Text die een foutmelding geeft
+        final Text actiontarget = new Text();
+        actiontarget.setFill(Color.FIREBRICK);
+        grid.add(actiontarget, 11, 6);
+        
         //eventhandlers voor de begindatum
         beginJaar.setOnAction((event) -> {
             beginJaarString = (String) beginJaar.getSelectionModel().getSelectedItem();
@@ -276,9 +282,15 @@ public class ManagerStartScherm extends Application{
             }
         });
 
-        /** =========== lineChar =========== */
+        /* =========== lineChar =========== */
         bagagewWtIsZoekGeraakt.setOnAction((ActionEvent e) -> {
-            lineChar.start(primaryStage, beginJaarString, beginMaandString, eindJaarString, eindMaandString, airportList);
+            
+            //kijken hoeveel luchthavens geselecteerd zijn
+            if(airportList.size() == 1){
+                lineChar.start(primaryStage, beginJaarString, beginMaandString, eindJaarString, eindMaandString, airportList);
+            } else {
+                actiontarget.setText("You can't select more dan one airport.");
+            }
         });
         
         // deze aanpassen van grid naar root..

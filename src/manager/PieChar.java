@@ -174,11 +174,12 @@ public class PieChar extends Application {
                 }
 
                 //piechart
+                //piechart
                 final PieChart chart = new PieChart(pieChartData);
-                chart.setTitle("Bagage that not found back.");
-
+                chart.setTitle("Not found bagage back");
+                root.setCenter(chart);
                 //maak het beschikbaar in scene
-                ((Group) scene.getRoot()).getChildren().add(chart);
+                
                 primaryStage.setScene(scene);
                 primaryStage.show();
             }
@@ -225,9 +226,9 @@ public class PieChar extends Application {
                 //piechart
                 final PieChart chart = new PieChart(pieChartData);
                 chart.setTitle("Bagage that not found back.");
-
+                root.setCenter(chart);
                 //maak het beschikbaar in scene
-                ((Group) scene.getRoot()).getChildren().add(chart);
+                
                 primaryStage.setScene(scene);
                 primaryStage.show();
 

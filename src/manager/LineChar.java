@@ -132,7 +132,6 @@ public class LineChar extends Application {
         }
 
         //scence
-        //Scene scene = new Scene(new Group());
         primaryStage.setTitle("");
         primaryStage.setWidth(1200);
         primaryStage.setHeight(920);

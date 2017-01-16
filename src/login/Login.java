@@ -48,6 +48,10 @@ public class Login extends Application {
     private final String CONN_STRING = mysql.getUrlmysql();
     //gebruikersrol die wordt geset op het moment van inloggen
     public static String rol;
+    public static String userName;
+    public static String voornaam;
+    public static String achternaam;
+    public static String email;
 
     @Override
     public void start(Stage primaryStage) {
@@ -73,8 +77,8 @@ public class Login extends Application {
         grid.add(scenetitle, 0, 0, 2, 1);
 
         //Username text
-        Label userName = new Label("Username:");
-        grid.add(userName, 0, 1);
+        Label userNameLabel = new Label("Username:");
+        grid.add(userNameLabel, 0, 1);
 
         //Text veld na Username
         TextField userTextField = new TextField();
@@ -147,11 +151,16 @@ public class Login extends Application {
                         while (rs.next()) {
                             String pass = rs.getString("wachtwoord");
                             rol = rs.getString("rol");
+                            userName = rs.getString("username");
+                            voornaam = rs.getString("voornaam");
+                            achternaam = rs.getString("achternaam");
+                            email = rs.getString("email");
+                            
                             Encrypt encrypt = new Encrypt();
                             if (encrypt.verifyPassword(password, pass)) {
                                 home.start(primaryStage);
                             } else {
-                                actiontarget.setText("Wrong password or uername try again!");
+                                actiontarget.setText("Wrong password or username try again!");
                             }
                         }
                     } else {

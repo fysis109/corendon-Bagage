@@ -10,11 +10,15 @@ import java.io.File;
 import java.io.IOException;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.control.CheckMenuItem;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import login.Login;
 
@@ -29,6 +33,7 @@ public class MenuB {
     MenuBar menuBar = new MenuBar();
     Home home = new Home();
     Login login = new Login();
+    Profile profiel = new Profile();
         
     // File menu - new, save, exit
     Menu homeB = new Menu("Options");
@@ -37,6 +42,13 @@ public class MenuB {
     MenuItem logout = new MenuItem("Logout");
     MenuItem exit = new MenuItem("Exit application");
     
+    //Plaatje linksonder
+        Image logo = new Image("file:src/images/corendon_logo.jpg");
+        ImageView imgpic = new ImageView();
+        imgpic.setImage(logo);
+        imgpic.setFitHeight(50);
+        imgpic.setFitWidth(150);
+
     exit.setOnAction(actionEvent -> Platform.exit());
     homePage.setOnAction((ActionEvent e) -> {
         home.start(primaryStage);
@@ -49,9 +61,18 @@ public class MenuB {
         new SeparatorMenuItem(), exit);
 
     Menu webMenu = new Menu("Help");
-    MenuItem userManual = new CheckMenuItem("Open user manual");
+    MenuItem userManual = new MenuItem("Open user manual");
     webMenu.getItems().add(userManual);
     
+    Label menuLabel = new Label("Profile");
+    Menu profile = new Menu();
+    profile.setGraphic(menuLabel);
+    menuLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event){
+          profiel.star(primaryStage);  
+        }
+    });
     userManual.setOnAction((ActionEvent e) -> {
         if (Desktop.isDesktopSupported()) {
             try {
@@ -63,7 +84,8 @@ public class MenuB {
         }
     });
     
-    menuBar.getMenus().addAll(homeB, webMenu);
+    
+    menuBar.getMenus().addAll(homeB, webMenu, profile);
         
     return menuBar;
     

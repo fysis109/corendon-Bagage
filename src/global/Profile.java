@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package admin;
+package global;
 
-import global.Encrypt;
+import admin.GebruikerAanpassen;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -35,18 +37,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import global.MenuB;
-import global.Mysql;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Joljin Verwest
  */
-public class GebruikerAanpassen {
-
+public class Profile {
     Mysql mysql = new Mysql();
+    
 
     //private mqsql
     private final String USERNAME = mysql.getUsername();
@@ -54,7 +52,7 @@ public class GebruikerAanpassen {
     private final String CONN_STRING = mysql.getUrlmysql();
     String gebruikersRol = null;
     //test
-    public void star(Stage primaryStage, String userName, String wachtwoord, String role, String mail, String userID) {
+    public void star(Stage primaryStage) {
         
          // deze vijf regels om een homeknop aan te roepen
         MenuB menuB = new MenuB();
@@ -63,7 +61,7 @@ public class GebruikerAanpassen {
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
 
-        primaryStage.setTitle("Adjust users");
+        primaryStage.setTitle("Profile");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -74,18 +72,33 @@ public class GebruikerAanpassen {
         
 
         //Welkom + Letter type
-        Text scenetitle = new Text("Adjust user");
+        Text scenetitle = new Text("Adjust your information");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 10, 1);
 
         int rij = 1;
+        
+        Label voornaam = new Label("First name:");
+        grid.add(voornaam, 0, rij);
+
+        //Text veld na Username
+        TextField voornaamTextField = new TextField(login.Login.voornaam);
+        grid.add(voornaamTextField, 1, rij++);
+        
+        Label lastname = new Label("Last name:");
+        grid.add(lastname, 0, rij);
+
+        //Text veld na Username
+        TextField lastnameTextField = new TextField(login.Login.achternaam);
+        grid.add(lastnameTextField, 1, rij++);
+        
         //Username text
         Label username = new Label("Username:");
         grid.add(username, 0, rij);
 
         //Text veld na Username
-        TextField userTextField = new TextField(userName);
-        grid.add(userTextField, 1, rij++);
+        TextField usernameTextField = new TextField(login.Login.userName);
+        grid.add(usernameTextField, 1, rij++);
 
         //Password: text
         Label pw = new Label("New password:");
@@ -107,7 +120,7 @@ public class GebruikerAanpassen {
         grid.add(emailLabel, 0, rij);
 
         //text veld na password + bullets
-        TextField emailText = new TextField(mail);
+        TextField emailText = new TextField(login.Login.email);
         grid.add(emailText, 1, rij++);
 
         //newPassword: text
@@ -115,7 +128,7 @@ public class GebruikerAanpassen {
         grid.add(emailconLabel, 0, rij);
 
         //text veld na newpassword + bullets
-        TextField emailconText = new TextField(mail);
+        TextField emailconText = new TextField(login.Login.email);
         grid.add(emailconText, 1, rij++);
 
         Connection conn;
@@ -135,25 +148,23 @@ public class GebruikerAanpassen {
         rollen.valueProperty().addListener(new ChangeListener<String>() {
             @Override public void changed(ObservableValue ov, String t, String t1) {                
                 gebruikersRol = t1;                
-            }}); 
+            }});
         
-        
-        
+        //De Sign in 
+        Button btn = new Button("Adjust info");
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(btn);
+        grid.add(hbBtn, 1, rij++);
+
         //Plaatje linksonder
         Image logo = new Image("file:src/images/corendon_logo.jpg");
         ImageView imgpic = new ImageView();
         imgpic.setImage(logo);
         imgpic.setFitHeight(50);
         imgpic.setFitWidth(150);
-        grid.add(imgpic, 0, 6);
+        grid.add(imgpic, 0, rij);
         
-        //De Sign in 
-        Button btn = new Button("Adjust user");
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, rij++);
-
         //button event maken
         final Text actiontarget = new Text();
         actiontarget.setFill(Color.FIREBRICK);
@@ -169,11 +180,13 @@ public class GebruikerAanpassen {
             @Override
             public void handle(ActionEvent e) {
                 System.out.println(gebruikersRol);
-                String username = userTextField.getText();
+                String username = usernameTextField.getText();
                 String password = pwBox.getText();
                 String password2 = pwBox2.getText();
                 String email = emailText.getText();
                 String emailcon = emailconText.getText();
+                String voornaam = voornaamTextField.getText();
+                String achternaam = lastnameTextField.getText();
                 if (gebruikersRol == null )
                 {
                     actiontarget.setText("Role can't be left open");
@@ -209,13 +222,15 @@ public class GebruikerAanpassen {
                                     } catch (Encrypt.CannotPerformOperationException ex) {
                                         Logger.getLogger(GebruikerAanpassen.class.getName()).log(Level.SEVERE, null, ex);
                                     }
-                                    String sql = "UPDATE users SET username=?, wachtwoord=?, email=?, rol=? WHERE userID=?";
+                                    String sql = "UPDATE users SET username=?, wachtwoord=?, email=?, voornaam=?, achternaam=?"
+                                            + " WHERE userID=?";
                                     PreparedStatement statement = conn.prepareStatement(sql);
                                     statement.setString(1, username);
                                     statement.setString(2, password2);
                                     statement.setString(3, emailcon);
-                                    statement.setString(4, gebruikersRol);
-                                    statement.setInt(5, userID);
+                                    statement.setString(4, voornaam);
+                                    statement.setString(5, achternaam);
+                                    statement.setInt(6, userID);
                                     
                                     int rowsUpdated = statement.executeUpdate();
                                     if (rowsUpdated > 0) {
@@ -247,5 +262,4 @@ public class GebruikerAanpassen {
 
     public static void main(String[] args) {
     }
-
 }

@@ -25,6 +25,7 @@ public class PieChar extends Application {
     
     //mysql connectie
     Mysql mysql = new Mysql();  
+    MenuB menubar = new MenuB();
     
     //private mqsql
     private final String USERNAME = mysql.getUsername();
@@ -62,7 +63,7 @@ public class PieChar extends Application {
         root.setCenter(grid);
         
         //scence
-        Scene scene = new Scene(new Group());
+        Scene scene = new Scene(root);
         primaryStage.setTitle("");
         primaryStage.setWidth(1200);
         primaryStage.setHeight(920);
@@ -124,9 +125,9 @@ public class PieChar extends Application {
                 //piechart
                 final PieChart chart = new PieChart(pieChartData);
                 chart.setTitle("Found bagage back");
-
+                root.setCenter(chart);
                 //maak het beschikbaar in scene
-                ((Group) scene.getRoot()).getChildren().add(chart);
+                
                 primaryStage.setScene(scene);
                 primaryStage.show();
             }

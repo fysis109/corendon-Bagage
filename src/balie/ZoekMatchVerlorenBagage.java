@@ -18,8 +18,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -43,7 +41,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import login.PDFregister;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -142,9 +139,6 @@ public class ZoekMatchVerlorenBagage {
         }
         laatResultatenZien(kofferIdResultaten);
     }
-    
-    private TableView<Table> table = new TableView<>();
-    private String kofferid, dlabel, kleur, dikte, lengte, breedte, luchthavengevonden, datum, softhard, bijzonderhede, merk;
     
     private void laatResultatenZien(ArrayList<Integer> kofferIdResultaten) {
         MenuB menuB = new MenuB();
@@ -335,20 +329,12 @@ public class ZoekMatchVerlorenBagage {
             String updateStatusGev = "UPDATE gevondenbagage SET status = 'pending' WHERE gevondenkofferID = '"+gevondenKofferID+"'";
             st.execute(updateStatusVerl);
             st.execute(updateStatusGev);
-            /*
-             * JIORGOS mail naar klant dat koffer is gevonden en dat ie wordt opgestuurd naar zijn of haar afleveradres, dat afleveradres er dus ook even bij zetten
-             * en pdf voor vliegtuig welk bagage stuk waar heen moet
-            */
+            
             
             Statement kofferinfo = conn.createStatement();
             String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID = '" +verlorenKofferID +"'";
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
-                    this.Bagagelabel = rs.getString("bagagelabel");
-                    this.Kleur = rs.getString("kleur");
-                    this.Bijzonderhede = rs.getString("bijzonderheden");
-                    this.Merk = rs.getString("merk");
-                    this.Softhard = rs.getString("softhard");
                     this.Voornaam = rs.getString("voornaam");
                     this.Tussenvoegsel = rs.getString("tussenvoegsel");
                     this.Achternaam = rs.getString("achternaam");
@@ -362,23 +348,54 @@ public class ZoekMatchVerlorenBagage {
                     this.Luchthavenaankomst = rs.getString("luchthavenaankomst");
                     }
             
+            
+           
+            String bagageLabelGevonden = "";
+            String kleurGevonden = "";
+            String merkGevonden = "";
+            String hoogteGevonden = "";
+            String lengteGevonden = "";
+            String breedteGevonden = "";
+            String luchthavenGevonden = "";
+            String softHardGevonden = "";
+            String bijzonderhedenGevonden = "";
+            
+            
             Statement kofferinfo2 = conn.createStatement();
-            String insertString3 = "select * from gevondenbagage where gevondenkofferID =" + gevondenKofferID;
+            String insertString3 = "select * from gevondenbagage where gevondenkofferID = '" + gevondenKofferID+ "'";
             ResultSet rs1 = kofferinfo.executeQuery(insertString3);
             while (rs1.next()) {
-               this.Luchthavengevonden = rs1.getString("luchthavengevonden");
-                    }
-           
-
-                 
+                bagageLabelGevonden = rs1.getString("bagagelabel");
+                kleurGevonden = rs1.getString("kleur");
+                merkGevonden =rs1.getString("merk");
+                hoogteGevonden = rs1.getString("dikte");
+                lengteGevonden = rs1.getString("lengte");
+                breedteGevonden = rs1.getString("breedte");
+                softHardGevonden = rs1.getString("softhard");
+                bijzonderhedenGevonden = rs1.getString("bijzonderhede");
+                luchthavenGevonden = rs1.getString("luchthavengevonden");
+            }
+            
+            String stuurNaarLuchthaven = "";
+            if(Land.equals("Netherlands")){
+                stuurNaarLuchthaven = "Schiphol, Amsterdam";
+            }if(Land.equals("Spain")){
+                stuurNaarLuchthaven = "El prat, Barcelona";
+            }if(Land.equals("Turkey")){
+                stuurNaarLuchthaven = "Atatürk, Istanbul";
+            }
+            
+            if(bagageLabelGevonden == null){
+                bagageLabelGevonden = "Doesn't exist";
+            }
      
-        // pdf verloren kofffer match
-           // Create a new empty document
-        PDDocument document = new PDDocument();
+            // pdf verloren kofffer match
+               // Create a new empty document
+            PDDocument document = new PDDocument();
 
-        // Create a new blank page and add it to the document
-        PDPage blankPage = new PDPage();
-        document.addPage( blankPage );
+            // Create a new blank page and add it to the document
+            PDPage blankPage = new PDPage();
+            document.addPage( blankPage );
        
          
         
@@ -401,22 +418,26 @@ public class ZoekMatchVerlorenBagage {
             contentStream.beginText();
             contentStream.setFont( font, 15 );
             contentStream.moveTextPositionByAmount( 75, 700 );
-            contentStream.drawString( "Match found form" );
+            contentStream.drawString( "DHL shipment form" );
             contentStream.endText();
-            
             //Datum 
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 175, 650 );
-            contentStream.drawString( "Date: ");
+            contentStream.moveTextPositionByAmount( 180, 650 );
+            contentStream.drawString( "Date: " + reportDate);
             contentStream.endText();
-            //luchthaven
+            //luchthaven waar bagage heen moet
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 150, 635 );
-            contentStream.drawString( "Airport: ");
+            contentStream.moveTextPositionByAmount( 180, 635 );
+            contentStream.drawString( "Send to airport: "  + stuurNaarLuchthaven );
             contentStream.endText();
-            
+            //Luchthaven waar het gevonden is
+            contentStream.beginText();
+            contentStream.setFont( font2, 12 );
+            contentStream.moveTextPositionByAmount( 180, 620 );
+            contentStream.drawString( "From airport: "  + luchthavenGevonden );
+            contentStream.endText();
             //begin reiziger informatie
             contentStream.beginText();
             contentStream.setFont( font, 12 );
@@ -427,43 +448,43 @@ public class ZoekMatchVerlorenBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 575 );
-            contentStream.drawString( "Name: " );
+            contentStream.drawString( "Name: " + Voornaam + " " + Tussenvoegsel + " " + Achternaam);
             contentStream.endText();
             //Adres
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 560 );
-            contentStream.drawString( "Address: " );
+            contentStream.drawString( "Address: " + Straat + " " + Huisnr );
             contentStream.endText();
             //Woonplaats
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 152, 545 );
-            contentStream.drawString( "Home town: " );
+            contentStream.moveTextPositionByAmount( 180, 545 );
+            contentStream.drawString( "Home town: " + Plaats );
             contentStream.endText();
             //Postcode
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 165, 530 );
-            contentStream.drawString( "Zip code: " );
+            contentStream.moveTextPositionByAmount( 180, 530 );
+            contentStream.drawString( "Zip code: " + Postcode );
             contentStream.endText();
             //Land
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 185, 515 );
-            contentStream.drawString( "Country: " );
+            contentStream.moveTextPositionByAmount( 180, 515 );
+            contentStream.drawString( "Country: " + Land);
             contentStream.endText();
             //Telefoon
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 167, 500 );
-            contentStream.drawString( "Telephone: " );
+            contentStream.moveTextPositionByAmount( 180, 500 );
+            contentStream.drawString( "Telephone: " + Telefoonnummer );
             contentStream.endText();
             //E-mail
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 178, 485 );
-            contentStream.drawString( "E-mail: " );
+            contentStream.moveTextPositionByAmount( 180, 485 );
+            contentStream.drawString( "E-mail: " + Email);
             contentStream.endText();
             
             //bagagelabel informatie
@@ -475,170 +496,62 @@ public class ZoekMatchVerlorenBagage {
             //Label nummer
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 140, 440 );
-            contentStream.drawString( "Label number: " );
-            contentStream.endText();
-            //Bestemming
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 150, 425 );
-            contentStream.drawString( "Destination: " );
-            contentStream.endText();
-            
+            contentStream.moveTextPositionByAmount( 180, 440 );
+            contentStream.drawString( "Label number: " + bagageLabelGevonden);
+            contentStream.endText(); 
             //Bagage informatie
             contentStream.beginText();
             contentStream.setFont( font, 12 );
-            contentStream.moveTextPositionByAmount( 100, 380 );
+            contentStream.moveTextPositionByAmount( 100, 410 );
             contentStream.drawString( "Luggage information: " );
             contentStream.endText();
             //Type
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 187, 365 );
-            contentStream.drawString( "Type: " );
+            contentStream.moveTextPositionByAmount( 180, 395 );
+            contentStream.drawString( "Type: " + softHardGevonden);
             contentStream.endText();
             //Merk
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 185, 350);
-            contentStream.drawString( "Brand: " );
+            contentStream.moveTextPositionByAmount( 180, 380);
+            contentStream.drawString( "Brand: " + merkGevonden);
             contentStream.endText();
             //Kleur
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 184, 335 );
-            contentStream.drawString( "Colour: " );
+            contentStream.moveTextPositionByAmount( 180, 365 );
+            contentStream.drawString( "Colour: " + kleurGevonden);
             contentStream.endText();
             //Kenmerken
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 155, 320 );
-            contentStream.drawString( "Brand: " );
+            contentStream.moveTextPositionByAmount( 180, 350 );
+            contentStream.drawString( "Dimensions (height x width x depth): "+ hoogteGevonden + ", "+ lengteGevonden +", " + breedteGevonden);
+            contentStream.endText();
+            //bijzonderheden
+            contentStream.beginText();
+            contentStream.setFont( font2, 12 );
+            contentStream.moveTextPositionByAmount( 180, 335 );
+            contentStream.drawString( "Characteristics: "+bijzonderhedenGevonden);
             contentStream.endText();
             
-            //handtekening reiziger
-            contentStream.beginText();
-            contentStream.setFont( font, 12 );
-            contentStream.moveTextPositionByAmount( 100, 220 );
-            contentStream.drawString( "Autograph traveler: " );
-            contentStream.endText();
-            //Handtekening klantenservice
-            contentStream.beginText();
-            contentStream.setFont( font, 12 );
-            contentStream.moveTextPositionByAmount( 100, 140 );
-            contentStream.drawString( "Autograph customer service: " );
-            contentStream.endText();
-            
-            //input Datum
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 650 );
-            contentStream.drawString( reportDate );
-            contentStream.endText();
-            //input luchthaven
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 635 );
-            contentStream.drawString( this.luchthavengevonden );
-            contentStream.endText();
-            //input Naam
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 575 );
-            contentStream.drawString( this.Voornaam + " " + this.Tussenvoegsel + " " + this.Achternaam );
-            contentStream.endText();
-            //input Adres
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 560 );
-            contentStream.drawString( this.Straat + " " + this.Huisnr );
-            contentStream.endText();
-            //input Woonplaats
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 545 );
-            contentStream.drawString( this.Plaats );
-            contentStream.endText();
-            //input Postcode
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 530 );
-            contentStream.drawString( this.Postcode );
-            contentStream.endText();
-            //input Land
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 515 );
-            contentStream.drawString( this.Land );
-            contentStream.endText();
-            //input Telefoon
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 500 );
-            contentStream.drawString( this.Telefoonnummer );
-            contentStream.endText();
-            //input E-mail
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 485 );
-            contentStream.drawString( this.Email );
-            contentStream.endText();
-            //input Label nummer
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 440 );
-            contentStream.drawString(this.Bagagelabel );
-            contentStream.endText();
-            //input Bestemming
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 425 );
-            contentStream.drawString( this.Luchthavenaankomst );
-            contentStream.endText();
-            //input Type
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 365 );
-            contentStream.drawString( this.Softhard );
-            contentStream.endText();
-            //input Merk
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 350 );
-            contentStream.drawString( this.Merk );
-            contentStream.endText();
-            //input Kleur
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 335 );
-            contentStream.drawString( this.Kleur );
-            contentStream.endText();
-            //input Kenmerken
-            contentStream.beginText();
-            contentStream.setFont( font2, 12 );
-            contentStream.moveTextPositionByAmount( 215, 320 );
-            contentStream.drawString( this.Bijzonderhede );
-            contentStream.endText();
-            
-            
-            
-            
-
-
             // Make sure that the content stream is closed:
             contentStream.close();
 
-            document.save("Match luggage " + this.Bagagelabel + ".pdf");
+            document.save("Match luggage " + gevondenKofferID + "matches with "+ verlorenKofferID+ ".pdf");
             document.close();
         } catch (IOException ex) {
-            Logger.getLogger(PDFregister.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex);
         } catch (SQLException ex) {
-            Logger.getLogger(ZoekMatchVerlorenBagage.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex);
         }
     }
     
      
-
+    private TableView<Table> table = new TableView<>();
+    private String kofferid, dlabel, kleur, dikte, lengte, breedte, luchthavengevonden, datum, softhard, bijzonderhede, merk;
+    
     public static class Table{
         private SimpleStringProperty gevondenkofferID, bagagelabel, kleur,
                 dikte, lengte, breedte, luchthavengevonden, datum,

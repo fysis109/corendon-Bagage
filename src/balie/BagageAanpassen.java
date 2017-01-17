@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Past de informatie van verloren bagage aan in de database
  */
 package balie;
 
@@ -42,23 +40,21 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-/**
- *
- * @author tim
- */
+
 public class BagageAanpassen {
-    
+   //connectie met de database 
     private Mysql mysql = new Mysql();
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
+    //tableview maken
     private TableView<Table> table = new TableView<>();
     private String kleurEntry, merkEntry, hoogteEntry, lengteEntry, breedteEntry, countryEntry, country,
                 luchthavenVertrekEntry, luchthavenAankomstEntry, hardSoftEntry, statusEntry;
     
     
     public void start(Stage primaryStage){
-        
+        //menubar toevoegen
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
@@ -72,6 +68,7 @@ public class BagageAanpassen {
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
         
+        //informatie uit de database halen
         try{
             Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             Statement st = conn.createStatement();
@@ -106,6 +103,7 @@ public class BagageAanpassen {
         Label matchesLabel = new Label("All lost lugage: ");
         matchesLabel.setFont(new Font("Arial", 20));
         
+        //kolommen aanmaken
         TableColumn gevondenkofferIDcol = new TableColumn("ID");
         gevondenkofferIDcol.setMinWidth(10);
         gevondenkofferIDcol.setCellValueFactory(
@@ -171,11 +169,13 @@ public class BagageAanpassen {
         statuscol.setCellValueFactory(
                 new PropertyValueFactory<>("status"));
         
+        //kolommen oevoegen
         table.getColumns().addAll(bagagelabelcol, kleurcol, diktecol, lengtecol, breedtecol, luchthavenaankomstcol, luchthavenvertrokkencol, datumcol, softhardcol, merkcol, bijzonderhedecol, statuscol);
         
         Scene scene = new Scene(new Group(), 1200, 1000);
         primaryStage.setTitle("All lost luggage");
         
+        //tabel grootte instellen
         scene.widthProperty().addListener(new ChangeListener<Number>() {
             @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
                 table.setMinWidth(((double)newSceneWidth - 10));
@@ -189,7 +189,7 @@ public class BagageAanpassen {
             }
         });
         
-        
+        //buttons aanmaken
         Button pasAan = new Button("Adjust luggage");
         Button pasAdresAan = new Button("Adjust address");
         Button pasStatusAan = new Button("Adjust status");
@@ -260,8 +260,9 @@ public class BagageAanpassen {
         
     }
     
-    
+    //status aanpas scherm
     private void pasStatusAan(Stage primaryStage, String verlorenKofferID, String status, String bagageLabel){
+        //menubar toevoegen
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
@@ -276,6 +277,7 @@ public class BagageAanpassen {
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
         
+        //voeg textfields en labels toe
         Text scenetitle = new Text("Adjust status");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -298,7 +300,8 @@ public class BagageAanpassen {
             statusEntry = (String) statusComboBox.getSelectionModel().getSelectedItem();
         });
         grid.add(statusComboBox, 1, 2);
-        
+       
+        //pas status aan button
         Button pasAan = new Button("Adjust status");
         HBox bwvbox1 = new HBox(10);
         bwvbox1.setAlignment(Pos.BOTTOM_RIGHT);
@@ -348,14 +351,16 @@ public class BagageAanpassen {
         primaryStage.show();
     }
     
+    //adres aanpas scherm
     private void pasAdresAan(Stage primaryStage, String verlorenKofferID){
-        
+        //voeg menubar toe
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
 
+        //grid
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -363,6 +368,7 @@ public class BagageAanpassen {
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
         
+        //krijg informatie uit de database
         String plaats = null, straat= null, huisnummer = null, postcode = null, toevoeging = null;
         try{
             Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
@@ -387,6 +393,7 @@ public class BagageAanpassen {
         Label countryLabel = new Label("Country:");
         grid.add(countryLabel, 0, 1);
 
+        //combobox voor land koffer
         ComboBox countryComboBox = new ComboBox();
         countryComboBox.getItems().addAll(
                 "Netherlands", "Spain", "Turkey"
@@ -399,6 +406,8 @@ public class BagageAanpassen {
             countryEntry = (String) countryComboBox.getSelectionModel().getSelectedItem();
         });
 
+        
+        //textfields en labels toevoegen
         Label plaatsLabel = new Label("City/town:");
         grid.add(plaatsLabel, 0, 2);
 
@@ -440,6 +449,7 @@ public class BagageAanpassen {
         Text actiontarget = new Text();
         grid.add(actiontarget, 1, 7, 2, 1);
         
+        //pas adres informatie aan
         pasAan.setOnAction((ActionEvent e) -> {
             if(countryEntry == null){countryEntry = country;}
             if(plaatsEntry.getText().trim().isEmpty()|| straatEntry.getText().trim().isEmpty() || 
@@ -473,19 +483,21 @@ public class BagageAanpassen {
         primaryStage.show();
     }
     
+    //pas babage informatie aan
     private void pasBagageAan(Stage primaryStage, String verlorenKofferID, 
                     String bagageLabel, String kleur, String dikte, String lengte, 
                     String breedte, String luchthavenVertrokken, String luchthavenAankomst, 
                     String bijzonderheden, String merk, String softhard){
         
         
-        
+        //voeg menubar toe
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
         menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
         root.setTop(menuBar);
 
+        //grid
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -495,6 +507,7 @@ public class BagageAanpassen {
         
         int rij = 1;
 
+        //voeg textfields en labels
         Text scenetitle = new Text("Adjust lost Lugage");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -647,6 +660,7 @@ public class BagageAanpassen {
         
         rij++;
         
+        //button update informatie en check voor matches
         Button updateEnCheckMatch = new Button("Update and check for matches");
         HBox bwvbox = new HBox(10);
         bwvbox.setAlignment(Pos.BOTTOM_RIGHT);
@@ -659,6 +673,7 @@ public class BagageAanpassen {
         
         ZoekMatchVerlorenBagage zoekMatch = new ZoekMatchVerlorenBagage();
         
+        //action zoek voor match in database
         updateEnCheckMatch.setOnAction((ActionEvent e) -> {
             if(kleurEntry == null){kleurEntry = kleur;}
             if(hoogteEntry == null){hoogteEntry = dikte;}
@@ -707,9 +722,7 @@ public class BagageAanpassen {
                                     + "lengte = '"+lengteEntry+"', breedte = '"+ breedteEntry + "', luchthavenvertrokken = '"+ luchthavenVertrekEntry+ "', luchthavenaankomst = '"+luchthavenAankomstEntry
                                     +"', bijzonderheden = '"+bijzonderhedenEntry.getText()+ "', merk = '"+ merkEntry+ "', softhard = '"+ hardSoftEntry +"' WHERE verlorenkofferID = '"+ verlorenKofferID+"'" ;
                         stmt.execute(updateString);
-                        System.out.println(updateString);
                         int customerID = 0;
-                        System.out.println("SELECT customersID FROM verlorenbagage WHERE verlorenkofferID = '"+ verlorenKofferID);
                         ResultSet customerIDResultSet = stmt.executeQuery("SELECT customersID FROM verlorenbagage WHERE verlorenkofferID = '"+ verlorenKofferID+ "'");
                         while(customerIDResultSet.next()){
                             customerID = customerIDResultSet.getInt("customersID");

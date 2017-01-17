@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Hiermee kan je de klant informatie veranderen in de database
  */
 package balie;
 
@@ -30,20 +28,15 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-/**
- *
- * @author Joljin Verwest
- */
+
 public class AanpassenKlanten {
     
+    //connectie met de database
     private Mysql mysql = new Mysql();
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
     
-    private int customerID;
-    private String kleur, merk, hoogte, lengte, breedte, luchthavenVertrekEntry,
-            luchthavenAankomstEntry, countryEntry, softHard;
 
     public void AanpassenKlanten(Stage primaryStage, String voornaam, String achternaam, String tussenvoegsel2, String telefoon,
             String eMail, String gebDatum, String customersID) {

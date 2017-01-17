@@ -1,3 +1,6 @@
+/*
+ * Dit programma maakt een piechar de statistieken laat zien.
+*/
 package manager;
 
 import java.sql.Connection;
@@ -17,7 +20,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.chart.*;
-import javafx.scene.Group;
 import global.MenuB;
 import global.Mysql;
 import javafx.event.ActionEvent;
@@ -34,23 +36,13 @@ public class PieChar extends Application {
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
     
-    private String beginDatum;
-    private String eindDatum;
-    private ArrayList AirportList;
     private int total = 0;
-    private int totalKoffer = 0; 
-    //pieChart
+    private int totalKoffer = 0;
     
     HashMap<Integer, String> TempArray= new HashMap<Integer, String>();
      
     public void start(Stage primaryStage, String beginDatum, String eindDatum, String zoekOpDracht ,ArrayList AirportList) throws SQLException {
         
-        
-        
-        //private variable vullen
-        this.beginDatum = beginDatum;
-        this.eindDatum = eindDatum;
-        this.AirportList = AirportList;
         
         ManagerStartScherm managerstartscherm = new ManagerStartScherm();
         
@@ -74,7 +66,6 @@ public class PieChar extends Application {
         primaryStage.setWidth(1200);
         primaryStage.setHeight(920);
         
-        //mysql
         Connection conn;
         try {
             
@@ -82,7 +73,6 @@ public class PieChar extends Application {
             conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             Statement st = conn.createStatement();
        
-            
             //Maak een array aan
             int[]pieCharDoubleArray = new int[AirportList.size()];
             String[]pieCharStringArray = new String[AirportList.size()];
@@ -90,7 +80,6 @@ public class PieChar extends Application {
             //laat piechar zien als de bagage is terug gevonnden
             if("opgelostBagage".equals(zoekOpDracht)) {
                 
-                //for loop
                 for (int i = 0; i < AirportList.size(); i++) {
                     System.out.println("AirportList "+AirportList.size());
 
@@ -121,32 +110,26 @@ public class PieChar extends Application {
 
 
                     double tempkofferLuchthaven = pieCharDoubleArray[b];
-                    double lol = tempkofferLuchthaven/totalKoffer*100;
-                    System.out.println(lol);
+                    double berekening = tempkofferLuchthaven/totalKoffer*100;
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Bagage found back "+ tempkofferLuchthaven,tempkofferLuchthaven/totalKoffer*100));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Bagage found back "+ tempkofferLuchthaven,berekening));
                 }
 
                 //piechart
                 final PieChart chart = new PieChart(pieChartData);
                 chart.setTitle("Found bagage back");
                 root.setCenter(chart);
-                //maak het beschikbaar in scene
                 
+                //maak het beschikbaar in scene
                 primaryStage.setScene(scene);
                 primaryStage.show();
             }
             
-            System.out.println(zoekOpDracht);
-            
             //kijken naar niet terug gevonden bagage
             if("nietTerugGevonden".equals(zoekOpDracht)){
-                System.out.println("AirportList "+AirportList.size());
-                 //for loop
+                
                 for (int i = 0; i < AirportList.size(); i++) {
-                    System.out.println("project");
-                    System.out.println("airport: "+AirportList.get(i));
 
                     //query
                     String query = "SELECT count(bagagelabel) as count FROM corendonbagagesystem.verlorenbagage where luchthavenvertrokken = '"+AirportList.get(i)+"' AND status='notSolved';";
@@ -154,8 +137,7 @@ public class PieChar extends Application {
                     System.out.println(query);
                     ResultSet databaseResponse = st.executeQuery(query);
                     while (databaseResponse.next()) {
-                        System.out.println("fakse "+databaseResponse);
-                        System.out.println(databaseResponse.getInt("count"));
+                        
                         pieCharDoubleArray[i] = databaseResponse.getInt("count");
                         
                         //tel de nieuwe hoeveel koffers op
@@ -172,40 +154,33 @@ public class PieChar extends Application {
 
 
                     double tempkofferLuchthaven = pieCharDoubleArray[b];
-                    double lol = tempkofferLuchthaven/totalKoffer*100;
-                    System.out.println(lol);
+                    double berekening = tempkofferLuchthaven/totalKoffer*100;
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Bagage not found back "+ tempkofferLuchthaven ,tempkofferLuchthaven/totalKoffer*100));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Bagage not found back "+ tempkofferLuchthaven ,berekening));
                 }
 
-                //piechart
                 //piechart
                 final PieChart chart = new PieChart(pieChartData);
                 chart.setTitle("Not found bagage back");
                 root.setCenter(chart);
-                //maak het beschikbaar in scene
                 
+                //maak het beschikbaar in scene
                 primaryStage.setScene(scene);
                 primaryStage.show();
             }
             
             //bagage wat naar de sloop is gegaan
             if("verwijderdBagage".equals(zoekOpDracht)){
-                System.out.println("AirportList "+AirportList.size());
-                 //for loop
+                
                 for (int i = 0; i < AirportList.size(); i++) {
-                    System.out.println("project");
-                    System.out.println("airport: "+AirportList.get(i));
 
                     //query
                     String query = "SELECT count(bagagelabel) as count FROM corendonbagagesystem.verlorenbagage where luchthavenvertrokken = '"+AirportList.get(i)+"' AND status='deleted';";
 
-                    System.out.println(query);
                     ResultSet databaseResponse = st.executeQuery(query);
                     while (databaseResponse.next()) {
-                        System.out.println("fakse "+databaseResponse);
-                        System.out.println(databaseResponse.getInt("count"));
+                        
                         pieCharDoubleArray[i] = databaseResponse.getInt("count");
                         
                         //tel de nieuwe hoeveel koffers op
@@ -222,25 +197,17 @@ public class PieChar extends Application {
 
 
                     double tempkofferLuchthaven = pieCharDoubleArray[b];
-                    double lol = tempkofferLuchthaven/totalKoffer*100;
-                    System.out.println(lol);
+                    double berekening = tempkofferLuchthaven/totalKoffer*100;
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b]+" Bagage delete "+ tempkofferLuchthaven,tempkofferLuchthaven/totalKoffer*100));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b]+" Bagage delete "+ tempkofferLuchthaven,berekening));
                 }
 
                 //piechart
                 final PieChart chart = new PieChart(pieChartData);
                 chart.setTitle("Bagage that not found back.");
                 root.setCenter(chart);
-                //maak het beschikbaar in scene
-                Button backKnop = new Button("Show");
-                grid.add(backKnop, 1, 1); 
-
-
-                backKnop.setOnAction((ActionEvent e) -> {
-                    managerstartscherm.start(primaryStage);
-                });
+                
                 
                 primaryStage.setScene(scene);
                 primaryStage.show();

@@ -1,3 +1,7 @@
+/*
+ * In dit scherm kan je de luchthaven dan selecteren en de datum zodat je de statistieken kan zien.
+*/
+
 package manager;
 
 import java.sql.SQLException;
@@ -21,21 +25,12 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import global.MenuB;
-import global.Mysql;
 import javafx.scene.paint.Color;
 
 public class ManagerStartScherm extends Application{
     
-    //mysql connectie
-    Mysql mysql = new Mysql();  
-    
     PieChar pieChar = new PieChar();
     LineChar lineChar = new LineChar();
-    
-    //private mqsql
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();
     
     private String beginJaarString, beginMaandString, beginDagString,eindJaarString,
         eindMaandString,eindDagString, beginDatum, eindDatum,
@@ -47,14 +42,18 @@ public class ManagerStartScherm extends Application{
     private ObservableList<PieChart.Data> pieChartData;
     private boolean amsterdamSelected, barcelonaSelected, istanbulSelected;
 
-    //finals
-    private final String ZOEKENOPGELOSTBAGAGE= "opgelostBagage";
-    private final String ZOEKENNIETTERUGGEVONDEN= "nietTerugGevonden";
-    private final String ZOEKENNAARBAGAGEWATVERWIJDERDIS= "verwijderdBagage";
-    
     public void start(Stage primaryStage) {
-
-        //airport list
+        
+        /*
+         * Deze Strings geven mee waar mee de piechar gevuld moet worden.
+        */
+        final String ZOEKENOPGELOSTBAGAGE= "opgelostBagage";
+        final String ZOEKENNIETTERUGGEVONDEN= "nietTerugGevonden";
+        final String ZOEKENNAARBAGAGEWATVERWIJDERDIS= "verwijderdBagage";
+        
+        /*
+         * Airports
+        */
         stringAmsterdamSelected = "Schiphol, Amsterdam";
         stringBarcelonaSelected = "El Prat, Barcelona";
         stringIstanbulSelected = "Atatürk, Istanbul";
@@ -127,6 +126,7 @@ public class ManagerStartScherm extends Application{
         );
         grid.add(eindDag, 4, 3);
         
+        //Text om je airport label te zetten
         Text selectAirportLabel = new Text("Select airports");
         selectAirportLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
         grid.add(selectAirportLabel, 9, 1, 2, 1);
@@ -143,22 +143,27 @@ public class ManagerStartScherm extends Application{
         Label barcelonaAirportLabel = new Label("El Prat, Barcelona");
         grid.add(barcelonaAirportLabel, 9 , 3);
         
-        //CheckBox barcelonaairport
+        //CheckBox barcelona airport
         CheckBox barcelonaAirport = new CheckBox();
         grid.add(barcelonaAirport, 10,3 );
         
+        //Label Atatürk airport
         Label istanbulAirportLabel = new Label("Atatürk, Istanbul");
         grid.add(istanbulAirportLabel,9,4);
         
+        //Check box Atatürk airport
         CheckBox istanbulAirport = new CheckBox();
         grid.add(istanbulAirport, 10 ,4 );
         
+        //Lbal opgelost
         Label opgelostLabel = new Label("Luggage found back.");
         grid.add(opgelostLabel, 11, 2);
         
+        //OpgelostBagage
         Button opgelostBagage = new Button("Show");
         grid.add(opgelostBagage, 12, 2);
         
+        //Niet opgelost label
         Label nietopgelostLabel = new Label("Luggage not found back.");
         grid.add(nietopgelostLabel, 11, 3);
         
@@ -182,7 +187,9 @@ public class ManagerStartScherm extends Application{
         actiontarget.setFill(Color.FIREBRICK);
         grid.add(actiontarget, 11, 6);
         
-        //eventhandlers voor de begindatum
+        /*
+         * eventhandlers voor de begindatum
+        */
         beginJaar.setOnAction((event) -> {
             beginJaarString = (String) beginJaar.getSelectionModel().getSelectedItem();
         });
@@ -195,7 +202,9 @@ public class ManagerStartScherm extends Application{
             beginDagString = (String) beginDag.getSelectionModel().getSelectedItem();
         });
         
-        //eventhandler voor de einddatum
+        /*
+         * eventhandlers voor de einddatum
+        */
         eindJaar.setOnAction((event) -> {
             eindJaarString = (String) eindJaar.getSelectionModel().getSelectedItem();
         });
@@ -208,7 +217,9 @@ public class ManagerStartScherm extends Application{
             eindDagString = (String) eindDag.getSelectionModel().getSelectedItem();
         });
         
-        //eventhandlers voor de checkboxes
+        /* 
+         * eventhandlers voor de checkbox voor amsterdam
+        */
         amsterdamAirport.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             amsterdamSelected = new_val;
             if(amsterdamSelected == true){
@@ -219,6 +230,9 @@ public class ManagerStartScherm extends Application{
             }
         });
         
+        /* 
+         * eventhandlers voor de checkbox voor barcelonaAirport
+        */
         barcelonaAirport.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             barcelonaSelected = new_val;
             if(barcelonaSelected == true){
@@ -230,6 +244,9 @@ public class ManagerStartScherm extends Application{
             }
         });        
         
+        /* 
+         * eventhandlers voor de checkbox voor istanbulAirport
+        */
         istanbulAirport.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             istanbulSelected = new_val;
             if(istanbulSelected == true){
@@ -238,7 +255,10 @@ public class ManagerStartScherm extends Application{
                 airportList.remove(stringIstanbulSelected);
             }
         });
-            
+        
+        /*
+         * Opgelost bagage action eventhandler
+        */
         opgelostBagage.setOnAction((ActionEvent e) -> {
             
             beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
@@ -252,6 +272,9 @@ public class ManagerStartScherm extends Application{
             }
         });
         
+        /*
+         * niet opgeloste bagage action eventhandler
+        */
         nietopgelostBagage.setOnAction((ActionEvent e) -> {
             
             //Bagage wat niet is opgelost
@@ -267,6 +290,9 @@ public class ManagerStartScherm extends Application{
             }
         });        
         
+        /*
+         * bagageVernietigd bagage action eventhandler
+        */
         bagageVernietigd.setOnAction((ActionEvent e) -> {
             
             //Bagage wat niet is opgelost
@@ -282,7 +308,9 @@ public class ManagerStartScherm extends Application{
             }
         });
 
-        /* =========== lineChar =========== */
+        /*
+         * Bagage is zoek geraakt
+        */
         bagagewWtIsZoekGeraakt.setOnAction((ActionEvent e) -> {
             
             //kijken hoeveel luchthavens geselecteerd zijn
@@ -293,9 +321,8 @@ public class ManagerStartScherm extends Application{
             }
         });
         
-        // deze aanpassen van grid naar root..
-        Scene scene = new Scene(root, 1200, 920);
         
+        Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Manager");
         scene.getStylesheets().add("global/Style2.css");
         primaryStage.setScene(scene);

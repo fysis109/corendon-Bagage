@@ -1,8 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+ * Dit programma laat een line char zien van hoeveel koffers er verloren zijn per maand.
+*/
 package manager;
 
 import global.MenuB;
@@ -13,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
@@ -30,22 +27,19 @@ public class LineChar {
     //mysql connectie
     Mysql mysql = new Mysql();
     
-    
     //private mqsql
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
     
-    //int
-    private int tempJaar, tempMaand, tempQueryMaand, tempQueryJaar, count = 0;
-    
-    //strings
-    private String eindDatum, eindDatumString;
-    
     public void start(Stage primaryStage, String beginJaarAlleStatsString, String beginMaandAlleStatsString, 
                     String eindJaarAlleStatsString, String eindMaandAlleStatsString, ArrayList AirportList) {
         
-        ManagerStartScherm test = new ManagerStartScherm();
+        int tempJaar, tempMaand, tempQueryMaand, tempQueryJaar, count = 0;
+        String eindDatum, eindDatumString;
+        
+        ManagerStartScherm managerstartscherm = new ManagerStartScherm();
+        
         // deze vijf regels om de menubar aan te roepen
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);        
@@ -69,12 +63,12 @@ public class LineChar {
         final LineChart<String,Number> lineChart = 
             new LineChart<String,Number>(xAxis,yAxis);
         
-        primaryStage.setTitle("Line Chart Sample");
-        lineChart.setTitle("Stock Monitoring, 2010");
+        primaryStage.setTitle("Lost bagage");
+        lineChart.setTitle("Lost bagage");
         
         //defining a series
         XYChart.Series series = new XYChart.Series();
-        series.setName("My portfolio");
+        series.setName("Lost babage");
         
         //mysql
         Connection conn;
@@ -88,8 +82,9 @@ public class LineChar {
             tempMaand = Integer.parseInt(beginMaandAlleStatsString);
             tempJaar = Integer.parseInt(beginJaarAlleStatsString);
             
-            //kijken in welke maanden er op het scherm moeten komen
             while(true){
+                
+                //Einddatum word gevuld tot hoe ver de while loop moet gaan
                 eindDatum = eindJaarAlleStatsString +"-"+ eindMaandAlleStatsString;
                 
                 //temp vullen voor begin data voor de query
@@ -121,11 +116,9 @@ public class LineChar {
                     //add data 
                     series.getData().add(new XYChart.Data(eindDatumString, databaseResponse.getInt("count")));
                 }
-                
-                String test1 = eindDatumString;
-                String test2 = eindDatum;
-                
-                if(test1.equals(test2)){
+               
+                //kijk of eindDatum string het zelfde is al eindDatumString en als dat het zelfde is stop met de while loop
+                if(eindDatumString.equals(eindDatum)){
                     break;
                 }
             }

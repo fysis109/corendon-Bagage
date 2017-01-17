@@ -138,6 +138,7 @@ public class GebruikerAanmaken {
         rollen.getItems().addAll(
         "Admin",
         "Balie",
+        "SuperAdmin",
         "Manager"
                                    );
         rollen.setPrefWidth(150);

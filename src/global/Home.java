@@ -74,6 +74,16 @@ public class Home {
 
         //kijkt welke buttons er op de homepage moeten afhankeijk van de rol 
         switch (Login.rol) {
+            case "SuperAdmin":
+                grid.add(buttonGevondenKofferRegistreren, 0, 1);
+                grid.add(buttonVerlKofferReg, 0, 0);
+                grid.add(buttonGebruikersTable, 1, 0);
+                grid.add(buttonGebruikerAanmaken, 1, 1);
+                grid.add(buttonKlantenAanpassen, 2,0);
+                grid.add(buttonStatistics,2,1);
+                grid.add(buttonVerwijderBagage,3,0);
+                grid.add(buttonBagageAanpassen, 3,1);
+                break;
             case "Admin":
                 grid.add(buttonGevondenKofferRegistreren, 0, 0);
                 grid.add(buttonVerlKofferReg, 0, 1);

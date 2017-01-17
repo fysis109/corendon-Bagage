@@ -70,6 +70,8 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         MenuBar menuBar = menuB.createMenuB(stage);
         BorderPane root = new BorderPane();
         //menuBar.prefWidthProperty().bind(stage.widthProperty());
+        
+        Button adjustUser = new Button();
         root.setTop(menuBar);
         root.setCenter(table);
         
@@ -114,11 +116,13 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
                             this.role = databaseResponse2.getString("rol");
                             this.mail = databaseResponse2.getString("email");
                             this.userID = databaseResponse2.getString("userID");
-                            
-                             data.add(new Person(userName, password, role, mail, userID));
                              
+                             if(role.equals("SuperAdmin")){
+                                
+                             }else{
+                                data.add(new Person(userName, password, role, mail, userID));   
+                             }
                              table.setItems(data);
-                            
                         }
         }
                         catch (SQLException ed) {
@@ -162,17 +166,25 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         actionCol.setCellValueFactory( 
                 new PropertyValueFactory<>( "" ));
         
+        TableColumn delCol = new TableColumn( "Action" );
+        //delCol.setCellFactory(new PropertyValueFactory<>(deleteUser.toString()));
+        actionCol.setMinWidth(125);
+        actionCol.setCellFactory(
+                new PropertyValueFactory<>("" ));
+        
+        
         Callback<TableColumn<Person, String>, TableCell<Person, String>> cellFactory = //
                 new Callback<TableColumn<Person, String>, TableCell<Person, String>>()
                 {
                     @Override
                     public TableCell call( final TableColumn<Person, String> param )
                     {
-                        final TableCell<Person, String> cell = new TableCell<Person, String>()
+                        TableCell<Person, String> cell = new TableCell<Person, String>()
                         {
 
+                            Button deleteUser = new Button("Delete user");
                             Button btn = new Button( "Adjust user" );
-
+                            
                             @Override
                             public void updateItem( String item, boolean empty )
                             {
@@ -188,7 +200,8 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
                                             {
                                                 Person person = getTableView().getItems().get( getIndex() );
                                                 gebruikerAanpassen.star(stage,person.getUserName(),person.getWachtwoord(),person.getRole(),person.getMail(),person.getCustomersID());
-                                    } );
+                                                
+                                            } );
                                     setGraphic( btn );
                                     btn.setPrefWidth(125);
                                     setText( null );
@@ -199,7 +212,6 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
                         return cell;
                     }
                 };
-
         actionCol.setCellFactory( cellFactory );
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         scene.widthProperty().addListener(new ChangeListener<Number>() {

@@ -83,6 +83,7 @@ public class Home {
                 grid.add(buttonStatistics,2,1);
                 grid.add(buttonVerwijderBagage,3,0);
                 grid.add(buttonBagageAanpassen, 3,1);
+                grid.add(buttonGevBagageAanpassen, 3, 2);
                 break;
             case "Admin":
                 grid.add(buttonGevondenKofferRegistreren, 0, 0);
@@ -93,9 +94,15 @@ public class Home {
                 grid.add(buttonStatistics,2,1);
                 grid.add(buttonVerwijderBagage,3,0);
                 grid.add(buttonBagageAanpassen, 3,1);
+                grid.add(buttonGevBagageAanpassen, 3, 2);
                 break;
             case "Manager":
                 grid.add(buttonStatistics, 0, 0);
+                grid.add(buttonKlantenAanpassen, 0,1);
+                grid.add(buttonGevondenKofferRegistreren, 1,0);
+                grid.add(buttonVerlKofferReg, 1,1);
+                grid.add(buttonBagageAanpassen, 2,0);
+                grid.add(buttonGevBagageAanpassen, 2, 1);
                 break;
             default:
                 grid.add(buttonKlantenAanpassen, 0,0);

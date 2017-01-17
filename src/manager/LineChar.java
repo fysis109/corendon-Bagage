@@ -25,10 +25,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class LineChar extends Application {
+public class LineChar {
 
     //mysql connectie
-    Mysql mysql = new Mysql();  
+    Mysql mysql = new Mysql();
+    
     
     //private mqsql
     private final String USERNAME = mysql.getUsername();
@@ -44,6 +45,7 @@ public class LineChar extends Application {
     public void start(Stage primaryStage, String beginJaarAlleStatsString, String beginMaandAlleStatsString, 
                     String eindJaarAlleStatsString, String eindMaandAlleStatsString, ArrayList AirportList) {
         
+        ManagerStartScherm test = new ManagerStartScherm();
         // deze vijf regels om de menubar aan te roepen
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);        
@@ -141,8 +143,6 @@ public class LineChar extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
- 
-    @Override
     public void start(Stage primaryStage) throws Exception {
        
     }

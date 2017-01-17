@@ -21,8 +21,6 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -692,7 +690,7 @@ public class VerlKofferReg {
             System.out.println(fw.getDefaultDirectory());
 
                  
-            Path test = Paths.get(fw.getDefaultDirectory() + "\\pdfopslaan" );
+            Path test = Paths.get(fw.getDefaultDirectory() + "\\pdfopslaan");
             if(!Files.exists(test)){
                File file = new File(fw.getDefaultDirectory() + "\\pdfopslaan");
                file.mkdir();
@@ -707,10 +705,8 @@ public class VerlKofferReg {
             File myFile = new File(fw.getDefaultDirectory() + "\\pdfopslaan\\Luggage in database " + this.Bagagelabel + ".pdf");
             Desktop.getDesktop().open(myFile);
             
-            } catch (SQLException ed) {
+            } catch (SQLException | IOException ed) {
                 System.out.println(ed);
-            } catch (IOException ex) {
-                Logger.getLogger(VerlKofferReg.class.getName()).log(Level.SEVERE, null, ex);
             }
         
         

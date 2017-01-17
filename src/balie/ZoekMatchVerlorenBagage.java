@@ -582,9 +582,6 @@ public class ZoekMatchVerlorenBagage {
                File file = new File(fw.getDefaultDirectory() + "\\pdfopslaan");
                file.mkdir();
             }
-            
-            
-            
             String opslaanAls = fw.getDefaultDirectory() + "\\pdfopslaan\\Match luggage " + gevondenKofferID + "matches with "+ verlorenKofferID+ ".pdf";
             document.save(opslaanAls);
             document.close();

@@ -67,7 +67,7 @@ public class Login extends Application {
         Image logo = new Image("file:src/images/corendon_logo.png");
         ImageView imgpic = new ImageView();
         imgpic.setImage(logo);
-        imgpic.setFitHeight(100);
+        imgpic.setFitHeight(90);
         imgpic.setFitWidth(250);
         grid.add(imgpic, 0, 6);
 

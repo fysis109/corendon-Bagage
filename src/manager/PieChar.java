@@ -20,6 +20,8 @@ import javafx.scene.chart.*;
 import javafx.scene.Group;
 import global.MenuB;
 import global.Mysql;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
 
 public class PieChar extends Application {
     
@@ -43,10 +45,14 @@ public class PieChar extends Application {
      
     public void start(Stage primaryStage, String beginDatum, String eindDatum, String zoekOpDracht ,ArrayList AirportList) throws SQLException {
         
+        
+        
         //private variable vullen
         this.beginDatum = beginDatum;
         this.eindDatum = eindDatum;
         this.AirportList = AirportList;
+        
+        ManagerStartScherm managerstartscherm = new ManagerStartScherm();
         
         // deze vijf regels om de menubar aan te roepen
         MenuB menuB = new MenuB();
@@ -119,7 +125,7 @@ public class PieChar extends Application {
                     System.out.println(lol);
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b],tempkofferLuchthaven/totalKoffer*100));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" "+ tempkofferLuchthaven,tempkofferLuchthaven/totalKoffer*100));
                 }
 
                 //piechart
@@ -170,7 +176,7 @@ public class PieChar extends Application {
                     System.out.println(lol);
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b],tempkofferLuchthaven/totalKoffer*100));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Bagage not found back "+ tempkofferLuchthaven ,tempkofferLuchthaven/totalKoffer*100));
                 }
 
                 //piechart
@@ -228,6 +234,13 @@ public class PieChar extends Application {
                 chart.setTitle("Bagage that not found back.");
                 root.setCenter(chart);
                 //maak het beschikbaar in scene
+                Button backKnop = new Button("Show");
+                grid.add(backKnop, 1, 1); 
+
+
+                backKnop.setOnAction((ActionEvent e) -> {
+                    managerstartscherm.start(primaryStage);
+                });
                 
                 primaryStage.setScene(scene);
                 primaryStage.show();

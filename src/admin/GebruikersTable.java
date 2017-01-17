@@ -6,13 +6,16 @@
 package admin;
 
 import balie.AanpassenKlanten;
+import global.MenuB;
+import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import static javafx.application.Application.launch;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,21 +30,15 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import global.MenuB;
-import global.Mysql;
 
 /**
  *
@@ -137,8 +134,7 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         
         final Label label = new Label("Adjust users");
         label.setFont(new Font("Arial", 20));
-        table.setMinSize(690, 645);
-        table.setMaxSize(700, 1000);
+        
         table.setEditable(true);
  
         TableColumn gevondenkofferIDcol = new TableColumn("Username");
@@ -158,7 +154,6 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
         
         TableColumn mailcol = new TableColumn("Mailadress");
         mailcol.setMinWidth(100);
-        mailcol.setMaxWidth(200);
         mailcol.setCellValueFactory(
                 new PropertyValueFactory<>("mail"));
         
@@ -206,15 +201,61 @@ AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
                 };
 
         actionCol.setCellFactory( cellFactory );
-        //table.prefWidthProperty().bind(scene.widthProperty());
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        scene.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+                table.setMinWidth(((double)newSceneWidth - 10));
+                table.setMaxWidth(((double)newSceneWidth - 10));
+            }
+        });
+        scene.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                table.setMinHeight((double)newSceneHeight - 200);
+                table.setMaxHeight((double)newSceneHeight - 200);
+            }
+        });
+        
+        
+        
         table.getColumns().addAll(gevondenkofferIDcol,bagagelabelcol,tussenvoegselCol,
                 mailcol, actionCol);
+        
+        Button deleteUserButton = new Button("Delete selected user");
+        
+        deleteUserButton.setOnAction((ActionEvent e ) -> { 
+            if(table.getSelectionModel().isEmpty() == false){
+                Person selected = table.getSelectionModel().getSelectedItem();
+                final Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(stage);
+            VBox dialogVbox = new VBox(20);
+            Button test = new Button();
+            test.setText("Yes");
+            dialogVbox.getChildren().addAll(new Text("Are you sure to delete this user?"), test);
+            Scene dialogScene = new Scene(dialogVbox, 300, 200);
+            dialog.setScene(dialogScene);
+            dialog.show();
+
+            test.setOnAction((ActionEvent e1) -> {
+                try{
+                    Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                    Statement st = conn.createStatement();
+                    st.execute("DELETE FROM users WHERE userID = '"+selected.getCustomersID()+"'");
+                    GebruikersTable gebruikersTable = new GebruikersTable();
+                    gebruikersTable.start(stage);
+                    dialog.close();
+                }   catch (SQLException ex) {
+                        System.out.println(ex);
+                    }
+            });
+            }                
+        });
         
         final VBox vbox = new VBox(root);
         
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, table);
+        vbox.getChildren().addAll(label, table, deleteUserButton);
         ((Group) scene.getRoot()).getChildren().addAll(vbox);
  
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();

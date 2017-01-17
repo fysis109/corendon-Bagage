@@ -671,7 +671,10 @@ public class BagageAanpassen {
             
             if(bagageLabelEntry.getText().trim().isEmpty()){
                 actiontarget.setText("Luggagelabelnumber can't be left open"); 
-            }else{
+            }else if(luchthavenVertrekEntry.equals(luchthavenAankomstEntry)){
+                actiontarget.setText("Airport of departure \ncan't be the same as\naiport of arrival");
+            }
+            else{
                 try{
                     Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                     Statement stmt = (Statement) conn.createStatement();
@@ -726,6 +729,7 @@ public class BagageAanpassen {
         
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Adjust lost luggage");
+        scene.getStylesheets().add("global/Style.css");
         primaryStage.setScene(scene);
         primaryStage.show();
         

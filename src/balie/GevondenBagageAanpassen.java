@@ -441,7 +441,16 @@ public class GevondenBagageAanpassen {
                 
                 Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                 Statement stmt = (Statement) conn.createStatement();
-                if(!bagageLabelEntry.getText().trim().isEmpty() && !bagageLabel.equals(bagageLabelEntry.getText().trim())){
+                if(bagageLabelEntry.getText() == null || bagageLabelEntry.getText().isEmpty()){
+                    String updateString = "UPDATE gevondenbagage SET kleur = '"+kleurEntry+"', dikte = '"+hoogteEntry+"', bagagelabel = null, "
+                                        + "lengte = '"+lengteEntry+"', breedte = '"+ breedteEntry + "', luchthavengevonden = '"+luchthavenGevondenEntry
+                                        +"', bijzonderhede = '"+bijzonderhedenEntry.getText()+ "', merk = '"+ merkEntry+ "', softhard = '"+ hardSoftEntry +"' WHERE gevondenkofferID = '"+ gevondenkofferID+"'" ;
+                        stmt.execute(updateString);
+                        zoekbagage.maakZoekString(primaryStage, Integer.parseInt(gevondenkofferID), 
+                                        null, kleurEntry, hoogteEntry, lengteEntry, 
+                                        breedteEntry, luchthavenGevondenEntry, bijzonderhedenEntry.getText(), 
+                                        merkEntry, hardSoftEntry);
+                }else if(!bagageLabelEntry.getText().trim().isEmpty() && bagageLabel == null || !bagageLabel.equals(bagageLabelEntry.getText().trim()) ){
                     ResultSet bagagelabelExistsCheck = stmt.executeQuery("SELECT COUNT(*) AS total FROM gevondenbagage WHERE bagagelabel = '"+bagageLabelEntry.getText().trim()+"'");
                     int count = 0;
                     while(bagagelabelExistsCheck.next()){
@@ -456,13 +465,9 @@ public class GevondenBagageAanpassen {
                                 bagageLabelEntry.getText(), kleurEntry, hoogteEntry, lengteEntry, 
                                 breedteEntry, luchthavenGevondenEntry, bijzonderhedenEntry.getText(), 
                                 merkEntry, hardSoftEntry);
-
-                    }else{
-                        actiontarget.setText("Luggagelabelnumber already exists"); 
                     }
-                }else if(bagageLabelEntry.getText().equals(bagageLabel) || bagageLabelEntry.getText().trim().isEmpty()){
-                    if(!bagageLabelEntry.getText().trim().isEmpty()){
-                        String updateString = "UPDATE gevondenbagage SET kleur = '"+kleurEntry+"', dikte = '"+hoogteEntry+"', "
+                }else{
+                    String updateString = "UPDATE gevondenbagage SET kleur = '"+kleurEntry+"', dikte = '"+hoogteEntry+"', "
                                         + "lengte = '"+lengteEntry+"', breedte = '"+ breedteEntry + "', luchthavengevonden = '"+luchthavenGevondenEntry
                                         +"', bijzonderhede = '"+bijzonderhedenEntry.getText()+ "', merk = '"+ merkEntry+ "', softhard = '"+ hardSoftEntry +"' WHERE gevondenkofferID = '"+ gevondenkofferID+"'" ;
                         stmt.execute(updateString);
@@ -470,16 +475,6 @@ public class GevondenBagageAanpassen {
                                         bagageLabelEntry.getText(), kleurEntry, hoogteEntry, lengteEntry, 
                                         breedteEntry, luchthavenGevondenEntry, bijzonderhedenEntry.getText(), 
                                         merkEntry, hardSoftEntry);
-                    }else{
-                        String updateString = "UPDATE gevondenbagage SET kleur = '"+kleurEntry+"', dikte = '"+hoogteEntry+"', bagagelabel = null, "
-                                        + "lengte = '"+lengteEntry+"', breedte = '"+ breedteEntry + "', luchthavengevonden = '"+luchthavenGevondenEntry
-                                        +"', bijzonderhede = '"+bijzonderhedenEntry.getText()+ "', merk = '"+ merkEntry+ "', softhard = '"+ hardSoftEntry +"' WHERE gevondenkofferID = '"+ gevondenkofferID+"'" ;
-                        stmt.execute(updateString);
-                        zoekbagage.maakZoekString(primaryStage, Integer.parseInt(gevondenkofferID), 
-                                        null, kleurEntry, hoogteEntry, lengteEntry, 
-                                        breedteEntry, luchthavenGevondenEntry, bijzonderhedenEntry.getText(), 
-                                        merkEntry, hardSoftEntry);
-                    }
                 }
             }catch (SQLException ed) {
             System.out.println(ed);
@@ -488,6 +483,7 @@ public class GevondenBagageAanpassen {
         });
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Adjust found luggage");
+        scene.getStylesheets().add("global/Style.css");
         primaryStage.setScene(scene);
         primaryStage.show();
         

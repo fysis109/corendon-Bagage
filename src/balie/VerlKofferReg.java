@@ -436,6 +436,8 @@ public class VerlKofferReg {
                 if (countryEntry == null || bagageLabelEntry.getText().trim().isEmpty() || city == null || straat == null || huisnummerEntry.getText().trim().isEmpty() || postcodeEntry.getText().trim().isEmpty() || merk == null
                         || kleur == null || hoogte == null || lengte == null || breedte == null || luchthavenAankomstEntry == null || luchthavenVertrekEntry == null || hardSoftCase == null) {
                     actiontarget.setText("All fields must be\nfilled in except\nCharacteristics"); 
+                }else if(luchthavenAankomstEntry.equals(luchthavenVertrekEntry)){
+                    actiontarget.setText("Airport of departure \ncan't be the same as\naiport of arrival");
                 } else {
                     ResultSet bagagelabelExistsCheck = stmt.executeQuery("SELECT COUNT(*) AS total FROM verlorenbagage WHERE bagagelabel = '"+bagagelabel+"'");
                     int count = 0;
@@ -491,6 +493,7 @@ public class VerlKofferReg {
 
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Register Lost Lugage");
+        scene.getStylesheets().add("global/Style.css");
         primaryStage.setScene(scene);
         primaryStage.show();
 

@@ -1,9 +1,12 @@
+/*
+ * Geeft de informatie om een connectie te maken bij de database
+ */
 package global;
 
 public class Mysql {
-
+ 
     private final String USENAME = "root";
-    private final String PASSWORD = "Pulsar11";
+    private final String PASSWORD = "jojo123";
     private final String IPADDRESS = "localhost";
     private final String POORT = "3306";
     private final String DATABASENAAM = "corendonbagagesystem";

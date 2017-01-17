@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+  Laat het profiel zien waarmee je ingelogd bent zodat je je gegevens aan kan passen
  */
 package global;
 
@@ -14,15 +12,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.PasswordField;
@@ -38,10 +33,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-/**
- *
- * @author Joljin Verwest
- */
 public class Profile {
     Mysql mysql = new Mysql();
     
@@ -162,7 +153,6 @@ public class Profile {
 
             @Override
             public void handle(ActionEvent e) {
-                System.out.println(gebruikersRol);
                 String username = usernameTextField.getText();
                 String password = pwBox.getText();
                 String password2 = pwBox2.getText();
@@ -182,13 +172,11 @@ public class Profile {
                         while (rs2.next()) {
                             count = rs2.getInt("total");
                         }
-                        System.out.println(count);
                         ResultSet rs3 = stmt3.executeQuery("SELECT * FROM users WHERE username = '" + username + "'");
                             while (rs3.next()) {
                                 String pass = rs3.getString("wachtwoord");
                                 if (password.equals(password2) && email.equals(emailcon)) {
                                     actiontarget.setText("");
-                                    System.out.println("Gebruiker bestaat en kan aangepast worden");
                                     Statement stmt = (Statement) conn.createStatement();
                                     ResultSet rs1 = stmt.executeQuery("SELECT userID FROM users WHERE username = '" + username + "'");
                                     int userID = 0;

@@ -1,3 +1,8 @@
+/*
+Login scherm waarmee je in logt via accounts van de database
+
+
+*/
 package login;
 
 import global.Mysql;

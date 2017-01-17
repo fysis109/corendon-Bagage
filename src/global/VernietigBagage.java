@@ -1,7 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ *
+ * geeft de optie om bagage te vernietigen ouder dan 1 jaar en vernietigd automatisch bagage ouder dan 5 jaar
  */
 package global;
 
@@ -20,13 +19,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-/**
- *
- * @author tim
- */
+
 public class VernietigBagage {
     
-    
+    //conneciie met database
     private Mysql mysql = new Mysql();
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
@@ -41,7 +37,8 @@ public class VernietigBagage {
         ArrayList<Integer> bagageToDeleteGevondenPermantly = new ArrayList<>();
         
         Connection conn;
-        
+        //checked welke bagage ouder is dan 1 jaar
+        //checked welke bagage ouder is dan 5 jaar
         try {
             conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             Statement stm = conn.createStatement();
@@ -101,6 +98,7 @@ public class VernietigBagage {
         
         Home home = new Home();
         
+        //buttons en scene
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(primaryStage);

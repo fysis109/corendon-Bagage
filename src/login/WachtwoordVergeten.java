@@ -1,3 +1,8 @@
+/*
+Als je je wachtwoord vergeten bent zorgt dit ervoor dat er een email gestuurd word naar je met een nieuw wachtwoord
+
+
+*/
 package login;
 
 import global.Encrypt;

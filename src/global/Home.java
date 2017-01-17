@@ -1,3 +1,6 @@
+/*
+ * Home pagina van alle rollen waar de buttons verschijnen waarmee je verschillende dingen kan doen.
+ */
 package global;
 
 import admin.GebruikerAanmaken;

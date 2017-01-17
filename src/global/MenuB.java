@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Maakt een menubar die bovenin elk scherm toegevoegd kan worden.
  */
 package global;
 
@@ -22,10 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import login.Login;
 
-/**
- *
- * @author Joljin Verwest
- */
+
 public class MenuB {
     
     public MenuBar createMenuB(Stage primaryStage){
@@ -48,22 +43,24 @@ public class MenuB {
         imgpic.setImage(logo);
         imgpic.setFitHeight(50);
         imgpic.setFitWidth(150);
-
+    //button event handelers
     exit.setOnAction(actionEvent -> Platform.exit());
     homePage.setOnAction((ActionEvent e) -> {
         home.start(primaryStage);
-        });
-        logout.setOnAction((ActionEvent e) -> {
+    });
+    logout.setOnAction((ActionEvent e) -> {
         login.start(primaryStage);
-        });
-    
+    });
+    //toevoegen actions bij options
     homeB.getItems().addAll(homePage, logout,
         new SeparatorMenuItem(), exit);
 
-    Menu webMenu = new Menu("Help");
+    //help button
+    Menu help = new Menu("Help");
     MenuItem userManual = new MenuItem("Open user manual");
-    webMenu.getItems().add(userManual);
+    help.getItems().add(userManual);
     
+    //prile button
     Label menuLabel = new Label("Profile");
     Menu profile = new Menu();
     profile.setGraphic(menuLabel);
@@ -73,19 +70,20 @@ public class MenuB {
           profiel.star(primaryStage);  
         }
     });
+    //handleiding toevoegen bij open user manual
     userManual.setOnAction((ActionEvent e) -> {
         if (Desktop.isDesktopSupported()) {
             try {
                 File myFile = new File("src/images/Handleiding.pdf");
                 Desktop.getDesktop().open(myFile);
             } catch (IOException ex) {
-                // no application registered for PDFs
+                // no application registered fSor PDFs
             }
         }
     });
     
-    
-    menuBar.getMenus().addAll(homeB, webMenu, profile);
+    //alles toevoegen bij menubar
+    menuBar.getMenus().addAll(homeB, help, profile);
         
     return menuBar;
     

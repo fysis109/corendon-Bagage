@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Hiermee kan je gebruikers aanmaken in en toevoegen in de database
  */
 package admin;
 
@@ -39,10 +37,7 @@ import global.MenuB;
 import global.Mysql;
 import javafx.scene.input.MouseEvent;
 
-/**
- *
- * @author Joljin Verwest 
- */
+
 public class GebruikerAanmaken {
     
     Mysql mysql = new Mysql();
@@ -134,6 +129,7 @@ public class GebruikerAanmaken {
         Label rol = new Label("Rol");
         grid.add(rol, 0, rij);
         
+        //voegt rollen toe in combobox
         final ComboBox rollen = new ComboBox();
         rollen.getItems().addAll(
         "Admin",

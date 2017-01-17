@@ -297,7 +297,7 @@ public class ManagerStartScherm extends Application{
         Scene scene = new Scene(root, 1200, 920);
         
         primaryStage.setTitle("Manager");
-        scene.getStylesheets().add("global/Style.css");
+        scene.getStylesheets().add("global/Style2.css");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

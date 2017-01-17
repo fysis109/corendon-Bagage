@@ -125,7 +125,7 @@ public class PieChar extends Application {
                     System.out.println(lol);
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" "+ tempkofferLuchthaven,tempkofferLuchthaven/totalKoffer*100));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Bagage found back "+ tempkofferLuchthaven,tempkofferLuchthaven/totalKoffer*100));
                 }
 
                 //piechart
@@ -226,7 +226,7 @@ public class PieChar extends Application {
                     System.out.println(lol);
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b],tempkofferLuchthaven/totalKoffer*100));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b]+" Bagage delete "+ tempkofferLuchthaven,tempkofferLuchthaven/totalKoffer*100));
                 }
 
                 //piechart

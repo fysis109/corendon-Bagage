@@ -729,7 +729,7 @@ public class BagageAanpassen {
         
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Adjust lost luggage");
-        scene.getStylesheets().add("global/Style.css");
+        scene.getStylesheets().add("global/Style2.css");
         primaryStage.setScene(scene);
         primaryStage.show();
         

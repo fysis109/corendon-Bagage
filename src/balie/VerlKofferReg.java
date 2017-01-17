@@ -10,6 +10,9 @@ import global.Mysql;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -38,6 +41,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -477,12 +482,7 @@ public class VerlKofferReg {
                     }else{
                         actiontarget.setFill(Color.FIREBRICK);
                         actiontarget.setText("Luggage label already exists");
-                    }
-                
-            
-            // pdf verloren kofffer match
-           // Create a new empty document
-          
+                    }          
         }
         } catch (SQLException ed) {
                 System.out.println(ed);
@@ -493,7 +493,7 @@ public class VerlKofferReg {
 
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Register Lost Lugage");
-        scene.getStylesheets().add("global/Style.css");
+        scene.getStylesheets().add("global/Style2.css");
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -687,9 +687,24 @@ public class VerlKofferReg {
             // Make sure that the content stream is closed:
             contentStream.close();
 
-            document.save("Luggage in database " + this.Bagagelabel + ".pdf");
+            JFileChooser fr = new JFileChooser();
+            FileSystemView fw = fr.getFileSystemView();
+            System.out.println(fw.getDefaultDirectory());
+
+                 
+            Path test = Paths.get(fw.getDefaultDirectory() + "\\pdfopslaan" );
+            if(!Files.exists(test)){
+               File file = new File(fw.getDefaultDirectory() + "\\pdfopslaan");
+               file.mkdir();
+            }
+            
+            String opslaanAls = fw.getDefaultDirectory() + "\\pdfopslaan\\Luggage in database " + this.Bagagelabel + ".pdf";
+            document.save(opslaanAls);
             document.close();
-            File myFile = new File("C:\\Users\\tim\\Documents\\GitHub\\corendon-Bagage\\Luggage in database " + this.Bagagelabel + ".pdf");
+            
+            
+            
+            File myFile = new File(fw.getDefaultDirectory() + "\\pdfopslaan\\Luggage in database " + this.Bagagelabel + ".pdf");
             Desktop.getDesktop().open(myFile);
             
             } catch (SQLException ed) {

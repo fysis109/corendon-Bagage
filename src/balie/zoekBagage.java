@@ -263,18 +263,45 @@ public class zoekBagage {
             
             
             Button match = new Button("Match");
-        
+            Button geenMatch = new Button("No match");
+            GridPane buttons = new GridPane();
+            buttons.setVgap(10);
+            buttons.setHgap(10);
+            buttons.setPadding(new Insets(25, 25, 25, 25));
+            buttons.add(match, 0, 0);
+            buttons.add(geenMatch, 3, 0);
+            
             match.setOnAction((ActionEvent e) -> {
                 if(table.getSelectionModel().isEmpty() == false){
                     Person selected = table.getSelectionModel().getSelectedItem();
                     zetMatchInDatabase(selected.getGevondenkofferID());
                 }
             });
+            
+            geenMatch.setOnAction((ActionEvent e) -> {
+            final Stage dialog = new Stage();
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.initOwner(primaryStage);
+                VBox dialogVbox = new VBox(20);
+                Button test = new Button();
+                test.setText("Home");
+                dialogVbox.getChildren().addAll(new Text("This luggage has been added to\nthe database click the\nbutton to go to the homepage"), test);
+                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+                dialog.setScene(dialogScene);
+                dialog.show();
+                
+                test.setOnAction(new EventHandler<ActionEvent>() { public void handle(ActionEvent e){
+                    Home home = new Home();
+                    home.start(primaryStage);
+                    dialog.close();
+                  
+                }}); 
+            });
 
             final VBox vbox = new VBox(root);
             vbox.setSpacing(10);
             vbox.setPadding(new Insets(10, 0, 0, 10));
-            vbox.getChildren().addAll(matchesLabel, table, match);
+            vbox.getChildren().addAll(matchesLabel, table, buttons);
 
             ((Group) scene.getRoot()).getChildren().addAll(vbox);
             scene.getStylesheets().add("global/Style2.css");
@@ -286,8 +313,8 @@ public class zoekBagage {
             dialog.initOwner(primaryStage);
             VBox dialogVbox = new VBox(20);
             Button test = new Button();
-            test.setText("JA");
-            dialogVbox.getChildren().addAll(new Text("No match with lost lugage"), test);
+            test.setText("Home");
+            dialogVbox.getChildren().addAll(new Text("No match with lost lugage\nthe luggage has been added to the database\nclick the button to go to the homepage"), test);
             Scene dialogScene = new Scene(dialogVbox, 300, 200);
             dialog.setScene(dialogScene);
             dialog.show();

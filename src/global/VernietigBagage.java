@@ -96,7 +96,7 @@ public class VernietigBagage {
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(primaryStage);
         VBox dialogVbox = new VBox(20);
-        Button test = new Button("Home");
+        Button test = new Button("Close");
         Text text = new Text(countDestroyed+" Luggage has been destroyd");
         Text text1 = new Text(countPermantlyVerwijderd+" Luggage has been permantly \ndeleted from the database ");
         dialogVbox.getChildren().addAll(text, text1, test);

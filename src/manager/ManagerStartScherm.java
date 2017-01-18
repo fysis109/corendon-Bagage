@@ -29,11 +29,10 @@ import javafx.stage.Stage;
 public class ManagerStartScherm extends Application{
     
             
-      private PieChart pieChart;
-      private LineChart lineChart;
-    
-    PieChar pieChar = new PieChar();
-    LineChar lineChar = new LineChar();
+    private PieChart pieChart;
+    private LineChart lineChart;
+    private PieChar pieChar = new PieChar();
+    private LineChar lineChar = new LineChar();
     
     private String beginJaarString, beginMaandString, beginDagString,eindJaarString,
         eindMaandString,eindDagString, beginDatum, eindDatum,
@@ -230,7 +229,6 @@ public class ManagerStartScherm extends Application{
             amsterdamSelected = new_val;
             if(amsterdamSelected == true){
                 airportList.add(stringAmsterdamSelected);
-                System.out.println(airportList.size());
             } else {
                 airportList.remove(stringAmsterdamSelected);
             }
@@ -243,10 +241,8 @@ public class ManagerStartScherm extends Application{
             barcelonaSelected = new_val;
             if(barcelonaSelected == true){
                 airportList.add(stringBarcelonaSelected);
-                System.out.println("barcelona"+airportList.size());
             } else {
                 airportList.remove(stringBarcelonaSelected);
-                System.out.println("barcelona"+airportList.size());
             }
         });        
         

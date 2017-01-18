@@ -38,7 +38,7 @@ import javafx.stage.Stage;
 public class GebruikerAanpassen {
 
     //mysql informatie
-    private Mysql MYSQL = new Mysql();
+    private final Mysql MYSQL = new Mysql();
     private final String USERNAME = MYSQL.getUsername();
     private final String PASSWORD = MYSQL.getPassword();
     private final String CONN_STRING = MYSQL.getUrlmysql();
@@ -151,7 +151,7 @@ public class GebruikerAanpassen {
             } else {
                 Encrypt encrypt = new Encrypt();
                 try {
-                    Connection conn = DriverManager.getConnection(USERNAME, PASSWORD, CONN_STRING);
+                    Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                     Statement stmt2 = (Statement) conn.createStatement();
                     Statement stmt3 = (Statement) conn.createStatement();
                     ResultSet rs2 = stmt2.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = '" + username1 + "'");
@@ -159,7 +159,6 @@ public class GebruikerAanpassen {
                     while (rs2.next()) {
                         count = rs2.getInt("total");
                     }
-                    System.out.println(count);
                     ResultSet rs3 = stmt3.executeQuery("SELECT * FROM users WHERE username = '" + username1 + "'");
                     if (count > 0) {
                         while (rs3.next()) {

@@ -20,10 +20,10 @@ import javafx.stage.Stage;
 public class LineChar {
 
     //mysql connectie
-    private final Mysql mysql = new Mysql();
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();
+    private final Mysql MYSQL = new Mysql();
+    private final String USERNAME = MYSQL.getUsername();
+    private final String PASSWORD = MYSQL.getPassword();
+    private final String CONN_STRING = MYSQL.getUrlmysql();
     
     public LineChart start(Stage primaryStage, String beginJaarAlleStatsString, String beginMaandAlleStatsString, 
                     String eindJaarAlleStatsString, String eindMaandAlleStatsString, ArrayList AirportList) {
@@ -100,7 +100,7 @@ public class LineChar {
                 }
             }
         }catch (SQLException ex) {
-            System.out.println("Code kan geen connectie maken met het database.");
+            System.out.println(ex);
         }
         
         lineChart.getData().add(series);

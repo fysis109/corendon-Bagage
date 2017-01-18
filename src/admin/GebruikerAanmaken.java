@@ -165,13 +165,11 @@ public class GebruikerAanmaken {
             } else { 
                 actiontarget.setText("");
                 if (!username.equals(username2) || !password.equals(password2) || !mail1.equals(mail3)) {
-                    System.out.println("Username, password and/or mailadress are not the same");
                     actiontarget.setFill(Color.RED);
                     actiontarget.setText("Username, password and/or\n mailadress are not the same");
                 } else {
                     try {
                         Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-                        System.out.println("Connected!");
                         Statement stmt = (Statement) conn.createStatement();
                         ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = '" + username+ "'");
                         int count = 0;

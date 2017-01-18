@@ -19,11 +19,11 @@ import javafx.stage.Stage;
 public class PieChar {
     
     //mysql connectie
-    Mysql mysql = new Mysql();  
+    private final Mysql MYSQL = new Mysql();  
     
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();
+    private final String USERNAME = MYSQL.getUsername();
+    private final String PASSWORD = MYSQL.getPassword();
+    private final String CONN_STRING = MYSQL.getUrlmysql();
     
     private int total = 0;
     private int totalKoffer = 0;

@@ -5,8 +5,8 @@ package global;
 
 public class Mysql {
  
-    private final String USENAME = "root";
-    private final String PASSWORD = "Pulsar11";
+    private final String USENAME = "VUL HIER UW USERNAME IN";
+    private final String PASSWORD = "VUL HIER UW WACHTWOORD IN";
     private final String IPADDRESS = "localhost";
     private final String POORT = "3306";
     private final String DATABASENAAM = "corendonbagagesystem";

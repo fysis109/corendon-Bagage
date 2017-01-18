@@ -1,6 +1,6 @@
 /**
- *
- * geeft de optie om bagage te vernietigen ouder dan 1 jaar en vernietigd automatisch bagage ouder dan 5 jaar
+ * Zet de status op delete bij bagage ouder dan 1 jaar en vernietigd automatisch
+ * permanent bagage ouder dan 5 jaar
  */
 package global;
 
@@ -36,11 +36,11 @@ public class VernietigBagage {
         ArrayList<Integer> bagageToDeleteVerlorenPermantly = new ArrayList<>();
         ArrayList<Integer> bagageToDeleteGevondenPermantly = new ArrayList<>();
         
-        Connection conn;
-        //checked welke bagage ouder is dan 1 jaar
-        //checked welke bagage ouder is dan 5 jaar
+        
+        //checked welke bagage ouder is dan 1 jaar en zet de status op delete
+        //checked welke bagage ouder is dan 5 jaar en verwijdert deze permanent
         try {
-            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+            Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             Statement stm = conn.createStatement();
             String selectStringVer = "SELECT verlorenkofferID FROM verlorenbagage WHERE datum <= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AND status = 'notSolved' ";
             String selectStringGev = "SELECT gevondenkofferID FROM gevondenbagage WHERE datum <= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AND status = 'notSolved' ";
@@ -87,16 +87,9 @@ public class VernietigBagage {
                 stm.execute("DELETE FROM opgelost WHERE gevondenkofferID = '"+bagageToDeleteGevondenPermantly.get(i)+"'");
                 countPermantlyVerwijderd ++;
             }
-            
-            
-            
-            
-            
         }catch(SQLException ed){
             System.out.println(ed);
         }
-        
-        Home home = new Home();
         
         //buttons en scene
         Stage dialog = new Stage();
@@ -113,6 +106,7 @@ public class VernietigBagage {
         dialog.show();
 
         test.setOnAction(new EventHandler<ActionEvent>() { public void handle(ActionEvent e){
+            Home home = new Home();
             home.start(primaryStage);
             dialog.close();
         }});

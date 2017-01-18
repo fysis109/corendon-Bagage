@@ -3,6 +3,9 @@
  */
 package admin;
 
+import global.Encrypt;
+import global.MenuB;
+import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -11,7 +14,6 @@ import java.sql.Statement;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,8 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -31,23 +31,16 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import global.Encrypt;
-import global.Home;
-import global.MenuB;
-import global.Mysql;
-import javafx.scene.input.MouseEvent;
 
 
 public class GebruikerAanmaken {
     
-    Mysql mysql = new Mysql();
-    Home home = new Home();
-     
-    //private mqsql
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();
-    String gebruikersRol;
+    //mysqil informatie
+    private final Mysql MYSQL = new Mysql();
+    private final String USERNAME = MYSQL.getUsername();
+    private final String PASSWORD = MYSQL.getPassword();
+    private final String CONN_STRING = MYSQL.getUrlmysql();
+    private String gebruikersRol;
     
     
     //test
@@ -60,8 +53,7 @@ public class GebruikerAanmaken {
         root.setTop(menuBar);
         
         primaryStage.setTitle("Gebruiker aanmaken");
-        Image logo = new Image("file:src/images/corendon_logo.jpg");
-        primaryStage.getIcons().add(logo);
+        
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -130,112 +122,81 @@ public class GebruikerAanmaken {
         grid.add(rol, 0, rij);
         
         //voegt rollen toe in combobox
-        final ComboBox rollen = new ComboBox();
+        ComboBox rollen = new ComboBox();
         rollen.getItems().addAll(
-        "Admin",
-        "Balie",
-        "SuperAdmin",
-        "Manager"
-                                   );
+            "Admin", "Balie", "SuperAdmin", "Manager"
+        );
         rollen.setPrefWidth(150);
         grid.add(rollen , 1 , rij++);
-        
         
         rollen.valueProperty().addListener(new ChangeListener<String>() {
             @Override public void changed(ObservableValue ov, String t, String t1) {                
                 gebruikersRol = t1;                
             }});  
+        
         //De Sign in 
-        Button btn = new Button("Make user");
+        Button createUser = new Button("Make user");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn.getChildren().add(btn);
+        hbBtn.getChildren().add(createUser);
         grid.add(hbBtn, 1, rij++);
 
         //button event maken
-        final Text actiontarget = new Text();
+        Text actiontarget = new Text();
         actiontarget.setFill(Color.FIREBRICK);
         grid.add(actiontarget, 1, rij++);
 
-        //Plaatje linksonder
-        
-        ImageView imgpic = new ImageView(logo);
-        imgpic.setImage(logo);
-        imgpic.setFitHeight(50);
-        imgpic.setFitWidth(150);
-        grid.add(imgpic, 1, rij++ , 1 , 1);
-        
-        imgpic.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent event) {
-                home.start(primaryStage);
-                System.out.println("Logo clicked");
-            }
-            
-        });
-        Button btn5 = new Button();
-        btn5.setGraphic(new ImageView(logo));
-        
         //Enter ook
-        btn.setDefaultButton(true);
+        createUser.setDefaultButton(true);
 
         //Button event text
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                System.out.println(gebruikersRol);
-                String username = userTextField.getText();
-                String password = pwBox.getText();
-                String username2 = userTextField2.getText();
-                String password2 = pwBox2.getText();
-                String mail = mailbox.getText();
-                String mail2 = mailbox2.getText();
-                if(pwBox.getText().trim().isEmpty() || pwBox2.getText().trim().isEmpty() ||
-                   userTextField.getText().trim().isEmpty()|| userTextField2.getText().trim().isEmpty()||
-                   mailbox.getText().trim().isEmpty()||mailbox2.getText().trim().isEmpty()||gebruikersRol == null){
-                   actiontarget.setFill(Color.RED);
-                   actiontarget.setText("Fields can't be left open");
-                   
+        createUser.setOnAction((ActionEvent e) -> {
+            String username = userTextField.getText();
+            String password = pwBox.getText();
+            String username2 = userTextField2.getText();
+            String password2 = pwBox2.getText();
+            String mail1 = mailbox.getText();
+            String mail3 = mailbox2.getText();
+            if (pwBox.getText().trim().isEmpty() || pwBox2.getText().trim().isEmpty() ||
+                    userTextField.getText().trim().isEmpty()|| userTextField2.getText().trim().isEmpty()||
+                    mailbox.getText().trim().isEmpty()||mailbox2.getText().trim().isEmpty()||gebruikersRol == null) {
+                actiontarget.setFill(Color.RED);
+                actiontarget.setText("Fields can't be left open");
+            } else { 
+                actiontarget.setText("");
+                if (!username.equals(username2) || !password.equals(password2) || !mail1.equals(mail3)) {
+                    System.out.println("Username, password and/or mailadress are not the same");
+                    actiontarget.setFill(Color.RED);
+                    actiontarget.setText("Username, password and/or\n mailadress are not the same");
                 } else {
-                    System.out.print(username + "\n" + password);
-                    actiontarget.setText("");
-                    Connection conn;
-                    if(!username.equals(username2) || !password.equals(password2) || !mail.equals(mail2)){
-                        System.out.println("Username, password and/or mailadress are not the same");
-                        actiontarget.setFill(Color.RED);
-                        actiontarget.setText("Username, password and/or\n mailadress are not the same");
-                    }else{
-                    
-                        try {
-                            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-                            System.out.println("Connected!");
-                            Statement stmt = (Statement) conn.createStatement();
-                            
-                            ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = '" + username+ "'");
-                            int count = 0;
-                            while(rs2.next()){
-                               count = rs2.getInt("total");
-                            }
-                            if(count == 0){
-                                Encrypt encrypt = new Encrypt();
-                                try {
-                                    password = encrypt.createHash(password);
-                                } catch (Encrypt.CannotPerformOperationException ex) {
-                                   
-                                }
-                                String insert="INSERT INTO users (username, wachtwoord, rol, email) VALUES('"+username+"','"+password+"','"
-                                        +gebruikersRol+"','"+mail+"')";
-                                stmt.execute(insert);
-                                actiontarget.setFill(Color.GREEN);
-                                actiontarget.setText("User has been added");
-                                System.out.println("Gebruiker toegevoegd");
-                            }else{
-                                actiontarget.setFill(Color.RED);
-                                actiontarget.setText("Username already exists");
-                                System.out.println("bestaat al");}
-                        } catch (SQLException ed) {
-                            System.err.println(ed);
+                    try {
+                        Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                        System.out.println("Connected!");
+                        Statement stmt = (Statement) conn.createStatement();
+                        ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = '" + username+ "'");
+                        int count = 0;
+                        while(rs2.next()){
+                            count = rs2.getInt("total");
                         }
-                    }  
+                        if (count == 0) {
+                            Encrypt encrypt = new Encrypt();
+                            try {
+                                password = encrypt.createHash(password);
+                            } catch (Encrypt.CannotPerformOperationException ex) {
+                                System.out.println(ex);
+                            }
+                            String insert = "INSERT INTO users (username, wachtwoord, rol, email) VALUES('"+username+"','"+password+"','"
+                                    +gebruikersRol+"','" + mail1 + "')";
+                            stmt.execute(insert);
+                            actiontarget.setFill(Color.GREEN);
+                            actiontarget.setText("User has been added");
+                        } else {
+                            actiontarget.setFill(Color.RED);
+                            actiontarget.setText("Username already exists");
+                        }
+                    }catch (SQLException ed) {  
+                        System.err.println(ed);
+                    }
                 }
             }
         });
@@ -244,9 +205,6 @@ public class GebruikerAanmaken {
         scene.getStylesheets().add("global/Style2.css");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-    
-    public static void main(String[] args) {
     }
 
 }

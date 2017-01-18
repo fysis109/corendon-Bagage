@@ -13,7 +13,6 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -34,18 +33,17 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Profile {
-    Mysql mysql = new Mysql();
     
-
-    //private mqsql
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();
-    String gebruikersRol = null;
-    //test
+    //mysql informatie
+    private Mysql MYSQL = new Mysql();
+    private final String USERNAME = MYSQL.getUsername();
+    private final String PASSWORD = MYSQL.getPassword();
+    private final String CONN_STRING = MYSQL.getUrlmysql();
+    
+    private String gebruikersRol = null;
+   
     public void star(Stage primaryStage) {
         
-         // deze vijf regels om een homeknop aan te roepen
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);        
         BorderPane root = new BorderPane();
@@ -121,8 +119,6 @@ public class Profile {
         //text veld na newpassword + bullets
         TextField emailconText = new TextField(login.Login.email);
         grid.add(emailconText, 1, rij++);
-
-        Connection conn;
         
         //De Sign in 
         Button btn = new Button("Adjust info");
@@ -148,74 +144,63 @@ public class Profile {
         btn.setDefaultButton(true);
 
         //Button event text
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            private String[] test;
-
-            @Override
-            public void handle(ActionEvent e) {
-                String username = usernameTextField.getText();
-                String password = pwBox.getText();
-                String password2 = pwBox2.getText();
-                String email = emailText.getText();
-                String emailcon = emailconText.getText();
-                String voornaam = voornaamTextField.getText();
-                String achternaam = lastnameTextField.getText();
-                    Encrypt encrypt = new Encrypt();
-                    try {
-                        Connection conn;
-                        conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-
-                        Statement stmt2 = (Statement) conn.createStatement();
-                        Statement stmt3 = (Statement) conn.createStatement();
-                        ResultSet rs2 = stmt2.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = '" + username + "'");
-                        int count = 0;
-                        while (rs2.next()) {
-                            count = rs2.getInt("total");
+        btn.setOnAction((ActionEvent e) -> {
+            String username1 = usernameTextField.getText();
+            String password = pwBox.getText();
+            String password2 = pwBox2.getText();
+            String email = emailText.getText();
+            String emailcon = emailconText.getText();
+            String voornaam1 = voornaamTextField.getText();
+            String achternaam = lastnameTextField.getText();
+            Encrypt encrypt = new Encrypt();
+            try {
+                Connection conn;
+                conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                Statement stmt2 = (Statement) conn.createStatement();
+                Statement stmt3 = (Statement) conn.createStatement();
+                ResultSet rs2 = stmt2.executeQuery("SELECT COUNT(*) AS total FROM users WHERE username = '" + username1 + "'");
+                int count = 0;
+                while (rs2.next()) {
+                    count = rs2.getInt("total");
+                }
+                ResultSet rs3 = stmt3.executeQuery("SELECT * FROM users WHERE username = '" + username1 + "'");
+                while (rs3.next()) {
+                    String pass = rs3.getString("wachtwoord");
+                    if (password.equals(password2) && email.equals(emailcon)) {
+                        actiontarget.setText("");
+                        Statement stmt = (Statement) conn.createStatement();
+                        ResultSet rs1 = stmt.executeQuery("SELECT userID FROM users WHERE username = '" + username1 + "'");
+                        int userID = 0;
+                        while (rs1.next()) {
+                            userID = rs1.getInt("userID");
                         }
-                        ResultSet rs3 = stmt3.executeQuery("SELECT * FROM users WHERE username = '" + username + "'");
-                            while (rs3.next()) {
-                                String pass = rs3.getString("wachtwoord");
-                                if (password.equals(password2) && email.equals(emailcon)) {
-                                    actiontarget.setText("");
-                                    Statement stmt = (Statement) conn.createStatement();
-                                    ResultSet rs1 = stmt.executeQuery("SELECT userID FROM users WHERE username = '" + username + "'");
-                                    int userID = 0;
-                                    while (rs1.next()) {
-                                        userID = rs1.getInt("userID");
-                                    }
-                                    try {
-                                        password2 = encrypt.createHash(password2);
-                                    } catch (Encrypt.CannotPerformOperationException ex) {
-                                        Logger.getLogger(GebruikerAanpassen.class.getName()).log(Level.SEVERE, null, ex);
-                                    }
-                                    String sql = "UPDATE users SET username=?, wachtwoord=?, email=?, voornaam=?, achternaam=?"
-                                            + " WHERE userID=?";
-                                    PreparedStatement statement = conn.prepareStatement(sql);
-                                    statement.setString(1, username);
-                                    statement.setString(2, password2);
-                                    statement.setString(3, emailcon);
-                                    statement.setString(4, voornaam);
-                                    statement.setString(5, achternaam);
-                                    statement.setInt(6, userID);
-                                    
-                                    int rowsUpdated = statement.executeUpdate();
-                                    if (rowsUpdated > 0) {
-                                        actiontarget.setText("An existing user was updated successfully!");
-                                        actiontarget.setFill(Color.GREEN);
-                                    }
-
-                                } else {
-                                    actiontarget.setText("Password or emailaddress fields \nare not the same");
-                                    actiontarget.setFill(Color.RED);
-                                }
-                            }
-
-                    } catch (SQLException ed) {
-                        Encrypt.CannotPerformOperationException ex;
-                        System.err.println(ed);
+                        try {
+                            password2 = encrypt.createHash(password2);
+                        } catch (Encrypt.CannotPerformOperationException ex) {
+                            Logger.getLogger(GebruikerAanpassen.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        String sql = "UPDATE users SET username=?, wachtwoord=?, email=?, voornaam=?, achternaam=?"
+                                + " WHERE userID=?";
+                        PreparedStatement statement = conn.prepareStatement(sql);
+                        statement.setString(1, username1);
+                        statement.setString(2, password2);
+                        statement.setString(3, emailcon);
+                        statement.setString(4, voornaam1);
+                        statement.setString(5, achternaam);
+                        statement.setInt(6, userID);
+                        int rowsUpdated = statement.executeUpdate();
+                        if (rowsUpdated > 0) {
+                            actiontarget.setText("An existing user was updated successfully!");
+                            actiontarget.setFill(Color.GREEN);
+                        }
+                    } else {
+                        actiontarget.setText("Password or emailaddress fields \nare not the same");
+                        actiontarget.setFill(Color.RED);
                     }
-
-                
+                }
+            }catch (SQLException ed) {
+                Encrypt.CannotPerformOperationException ex;
+                System.err.println(ed);
             }
         });
 

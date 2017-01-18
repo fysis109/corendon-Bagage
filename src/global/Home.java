@@ -111,8 +111,8 @@ public class Home {
                 grid.add(buttonKlantenAanpassen, 0,0);
                 grid.add(buttonGevondenKofferRegistreren, 1,0);
                 grid.add(buttonVerlKofferReg, 1,1);
-                grid.add(buttonBagageAanpassen, 2,0);
-                grid.add(buttonGevBagageAanpassen, 2, 1);
+                grid.add(buttonBagageAanpassen, 2,1);
+                grid.add(buttonGevBagageAanpassen, 2, 0);
                 break;
         }
 
@@ -160,7 +160,7 @@ public class Home {
         
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
-        //set Stage boundaries to visible bounds of the main screen
+        //zet de stage op bijna full screen.
         primaryStage.setX(primaryScreenBounds.getMinX());
         primaryStage.setY(primaryScreenBounds.getMinY());
         primaryStage.setWidth(primaryScreenBounds.getWidth());

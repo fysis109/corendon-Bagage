@@ -49,19 +49,12 @@ public class PieChar {
             if("opgelostBagage".equals(zoekOpDracht)) {
                 
                 for (int i = 0; i < AirportList.size(); i++) {
-                    System.out.println("AirportList "+AirportList.size());
-
-
                     //query
                     String query = "select count(luchthavengevonden) as count from gevondenbagage a inner join opgelost b on a.gevondenkofferID = b.gevondenkofferID" +
                         " where luchthavengevonden = '"+AirportList.get(i)+"' AND b.datum between '"+beginDatum+"' and '"+eindDatum+"'" +
                         " group by luchthavengevonden";
-
-                    System.out.println(query);
                     ResultSet databaseResponse = st.executeQuery(query);
                     while (databaseResponse.next()) {
-
-                        System.out.println(databaseResponse.getInt("count"));
                         pieCharDoubleArray[i] = databaseResponse.getInt("count");
                         
                         //tel de nieuwe hoeveel koffers op
@@ -97,8 +90,6 @@ public class PieChar {
 
                     //query
                     String query = "SELECT count(bagagelabel) as count FROM corendonbagagesystem.verlorenbagage where luchthavenvertrokken = '"+AirportList.get(i)+"' AND status='notSolved';";
-
-                    System.out.println(query);
                     ResultSet databaseResponse = st.executeQuery(query);
                     while (databaseResponse.next()) {
                         
@@ -169,7 +160,7 @@ public class PieChar {
                 
             }
         }catch (SQLException ex) {
-            System.out.println("Code kan geen connectie maken met het database.");
+            System.out.println(ex);
         }
     
     return(chart);

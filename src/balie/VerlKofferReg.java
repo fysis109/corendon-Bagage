@@ -553,7 +553,7 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font, 15 );
             contentStream.moveTextPositionByAmount( 75, 700 );
-            contentStream.drawString( "Missing luggage registration form" );
+            contentStream.drawString( "Lost luggage registration form" );
             contentStream.endText();
             
             //Datum 

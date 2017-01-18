@@ -4,11 +4,11 @@
 
 package manager;
 
+import global.MenuB;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -20,14 +20,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import global.MenuB;
-import javafx.scene.paint.Color;
 
 public class ManagerStartScherm extends Application{
+    
+            
+      private PieChart pieChart;
+      private LineChart lineChart;
     
     PieChar pieChar = new PieChar();
     LineChar lineChar = new LineChar();
@@ -38,10 +41,10 @@ public class ManagerStartScherm extends Application{
 
     //ArrayList
     private ArrayList<String> airportList = new ArrayList<String>();
-    
-    private ObservableList<PieChart.Data> pieChartData;
+   
     private boolean amsterdamSelected, barcelonaSelected, istanbulSelected;
 
+    @Override
     public void start(Stage primaryStage) {
         
         /*
@@ -187,6 +190,9 @@ public class ManagerStartScherm extends Application{
         actiontarget.setFill(Color.FIREBRICK);
         grid.add(actiontarget, 11, 6);
         
+        
+        
+        
         /*
          * eventhandlers voor de begindatum
         */
@@ -260,13 +266,16 @@ public class ManagerStartScherm extends Application{
          * Opgelost bagage action eventhandler
         */
         opgelostBagage.setOnAction((ActionEvent e) -> {
-            
+            grid.getChildren().remove(pieChart);
+            grid.getChildren().remove(lineChart);
             beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
             eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
             
             zoekOpDracht = ZOEKENOPGELOSTBAGAGE;
             try {
-                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
+                pieChart = pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
+                grid.add(pieChart, 0, 7, 12, 1);
+                //pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
             } catch (SQLException ex) {    
             
             }
@@ -276,7 +285,8 @@ public class ManagerStartScherm extends Application{
          * niet opgeloste bagage action eventhandler
         */
         nietopgelostBagage.setOnAction((ActionEvent e) -> {
-            
+            grid.getChildren().remove(pieChart);
+            grid.getChildren().remove(lineChart);
             //Bagage wat niet is opgelost
             beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
             eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
@@ -284,7 +294,9 @@ public class ManagerStartScherm extends Application{
             zoekOpDracht = ZOEKENNIETTERUGGEVONDEN;
             
             try {
-                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
+                pieChart = pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
+                grid.add(pieChart, 0, 7, 12, 1);
+                //pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
             } catch (SQLException ex) {    
             
             }
@@ -295,6 +307,8 @@ public class ManagerStartScherm extends Application{
         */
         bagageVernietigd.setOnAction((ActionEvent e) -> {
             
+                grid.getChildren().remove(pieChart);
+            grid.getChildren().remove(lineChart);
             //Bagage wat niet is opgelost
             beginDatum = beginJaarString + "-" +beginMaandString + "-" +beginDagString;
             eindDatum = eindJaarString + "-" + eindMaandString + "-" + eindDagString;
@@ -302,7 +316,9 @@ public class ManagerStartScherm extends Application{
             zoekOpDracht = ZOEKENNAARBAGAGEWATVERWIJDERDIS;
             
             try {
-                pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
+                pieChart = pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
+                grid.add(pieChart, 0, 7, 12, 1);
+                //pieChar.start(primaryStage, beginDatum, eindDatum, zoekOpDracht, airportList);
             } catch (SQLException ex) {    
             
             }
@@ -312,12 +328,14 @@ public class ManagerStartScherm extends Application{
          * Bagage is zoek geraakt
         */
         bagagewWtIsZoekGeraakt.setOnAction((ActionEvent e) -> {
-            
+            grid.getChildren().remove(pieChart);
+            grid.getChildren().remove(lineChart);
             //kijken hoeveel luchthavens geselecteerd zijn
             if(airportList.size() == 1){
-                lineChar.start(primaryStage, beginJaarString, beginMaandString, eindJaarString, eindMaandString, airportList);
+                lineChart = lineChar.start(primaryStage, beginJaarString, beginMaandString, eindJaarString, eindMaandString, airportList);
+                grid.add(lineChart, 0, 7, 12, 1);
             } else {
-                actiontarget.setText("You can't select more dan one airport.");
+                actiontarget.setText("You can't select more than one airport.");
             }
         });
         

@@ -5,9 +5,9 @@ Login scherm waarmee je in logt via accounts van de database
 */
 package login;
 
-import global.Mysql;
 import global.Encrypt;
 import global.Home;
+import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -74,7 +74,7 @@ public class Login extends Application {
         imgpic.setImage(logo);
         imgpic.setFitHeight(90);
         imgpic.setFitWidth(250);
-        grid.add(imgpic, 0, 6);
+        grid.add(imgpic, 0, 6, 2, 1);
 
         //Welkom + Letter type
         Text scenetitle = new Text("Welcome");

@@ -36,6 +36,27 @@
     -fx-padding: 10 20 10 20;
 }
 
+/* kleur voor de assen van de lineChart */
+ .axis {
+    -fx-font-size: 1.4em;    
+    -fx-tick-label-fill: black;
+    -fx-font-family: Tahoma;
+    -fx-tick-length: 20;
+    -fx-minor-tick-length: 10;
+}
+ 
+.axis-label {
+   -fx-text-fill: #462300; 
+}
+ 
+.axis-tick-mark {
+    -fx-stroke: black;
+    -fx-stroke-width: 3; 
+}
+.axis-minor-tick-mark {
+    -fx-stroke: black;
+}
+
 
 /*Zorgen voor de layout van de database */
 

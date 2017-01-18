@@ -1,9 +1,9 @@
 /*
- * Dit programma laat een line char zien van hoeveel koffers er verloren zijn per maand.
+ * Dit programma returnd een lineChart die in een andere klasse wordt toegevoegd
+ * aan de gridd.
 */
 package manager;
 
-import global.MenuB;
 import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,49 +11,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.MenuBar;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class LineChar {
 
     //mysql connectie
-    Mysql mysql = new Mysql();
-    
-    //private mqsql
+    private final Mysql mysql = new Mysql();
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
     
-    public void start(Stage primaryStage, String beginJaarAlleStatsString, String beginMaandAlleStatsString, 
+    public LineChart start(Stage primaryStage, String beginJaarAlleStatsString, String beginMaandAlleStatsString, 
                     String eindJaarAlleStatsString, String eindMaandAlleStatsString, ArrayList AirportList) {
         
         int tempJaar, tempMaand, tempQueryMaand, tempQueryJaar, count = 0;
         String eindDatum, eindDatumString;
-        
-        ManagerStartScherm managerstartscherm = new ManagerStartScherm();
-        
-        // deze vijf regels om de menubar aan te roepen
-        MenuB menuB = new MenuB();
-        MenuBar menuBar = menuB.createMenuB(primaryStage);        
-        BorderPane root = new BorderPane();
-        menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
-        root.setTop(menuBar);
-
-        //Grid 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-        root.setCenter(grid);
-        
+       
         //defining the axes
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();    
@@ -125,18 +102,9 @@ public class LineChar {
         }catch (SQLException ex) {
             System.out.println("Code kan geen connectie maken met het database.");
         }
-
-        //scence
-        primaryStage.setTitle("");
-        primaryStage.setWidth(1200);
-        primaryStage.setHeight(920);
         
-        Scene scene  = new Scene(lineChart,800,600);
         lineChart.getData().add(series);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        return lineChart;
     }
-    public void start(Stage primaryStage) throws Exception {
-       
-    }
+
 }

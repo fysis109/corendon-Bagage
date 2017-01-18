@@ -1,8 +1,9 @@
 /*
- * Dit programma maakt een piechar de statistieken laat zien.
+ * Dit programma maakt een piechar die in een andere klasse wordt aangeroepen
 */
 package manager;
 
+import global.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -10,28 +11,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javafx.geometry.Insets;
-import javafx.scene.control.MenuBar;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.scene.chart.*;
-import global.MenuB;
-import global.Mysql;
-import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
-public class PieChar extends Application {
+public class PieChar {
     
     //mysql connectie
     Mysql mysql = new Mysql();  
-    MenuB menubar = new MenuB();
     
-    //private mqsql
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
@@ -39,32 +28,11 @@ public class PieChar extends Application {
     private int total = 0;
     private int totalKoffer = 0;
     
-    HashMap<Integer, String> TempArray= new HashMap<Integer, String>();
+    HashMap<Integer, String> TempArray= new HashMap<>();
      
-    public void start(Stage primaryStage, String beginDatum, String eindDatum, String zoekOpDracht ,ArrayList AirportList) throws SQLException {
+    public PieChart start(Stage primaryStage, String beginDatum, String eindDatum, String zoekOpDracht ,ArrayList AirportList) throws SQLException {
         
-        
-        ManagerStartScherm managerstartscherm = new ManagerStartScherm();
-        
-        // deze vijf regels om de menubar aan te roepen
-        MenuB menuB = new MenuB();
-        MenuBar menuBar = menuB.createMenuB(primaryStage);        
-        BorderPane root = new BorderPane();
-        menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
-        root.setTop(menuBar);
-       
-        //Grid 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-        root.setCenter(grid);
-        
-        //scence
-        Scene scene = new Scene(root);
-        primaryStage.setTitle("");
-        primaryStage.setWidth(1200);
-        primaryStage.setHeight(920);
+        PieChart chart = new PieChart();
         
         Connection conn;
         try {
@@ -113,17 +81,13 @@ public class PieChar extends Application {
                     double berekening = tempkofferLuchthaven/totalKoffer*100;
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Bagage found back "+ tempkofferLuchthaven,berekening));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Bagage found back: "+ (int) tempkofferLuchthaven,berekening));
                 }
 
-                //piechart
-                final PieChart chart = new PieChart(pieChartData);
-                chart.setTitle("Found bagage back");
-                root.setCenter(chart);
+                //vul de chart met de piechart data
+                chart.setData(pieChartData);
+                chart.setTitle("Luggage found back");
                 
-                //maak het beschikbaar in scene
-                primaryStage.setScene(scene);
-                primaryStage.show();
             }
             
             //kijken naar niet terug gevonden bagage
@@ -157,17 +121,13 @@ public class PieChar extends Application {
                     double berekening = tempkofferLuchthaven/totalKoffer*100;
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Bagage not found back "+ tempkofferLuchthaven ,berekening));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b] +" Luggage lost: "+ (int) tempkofferLuchthaven ,berekening));
                 }
 
-                //piechart
-                final PieChart chart = new PieChart(pieChartData);
-                chart.setTitle("Not found bagage back");
-                root.setCenter(chart);
-                
-                //maak het beschikbaar in scene
-                primaryStage.setScene(scene);
-                primaryStage.show();
+                //vul de chart met de piechart data
+                chart.setData(pieChartData);
+                chart.setTitle("Luggage that is still lost");
+               
             }
             
             //bagage wat naar de sloop is gegaan
@@ -200,26 +160,19 @@ public class PieChar extends Application {
                     double berekening = tempkofferLuchthaven/totalKoffer*100;
 
                     //Gooi data in Piechar    
-                    pieChartData.add(new PieChart.Data(pieCharStringArray[b]+" Bagage delete "+ tempkofferLuchthaven,berekening));
+                    pieChartData.add(new PieChart.Data(pieCharStringArray[b]+" Luggage deleted: "+ (int) tempkofferLuchthaven,berekening));
                 }
 
                 //piechart
-                final PieChart chart = new PieChart(pieChartData);
-                chart.setTitle("Bagage that not found back.");
-                root.setCenter(chart);
+                chart.setData(pieChartData);
+                chart.setTitle("Luggage deleted.");
                 
-                
-                primaryStage.setScene(scene);
-                primaryStage.show();
-
             }
         }catch (SQLException ex) {
             System.out.println("Code kan geen connectie maken met het database.");
         }
+    
+    return(chart);
     }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-       
-    }
+    
 }

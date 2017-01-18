@@ -111,7 +111,7 @@ public class Login extends Application {
         //Text die een foutmelding geeft
         final Text actiontarget = new Text();
         actiontarget.setFill(Color.FIREBRICK);
-        grid.add(actiontarget, 1, 6);
+        grid.add(actiontarget, 1, 7);
 
         //wachtwoord vergeten
         Button buttonWachtwoordVergeten = new Button("Forgot password");

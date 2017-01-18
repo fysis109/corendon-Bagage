@@ -1,7 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * In deze klasse wordt een match gezocht met een koffer die wordt meegegeven
+ * Daarna worden alle matches getoond en kan er gekozen worden om een match te kiezen
+ * Als dat gebeurd wordt er een email gestuurd naar de klant van wie de verloren koffer is
+ * En wordt er een email gestuurd naar de betreffende luchthaven
  */
 package balie;
 
@@ -60,30 +61,13 @@ public class ZoekMatchVerlorenBagage {
     private int customerId;
     private Stage primaryStage = new Stage();
     private int verlorenKofferID;
-    private final Mysql mysql = new Mysql();
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();
-    // Bagage info
     
-    private String Luchthavenaankomst;
+    //mysql connectie info
+    private final Mysql MYSQL = new Mysql();
+    private final String USERNAME = MYSQL.getUsername();
+    private final String PASSWORD = MYSQL.getPassword();
+    private final String CONN_STRING = MYSQL.getUrlmysql();
     
-    //klanten info
-    private String Voornaam;
-    private String Tussenvoegsel;
-    private String Achternaam;
-    private String Telefoonnummer;
-    private String Email;
-    private String Plaats;
-    private String Land;
-    private String Huisnr;
-    private String Straat;
-    private String Postcode;
-
-    
-   
-    
-
     public void maakZoekString(int customerId, Stage primaryStage, int verlorenKofferID, String bagagelabel, String kleur, String hoogte,
             String lengte, String breedte, String luchthavenVertrek,
             String luchthavenAankomst, String bijzonderheden, String merk, String hardSoftCase) {
@@ -91,6 +75,9 @@ public class ZoekMatchVerlorenBagage {
         this.primaryStage = primaryStage;
         this.verlorenKofferID = verlorenKofferID;
         this.customerId = customerId;
+        
+        //Maakt 2 zoekstrings eentje om alleen te zoeken op bagagelabel en eentje om 
+        //alleen te zoeken op kenmerken
         
         String zoekOpBagagelabel = "SELECT COUNT(*) AS result FROM gevondenbagage WHERE bagagelabel = '" + bagagelabel + "'";
         String zoekCriteria = "SELECT * FROM gevondenbagage WHERE softhard = '" + hardSoftCase + "'";
@@ -116,22 +103,24 @@ public class ZoekMatchVerlorenBagage {
     }
 
     private void zoekOpCriteria(String zoekCriteria, String zoekOpBagagelabel, String bagagelabel) {
+        //arraylist om alle resultaten in op te slaan
         ArrayList<Integer> kofferIdResultaten = new ArrayList<>();
-        Connection conn;
         try {
-            System.out.println(zoekCriteria + "\n" + zoekOpBagagelabel + "\n" + bagagelabel);
-            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+            Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             Statement stmt = (Statement) conn.createStatement();
             Statement stmt2 = (Statement) conn.createStatement();
             Statement stmt3 = (Statement) conn.createStatement();
             ResultSet matchOpBagagelabel = stmt.executeQuery(zoekOpBagagelabel);
             while (matchOpBagagelabel.next()) {
+                //als er geen match is op bagagelabel worden alle koffers die aan de zoekcriteria toegevoed aan de array
                 if (matchOpBagagelabel.getInt("result") == 0) {
                     ResultSet matchendeKoffersResult = stmt2.executeQuery(zoekCriteria);
                     while (matchendeKoffersResult.next()) {
                         kofferIdResultaten.add(matchendeKoffersResult.getInt("gevondenkofferID"));
                     }
-                } else {
+                } 
+                //als er een match is op bagagelabel wordt alleen die toegevoegd aan de array
+                else {
                     ResultSet resultaatBagageLabel = stmt3.executeQuery("SELECT * FROM gevondenbagage WHERE bagagelabel = '" + bagagelabel + "'");
                     while (resultaatBagageLabel.next()) {
                         kofferIdResultaten.add(resultaatBagageLabel.getInt("gevondenkofferID"));
@@ -141,6 +130,7 @@ public class ZoekMatchVerlorenBagage {
         } catch (SQLException ex) {
             System.out.println(ex);
         }
+        //Dan worden de resultaten naar een tableview omgezet
         laatResultatenZien(kofferIdResultaten);
     }
     
@@ -159,37 +149,35 @@ public class ZoekMatchVerlorenBagage {
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
         
+        //Als er helemaal geen resultaten zijn is de arraylist leeg en komt er een popup dat er geen match is.
         if(kofferIdResultaten.isEmpty()){
             final Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(primaryStage);
             VBox dialogVbox = new VBox(20);
-            Button test = new Button();
-            test.setText("Home");
-            dialogVbox.getChildren().addAll(new Text("No match with lost lugage\nthe luggage has been added to the database\nclick the button to go to the homepage"), test);
+            Button homeButton = new Button();
+            homeButton.setText("Home");
+            dialogVbox.getChildren().addAll(new Text("No match with lost lugage\nthe luggage has been added to the database\nclick the button to go to the homepage"), homeButton);
             Scene dialogScene = new Scene(dialogVbox, 300, 200);
             dialog.setScene(dialogScene);
             dialog.show();
 
-            test.setOnAction((ActionEvent e) -> {
+            homeButton.setOnAction((ActionEvent e) -> {
                 Home home = new Home();
                 home.start(primaryStage);
                 dialog.close();
             });
         }else{
             try {
-                //maak connectie met de database
-                Connection conn;
-                conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                 Statement st = conn.createStatement();
-
+                //Krijgt alle informatie van alle koffers in de arraylist uit de database
                 String selectString = "SELECT * FROM gevondenbagage WHERE gevondenKofferID = '" + kofferIdResultaten.get(0) + "'";
                 for (int i = 1; i < kofferIdResultaten.size(); i++) {
                     selectString += "OR gevondenKofferID = '" + kofferIdResultaten.get(i) + "'";
                 }
-                System.out.println(selectString);
                 ResultSet rs = st.executeQuery(selectString);
-                ObservableList<Table> data = FXCollections.observableArrayList();
+                ObservableList<bagageStuk> data = FXCollections.observableArrayList();
                 while (rs.next()) {
                     this.kofferid = rs.getString("gevondenKofferID");
                     this.dlabel = rs.getString("bagagelabel");
@@ -203,13 +191,12 @@ public class ZoekMatchVerlorenBagage {
                     this.merk = rs.getString("merk");
                     this.softhard = rs.getString("softhard");
                     
-                    data.add(new Table(kofferid, dlabel, kleur, dikte, lengte, 
+                    data.add(new bagageStuk(kofferid, dlabel, kleur, dikte, lengte, 
                             breedte, luchthavengevonden, datum, softhard, bijzonderhede, merk));
                     table.setItems(data);
                 }
-            }
-            catch (SQLException ed) {
-                    
+            }catch (SQLException ed) {
+                System.out.println(ed);     
             }
             
             table.setEditable(true);
@@ -275,80 +262,90 @@ public class ZoekMatchVerlorenBagage {
             merkcol.setCellValueFactory(
                     new PropertyValueFactory<>("merk"));
             
+            //voeg alle columns toe aan de tableview
+            table.getColumns().addAll(bagagelabelcol, kleurcol, diktecol, lengtecol, breedtecol, luchthavengevondencol, datumcol, softhardcol, merkcol, bijzonderhedecol);
+
+            Scene scene = new Scene(new Group(), 1200, 1000);
+            primaryStage.setTitle("Matches");
+
+            //zet de grootte van de tabel aan de hand van de grootte van het scherm
+            scene.widthProperty().addListener(new ChangeListener<Number>() {
+                @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+                    table.setMinWidth(((double)newSceneWidth - 10));
+                    table.setMaxWidth(((double)newSceneWidth - 10));
+                }
+            });
+            scene.heightProperty().addListener(new ChangeListener<Number>() {
+                @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                    table.setMinHeight((double)newSceneHeight - 200);
+                    table.setMaxHeight((double)newSceneHeight - 200);
+                }
+            });
             
+            Button match = new Button("Match");
+            Button geenMatch = new Button("No match");
+            GridPane buttons = new GridPane();
+            buttons.setVgap(10);
+            buttons.setHgap(10);
+            buttons.setPadding(new Insets(25, 25, 25, 25));
+            buttons.add(match, 0, 0);
+            buttons.add(geenMatch, 3, 0);
+            
+            //als er een match is en daar wordt ook op gedrukt dan gebeurd dit
+            match.setOnAction((ActionEvent e) -> {
+                if(table.getSelectionModel().isEmpty() == false){
+                    bagageStuk selected = table.getSelectionModel().getSelectedItem();
+                    zetMatchInDatabase(selected.getGevondenkofferID());
+                }
+            });
+            
+            //als er geenMatch button word geklikt gebeurd dit.
+            geenMatch.setOnAction((ActionEvent e) -> {
+                final Stage dialog = new Stage();
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    dialog.initOwner(primaryStage);
+                    VBox dialogVbox = new VBox(20);
+                    Button homeButton = new Button();
+                    homeButton.setText("Home");
+                    dialogVbox.getChildren().addAll(new Text("This luggage has been added to\nthe database click the\nbutton to go to the homepage"), homeButton);
+                    Scene dialogScene = new Scene(dialogVbox, 300, 200);
+                    dialog.setScene(dialogScene);
+                    dialog.show();
+
+                    homeButton.setOnAction(new EventHandler<ActionEvent>() { public void handle(ActionEvent e){
+                        Home home = new Home();
+                        home.start(primaryStage);
+                        dialog.close();
+                    }}); 
+            });
 
 
-        
-        
-        table.getColumns().addAll(bagagelabelcol, kleurcol, diktecol, lengtecol, breedtecol, luchthavengevondencol, datumcol, softhardcol, merkcol, bijzonderhedecol);
+            final VBox vbox = new VBox(root);
+            vbox.setSpacing(10);
+            vbox.setPadding(new Insets(10, 0, 0, 10));
+            vbox.getChildren().addAll(matchesLabel, table, buttons);
 
-        Scene scene = new Scene(new Group(), 1200, 1000);
-        primaryStage.setTitle("Table");
-        
-        scene.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-                table.setMinWidth(((double)newSceneWidth - 10));
-                table.setMaxWidth(((double)newSceneWidth - 10));
-            }
-        });
-        scene.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-                table.setMinHeight((double)newSceneHeight - 200);
-                table.setMaxHeight((double)newSceneHeight - 200);
-            }
-        });
-        
-        Button match = new Button("Match");
-        Button geenMatch = new Button("No match");
-        GridPane buttons = new GridPane();
-        buttons.setVgap(10);
-        buttons.setHgap(10);
-        buttons.setPadding(new Insets(25, 25, 25, 25));
-        buttons.add(match, 0, 0);
-        buttons.add(geenMatch, 3, 0);
-        
-        match.setOnAction((ActionEvent e) -> {
-            if(table.getSelectionModel().isEmpty() == false){
-                Table selected = table.getSelectionModel().getSelectedItem();
-                zetMatchInDatabase(selected.getGevondenkofferID());
-            }
-        });
-        
-        geenMatch.setOnAction((ActionEvent e) -> {
-            final Stage dialog = new Stage();
-                dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.initOwner(primaryStage);
-                VBox dialogVbox = new VBox(20);
-                Button test = new Button();
-                test.setText("Home");
-                dialogVbox.getChildren().addAll(new Text("This luggage has been added to\nthe database click the\nbutton to go to the homepage"), test);
-                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-                dialog.setScene(dialogScene);
-                dialog.show();
-                
-                test.setOnAction(new EventHandler<ActionEvent>() { public void handle(ActionEvent e){
-                    Home home = new Home();
-                    home.start(primaryStage);
-                    dialog.close();
-                  
-                }}); 
-        });
-        
-        
-        final VBox vbox = new VBox(root);
-        vbox.setSpacing(10);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(matchesLabel, table, buttons);
-
-        ((Group) scene.getRoot()).getChildren().addAll(vbox);
-        scene.getStylesheets().add("global/Style2.css");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+            ((Group) scene.getRoot()).getChildren().addAll(vbox);
+            scene.getStylesheets().add("global/Style2.css");
+            primaryStage.setScene(scene);
+            primaryStage.show();
             
         }
     }
     
     private void zetMatchInDatabase(String gevondenKofferID){
+        //Verloren koffer bagage strings
+        String  bagagelabelVerloren = null, voornaam = null, tussenvoegsel = null, 
+                achternaam = null, telefoonnummer = null, email = null, 
+                plaats = null, land = null, huisnr = null, straat = null, postcode = null;
+        
+        //gevonden koffer bagage strings
+        String bagageLabelGevonden = null, kleurGevonden = null, merkGevonden = null, hoogteGevonden = null,
+                    lengteGevonden = null, breedteGevonden = null, luchthavenGevonden = null, softHardGevonden = null, bijzonderhedenGevonden = null;
+            
+        //eerst wordt de status van de koffer op pending gezet, dan wordt er een pdf
+        //gemaakt die naar het vliegveld wordt gemaild, daarna wordt er nog een mailtje
+        //naar de klant gestuurd.
         try{
             Connection conn;
             conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
@@ -362,41 +359,27 @@ public class ZoekMatchVerlorenBagage {
             st.execute(updateStatusVerl);
             st.execute(updateStatusGev);
             
-            String bagagelabelVerloren = "";
-            Statement kofferinfo = conn.createStatement();
+            //alle informatie over de verloren bagage en de klant
             String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID = '" +verlorenKofferID +"'";
-            ResultSet rs = kofferinfo.executeQuery(insertString2);
+            ResultSet rs = st.executeQuery(insertString2);
             while (rs.next()) {
-                    bagagelabelVerloren = rs.getString("bagagelabel");
-                    this.Voornaam = rs.getString("voornaam");
-                    this.Tussenvoegsel = rs.getString("tussenvoegsel");
-                    this.Achternaam = rs.getString("achternaam");
-                    this.Telefoonnummer = rs.getString("telefoonnummer");
-                    this.Email = rs.getString("email");
-                    this.Plaats = rs.getString("Plaats");
-                    this.Land = rs.getString("Land");
-                    this.Huisnr = rs.getString("Huisnummer");
-                    this.Postcode = rs.getString("Postcode");
-                    this.Straat = rs.getString("Straat"); 
-                    this.Luchthavenaankomst = rs.getString("luchthavenaankomst");
-                }
+                bagagelabelVerloren = rs.getString("bagagelabel");
+                voornaam = rs.getString("voornaam");
+                tussenvoegsel = rs.getString("tussenvoegsel");
+                achternaam = rs.getString("achternaam");
+                telefoonnummer = rs.getString("telefoonnummer");
+                email = rs.getString("email");
+                plaats = rs.getString("Plaats");
+                land = rs.getString("Land");
+                huisnr = rs.getString("Huisnummer");
+                postcode = rs.getString("Postcode");
+                straat = rs.getString("Straat");
+            }
             
-            
-           
-            String bagageLabelGevonden = "";
-            String kleurGevonden = "";
-            String merkGevonden = "";
-            String hoogteGevonden = "";
-            String lengteGevonden = "";
-            String breedteGevonden = "";
-            String luchthavenGevonden = "";
-            String softHardGevonden = "";
-            String bijzonderhedenGevonden = "";
-            
-            
-            Statement kofferinfo2 = conn.createStatement();
-            String insertString3 = "select * from gevondenbagage where gevondenkofferID = '" + gevondenKofferID+ "'";
-            ResultSet rs1 = kofferinfo.executeQuery(insertString3);
+            //alle informatie over gevondenbagage
+            Statement st2 = conn.createStatement();
+            String selectGevondenKoffer = "select * from gevondenbagage where gevondenkofferID = '" + gevondenKofferID+ "'";
+            ResultSet rs1 = st2.executeQuery(selectGevondenKoffer);
             while (rs1.next()) {
                 bagageLabelGevonden = rs1.getString("bagagelabel");
                 kleurGevonden = rs1.getString("kleur");
@@ -410,11 +393,11 @@ public class ZoekMatchVerlorenBagage {
             }
             
             String stuurNaarLuchthaven = "";
-            if(Land.equals("Netherlands")){
+            if(land.equals("Netherlands")){
                 stuurNaarLuchthaven = "Schiphol, Amsterdam";
-            }if(Land.equals("Spain")){
+            }if(land.equals("Spain")){
                 stuurNaarLuchthaven = "El prat, Barcelona";
-            }if(Land.equals("Turkey")){
+            }if(land.equals("Turkey")){
                 stuurNaarLuchthaven = "Atatürk, Istanbul";
             }
             
@@ -422,30 +405,21 @@ public class ZoekMatchVerlorenBagage {
                 bagageLabelGevonden = "Doesn't exist";
             }
      
-            // pdf verloren kofffer match
-               // Create a new empty document
+            //maak nieuw document aan
             PDDocument document = new PDDocument();
 
-            // Create a new blank page and add it to the document
+            // voeg een lege pdf pagina toe
             PDPage blankPage = new PDPage();
-            document.addPage( blankPage );
-       
-         
-        
+            document.addPage( blankPage );        
             PDFont font = PDType1Font.HELVETICA_BOLD;
             PDFont font2 = PDType1Font.TIMES_ROMAN;
-            
-            // Create an instance of SimpleDateFormat used for formatting 
-            // the string representation of date (month/day/year)
-            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
-            // Get the date today using Calendar object.
+            //zorgt voor de datum en tijd
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
             java.util.Date today = Calendar.getInstance().getTime();        
-            // Using DateFormat format method we can create a string 
-            // representation of a date with the defined format.
             String reportDate = df.format(today);
 
-            // Start a new content stream which will "hold" the to be created content
+            //contentStream slaat de informatie op die erin moet
             PDPageContentStream contentStream = new PDPageContentStream(document, blankPage);
             // headline
             contentStream.beginText();
@@ -481,43 +455,43 @@ public class ZoekMatchVerlorenBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 575 );
-            contentStream.drawString( "Name: " + Voornaam + " " + Tussenvoegsel + " " + Achternaam);
+            contentStream.drawString( "Name: " + voornaam + " " + tussenvoegsel + " " + achternaam);
             contentStream.endText();
             //Adres
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 560 );
-            contentStream.drawString( "Address: " + Straat + " " + Huisnr );
+            contentStream.drawString( "Address: " + straat + " " + huisnr );
             contentStream.endText();
             //Woonplaats
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 545 );
-            contentStream.drawString( "Home town: " + Plaats );
+            contentStream.drawString( "Home town: " + plaats );
             contentStream.endText();
             //Postcode
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 530 );
-            contentStream.drawString( "Zip code: " + Postcode );
+            contentStream.drawString( "Zip code: " + postcode );
             contentStream.endText();
             //Land
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 515 );
-            contentStream.drawString( "Country: " + Land);
+            contentStream.drawString( "Country: " + land);
             contentStream.endText();
             //Telefoon
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 500 );
-            contentStream.drawString( "Phonenumber: " + Telefoonnummer );
+            contentStream.drawString( "Phonenumber: " + telefoonnummer );
             contentStream.endText();
             //E-mail
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 485 );
-            contentStream.drawString( "E-mail: " + Email);
+            contentStream.drawString( "E-mail: " + email);
             contentStream.endText();
             
             //bagagelabel informatie
@@ -572,28 +546,31 @@ public class ZoekMatchVerlorenBagage {
             // Make sure that the content stream is closed:
             contentStream.close();
             
+            //wordt gekeken of de map pdfopslaan bestaat, zo nee dan wordt deze aangemaakt op de computer.
             JFileChooser fr = new JFileChooser();
             FileSystemView fw = fr.getFileSystemView();
-            System.out.println(fw.getDefaultDirectory());
-
-                 
             Path test = Paths.get(fw.getDefaultDirectory() + "\\pdfopslaan" );
             if(!Files.exists(test)){
                File file = new File(fw.getDefaultDirectory() + "\\pdfopslaan");
                file.mkdir();
             }
+            
+            //pdf wordt opgeslagen in die map
             String opslaanAls = fw.getDefaultDirectory() + "\\pdfopslaan\\Match luggage " + gevondenKofferID + "matches with "+ verlorenKofferID+ ".pdf";
             document.save(opslaanAls);
             document.close();
             
             
-            
+            //mailtje naar de klant
             String body = "Dear Sir/Madam, \nYour luggage may have been found and will be sent to: "+stuurNaarLuchthaven+"\n Luggage label: "
                     + bagagelabelVerloren + "\nPlease visit the customer service of Corendon at "+ stuurNaarLuchthaven + " to verify it's your luggage \n\n"
                     + "Yours faithfully \nCorendon";
             WachtwoordVergeten sendMail = new WachtwoordVergeten();
-            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, Email, "Luggage might be found", body, null);
+            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, email, "Luggage might be found", body, null);
             
+            //mail naar de luchthaven met de pdf als bijlage
+            //voor nu even onze eigen email gedaan omdat de mail applicatie anders
+            //een foutmelding geeft
             String luchthavenEmail = "";
             if(luchthavenGevonden.equals("Schiphol, Amsterdam")){
                 //luchthavenEmail = "schiphol@corendonbalie.com";
@@ -605,34 +582,43 @@ public class ZoekMatchVerlorenBagage {
                 //luchthavenEmail = "atatürk@corendonbalie.com";
                 luchthavenEmail = "tim-vlaar@hotmail.com";
             }
-            
-            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, Email, "Send luggage back", "Send this back", opslaanAls);
-
-            
-            
+            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, luchthavenEmail, "Send luggage back", "Send this back", opslaanAls);
             
         } catch (IOException ex) {
             System.out.println(ex);
         } catch (SQLException ex) {
             System.out.println(ex);
         }
-        
-        
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(primaryStage);
+        VBox dialogVbox = new VBox(20);
+        Button homeButton = new Button();
+        homeButton.setText("Home");
+        dialogVbox.getChildren().addAll(new Text("The customer has received an email\nthe airport will send the luggage back\nclick home to go to the\nhomepage"), homeButton);
+        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+        dialog.setScene(dialogScene);
+        dialog.show();
+        homeButton.setOnAction(new EventHandler<ActionEvent>() { public void handle(ActionEvent e){
+            Home home = new Home();
+            home.start(primaryStage);
+            dialog.close();
+        }});
     }
     
     
     
     
-     
-    private TableView<Table> table = new TableView<>();
+    //deze klasse is nodig om de tableview te kunnen maken
+    private TableView<bagageStuk> table = new TableView<>();
     private String kofferid, dlabel, kleur, dikte, lengte, breedte, luchthavengevonden, datum, softhard, bijzonderhede, merk;
     
-    public static class Table{
+    public static class bagageStuk{
         private SimpleStringProperty gevondenkofferID, bagagelabel, kleur,
                 dikte, lengte, breedte, luchthavengevonden, datum,
                 softhard, bijzonderhede, merk;
         
-        private Table(String gevondenkofferID, String bagagelabel, String kleur, String dikte, String lengte, String breedte, String luchthavengevonden, String datum, String softhard, String bijzonderhede, String merk) {
+        private bagageStuk(String gevondenkofferID, String bagagelabel, String kleur, String dikte, String lengte, String breedte, String luchthavengevonden, String datum, String softhard, String bijzonderhede, String merk) {
             this.gevondenkofferID = new SimpleStringProperty(gevondenkofferID);
             this.bagagelabel = new SimpleStringProperty(bagagelabel);
             this.kleur = new SimpleStringProperty(kleur);

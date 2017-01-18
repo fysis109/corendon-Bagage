@@ -1,12 +1,10 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * In deze klasse wordt alle gevonden bagage getoond en daarna kan je deze
+ * aanpassen, daarna wordt er gekeken of er matches zijn.
  */
 package balie;
 
 
-import global.Home;
 import global.MenuB;
 import global.Mysql;
 import java.sql.Connection;
@@ -43,19 +41,14 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-/**
- *
- * @author tim
- */
 public class GevondenBagageAanpassen {
     
-    
-    private Mysql mysql = new Mysql();
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();
-    private TableView<Table> table = new TableView<>();
-    private String kleurEntry, merkEntry, hoogteEntry, lengteEntry, breedteEntry, countryEntry, country,
+    private final Mysql MYSQL = new Mysql();
+    private final String USERNAME = MYSQL.getUsername();
+    private final String PASSWORD = MYSQL.getPassword();
+    private final String CONN_STRING = MYSQL.getUrlmysql();
+    private TableView<BagageStuk> table = new TableView<>();
+    private String kleurEntry, merkEntry, hoogteEntry, lengteEntry, breedteEntry, 
                 luchthavenGevondenEntry, hardSoftEntry, statusEntry;
     
     
@@ -74,11 +67,13 @@ public class GevondenBagageAanpassen {
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
         
+        //Alle gevonden bagage wordt uit de database gehaald en toegevoegd aan 
+        //de tableview
         try{
             Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM gevondenbagage WHERE status = 'pending' OR status = 'notSolved' ORDER BY status DESC");
-            ObservableList<Table> data = FXCollections.observableArrayList();
+            ObservableList<BagageStuk> data = FXCollections.observableArrayList();
             while(rs.next()){
                 String kofferid = rs.getString("gevondenkofferID");
                 String dlabel = rs.getString("bagagelabel");
@@ -92,14 +87,11 @@ public class GevondenBagageAanpassen {
                 String merk = rs.getString("merk");
                 String softhard = rs.getString("softhard");
                 String status = rs.getString("status");
-                data.add(new Table(kofferid, dlabel, kleur, dikte, lengte, 
+                data.add(new BagageStuk(kofferid, dlabel, kleur, dikte, lengte, 
                             breedte, luchthavenvertrokken, 
                             datum, softhard, bijzonderheden, merk, status));
                 table.setItems(data);
-            }
-            
-            
-            
+            }    
         }catch (SQLException ed){
             System.out.println(ed);
         }
@@ -114,6 +106,7 @@ public class GevondenBagageAanpassen {
         Label matchesLabel = new Label("All lost lugage: ");
         matchesLabel.setFont(new Font("Arial", 20));
         
+        //alle tablecolumns
         TableColumn gevondenkofferIDcol = new TableColumn("ID");
         gevondenkofferIDcol.setMinWidth(10);
         gevondenkofferIDcol.setCellValueFactory(
@@ -176,8 +169,7 @@ public class GevondenBagageAanpassen {
         
         table.getColumns().addAll(bagagelabelcol, kleurcol, diktecol, lengtecol, breedtecol, luchthavenvertrokkencol, datumcol, softhardcol, merkcol, bijzonderhedecol, statuscol);
         
-        
-        
+        //veranderd de grootte van de table aan de hand van het grootte van het scherm
         scene.widthProperty().addListener(new ChangeListener<Number>() {
             @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
                 table.setMinWidth(((double)newSceneWidth - 10));
@@ -201,12 +193,13 @@ public class GevondenBagageAanpassen {
         buttons.add(pasAan, 0, 0);
         buttons.add(pasStatusAan, 3, 0);
         
+        //verandert de beschikbaarheid van de buttons aan de hand van de status van het bagagestuk dat is geselecteerd
         table.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
                 if(table.getSelectionModel().getSelectedItem() != null) 
                 {    
-                    Table selected = table.getSelectionModel().getSelectedItem();
+                    BagageStuk selected = table.getSelectionModel().getSelectedItem();
                     if("pending".equals(selected.getStatus())){
                         pasAan.setDisable(true);
                         pasStatusAan.setDisable(false);
@@ -218,10 +211,10 @@ public class GevondenBagageAanpassen {
             }
         });
         
-        
+        //verander de gegevens van het geselecteerde bagagestuk
         pasAan.setOnAction((ActionEvent e) -> {
             if(table.getSelectionModel().isEmpty() == false){
-                Table selected = table.getSelectionModel().getSelectedItem();
+                BagageStuk selected = table.getSelectionModel().getSelectedItem();
                 if(selected.getBagagelabel() == null){
                     pasBagageAan(primaryStage, selected.getVerlorenkofferID(), null, 
                         selected.getKleur(), selected.getDikte(), selected.getLengte(), selected.getBreedte(),
@@ -236,11 +229,10 @@ public class GevondenBagageAanpassen {
             }
         });
         
-        
-        
+        //pas de status aan van het geselecteerde bagagestuk
         pasStatusAan.setOnAction((ActionEvent e ) -> {
             if(table.getSelectionModel().isEmpty() == false){
-                Table selected = table.getSelectionModel().getSelectedItem();
+                BagageStuk selected = table.getSelectionModel().getSelectedItem();
                 pasStatusAan(primaryStage, selected.getVerlorenkofferID(), selected.getStatus(), selected.getBagagelabel());
             }    
         });
@@ -262,8 +254,6 @@ public class GevondenBagageAanpassen {
                     String breedte, String luchthavenGevonden, 
                     String bijzonderheden, String merk, String softhard){
         
-        
-        
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
@@ -278,7 +268,8 @@ public class GevondenBagageAanpassen {
         root.setCenter(grid);
         
         int rij = 1;
-
+        
+        //alle labels, comboboxen en textfields
         Text scenetitle = new Text("Adjust lost Lugage");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -425,8 +416,9 @@ public class GevondenBagageAanpassen {
         actiontarget.setFill(Color.FIREBRICK);
         grid.add(actiontarget, 1, rij++, 2, 1);
         
-        zoekBagage zoekbagage = new zoekBagage();
+        zoekBagage zoekBagage = new zoekBagage();
         
+        //verander de gegevens in de database en check of er een match is
         updateEnCheckMatch.setOnAction((ActionEvent e) -> {
             if(kleurEntry == null){kleurEntry = kleur;}
             if(hoogteEntry == null){hoogteEntry = dikte;}
@@ -437,20 +429,21 @@ public class GevondenBagageAanpassen {
             if(hardSoftEntry == null){hardSoftEntry = softhard;}
             
             try{
-                
-                
                 Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                 Statement stmt = (Statement) conn.createStatement();
+                //als het bagagelabel al leeg was en leeg is gelaten
                 if(bagageLabelEntry.getText() == null || bagageLabelEntry.getText().isEmpty()){
                     String updateString = "UPDATE gevondenbagage SET kleur = '"+kleurEntry+"', dikte = '"+hoogteEntry+"', bagagelabel = null, "
                                         + "lengte = '"+lengteEntry+"', breedte = '"+ breedteEntry + "', luchthavengevonden = '"+luchthavenGevondenEntry
                                         +"', bijzonderhede = '"+bijzonderhedenEntry.getText()+ "', merk = '"+ merkEntry+ "', softhard = '"+ hardSoftEntry +"' WHERE gevondenkofferID = '"+ gevondenkofferID+"'" ;
                         stmt.execute(updateString);
-                        zoekbagage.maakZoekString(primaryStage, Integer.parseInt(gevondenkofferID), 
+                        zoekBagage.maakZoekString(primaryStage, Integer.parseInt(gevondenkofferID), 
                                         null, kleurEntry, hoogteEntry, lengteEntry, 
                                         breedteEntry, luchthavenGevondenEntry, bijzonderhedenEntry.getText(), 
                                         merkEntry, hardSoftEntry);
-                }else if(!bagageLabelEntry.getText().trim().isEmpty() && bagageLabel == null || !bagageLabel.equals(bagageLabelEntry.getText().trim()) ){
+                }
+                // als het bagagelabel null was en veranderd is naar een echt bagagelabel.
+                else if(!bagageLabelEntry.getText().trim().isEmpty() && bagageLabel == null || !bagageLabel.equals(bagageLabelEntry.getText().trim()) ){
                     ResultSet bagagelabelExistsCheck = stmt.executeQuery("SELECT COUNT(*) AS total FROM gevondenbagage WHERE bagagelabel = '"+bagageLabelEntry.getText().trim()+"'");
                     int count = 0;
                     while(bagagelabelExistsCheck.next()){
@@ -461,24 +454,26 @@ public class GevondenBagageAanpassen {
                                 + "lengte = '"+lengteEntry+"', breedte = '"+ breedteEntry + "', luchthavengevonden = '"+luchthavenGevondenEntry
                                 +"', bijzonderhede = '"+bijzonderhedenEntry.getText()+ "', merk = '"+ merkEntry+ "', softhard = '"+ hardSoftEntry +"' WHERE gevondenkofferID = '"+ gevondenkofferID+"'" ;
                         stmt.execute(updateString);
-                        zoekbagage.maakZoekString(primaryStage, Integer.parseInt(gevondenkofferID), 
+                        zoekBagage.maakZoekString(primaryStage, Integer.parseInt(gevondenkofferID), 
                                 bagageLabelEntry.getText(), kleurEntry, hoogteEntry, lengteEntry, 
                                 breedteEntry, luchthavenGevondenEntry, bijzonderhedenEntry.getText(), 
                                 merkEntry, hardSoftEntry);
                     }
-                }else{
+                }
+                //als het bagagelabel al bestond en niet is aangepast
+                else{
                     String updateString = "UPDATE gevondenbagage SET kleur = '"+kleurEntry+"', dikte = '"+hoogteEntry+"', "
                                         + "lengte = '"+lengteEntry+"', breedte = '"+ breedteEntry + "', luchthavengevonden = '"+luchthavenGevondenEntry
                                         +"', bijzonderhede = '"+bijzonderhedenEntry.getText()+ "', merk = '"+ merkEntry+ "', softhard = '"+ hardSoftEntry +"' WHERE gevondenkofferID = '"+ gevondenkofferID+"'" ;
                         stmt.execute(updateString);
-                        zoekbagage.maakZoekString(primaryStage, Integer.parseInt(gevondenkofferID), 
+                        zoekBagage.maakZoekString(primaryStage, Integer.parseInt(gevondenkofferID), 
                                         bagageLabelEntry.getText(), kleurEntry, hoogteEntry, lengteEntry, 
                                         breedteEntry, luchthavenGevondenEntry, bijzonderhedenEntry.getText(), 
                                         merkEntry, hardSoftEntry);
                 }
             }catch (SQLException ed) {
-            System.out.println(ed);
-        }
+                System.out.println(ed);
+            }
             
         });
         Scene scene = new Scene(root, 1200, 920);
@@ -489,8 +484,8 @@ public class GevondenBagageAanpassen {
         
     }
     
+    //veranderd de status van de koffer en de bijbehorende match
     private void pasStatusAan(Stage primaryStage, String verlorenKofferID, String status, String bagageLabel){
-        System.out.println(verlorenKofferID);
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(primaryStage);
         BorderPane root = new BorderPane();
@@ -505,6 +500,7 @@ public class GevondenBagageAanpassen {
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
         
+        //voegt het bagagelabel en combobox voor de status toe aan de grid 
         Text scenetitle = new Text("Adjust status");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -534,11 +530,16 @@ public class GevondenBagageAanpassen {
         bwvbox1.getChildren().add(pasAan);
         grid.add(bwvbox1, 1, 3);
         
-        Button back = new Button("Home");
+        Button back = new Button("Go back");
+        back.setMinWidth(150);
+        HBox bwvbox = new HBox(10);
+        bwvbox.setAlignment(Pos.BOTTOM_RIGHT);
+        bwvbox.getChildren().add(back);
+        grid.add(bwvbox, 1, 4);
         
         Text actiontarget = new Text();
         actiontarget.setFill(Color.GREEN);
-        grid.add(actiontarget, 1, 4);
+        grid.add(actiontarget, 1, 5);
         
         pasAan.setOnAction((ActionEvent e) -> {
             if(statusEntry == null){statusEntry = status;}
@@ -551,26 +552,24 @@ public class GevondenBagageAanpassen {
                     ResultSet rs = stmt.executeQuery("SELECT verlorenkofferID FROM opgelost WHERE gevondenkofferID = '"+verlorenKofferID+"'");
                     while(rs.next()){
                         bijbehorendeKoffer = rs.getInt("verlorenkofferID");
-                        System.out.println(bijbehorendeKoffer);
                     }
                     stmt.execute("UPDATE verlorenbagage SET status = '"+statusEntry+"' WHERE verlorenkofferID = '"+bijbehorendeKoffer+"'");
                     stmt.execute("UPDATE gevondenbagage SET status = '"+statusEntry+"' WHERE gevondenkofferID = '"+verlorenKofferID+"'");
+                    if(statusEntry.equals("notSolved")){
+                        stmt.execute("DELETE FROM opgelost WHERE gevondenkofferID = '"+verlorenKofferID+"'");
+                    }
                     actiontarget.setText("Status updated");
-                    HBox bwvbox = new HBox(10);
-                    bwvbox.setAlignment(Pos.BOTTOM_RIGHT);
-                    bwvbox.getChildren().add(back);
-                    grid.add(bwvbox, 1, 5);
                 }
                 catch (SQLException ed) {
                 System.out.println(ed);
             }
         });
         
+        //ga terug naar het overzicht van de bagage
         back.setOnAction((ActionEvent e) -> {
-           Home home = new Home();
-           home.start(primaryStage);
+           GevondenBagageAanpassen gevondenBagageAanpassen = new GevondenBagageAanpassen();
+           gevondenBagageAanpassen.start(primaryStage);
         });
-        
         
         Scene scene = new Scene(root, 1200, 920);
         primaryStage.setTitle("Adjust status");
@@ -579,13 +578,13 @@ public class GevondenBagageAanpassen {
     }
     
     
-    
-    public static class Table{
+    //deze klasse wordt gebruikt om een tableview te kunnen maken
+    public static class BagageStuk{
         private SimpleStringProperty verlorenkofferID, bagagelabel, kleur, dikte, lengte, breedte, 
                     luchthavenvertrokken, datum, softhard, bijzonderheden, 
                      merk, status;
         
-        private Table(String gevondenkofferID, String bagagelabel, String kleur, String dikte, String lengte, String breedte, String luchthavenvertrokken, String datum, String softhard, String bijzonderhede, String merk, String status) {
+        private BagageStuk(String gevondenkofferID, String bagagelabel, String kleur, String dikte, String lengte, String breedte, String luchthavenvertrokken, String datum, String softhard, String bijzonderhede, String merk, String status) {
             this.verlorenkofferID = new SimpleStringProperty(gevondenkofferID);
             this.bagagelabel = new SimpleStringProperty(bagagelabel);
             this.kleur = new SimpleStringProperty(kleur);

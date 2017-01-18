@@ -1,7 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * In deze klasse wordt eerst een klant geregistreerd. Daarna is het mogelijk om zijn
+ * koffer te registreren. Dan wordt er een pdf van gemaakt en geopend. Dan wordt er 
+ * gekeken of er matches zijn. 
  */
 package balie;
 
@@ -49,31 +49,17 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 public class VerlKofferReg {
 
-    Mysql mysql = new Mysql();
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();
+    private final Mysql MYSQL = new Mysql();
+    private final String USERNAME = MYSQL.getUsername();
+    private final String PASSWORD = MYSQL.getPassword();
+    private final String CONN_STRING = MYSQL.getUrlmysql();
     private int customerID;
-    private String kleur, merk, hoogte, lengte, breedte, luchthavenVertrekEntry,
-            luchthavenAankomstEntry, countryEntry, hardSoftCase;
-    // Bagage info
-    private String Bagagelabel;
-    private String Kleur;
-    private String Bijzonderhede;
-    private String Merk;
-    private String Softhard;
-    private String Luchthavenaankomst;
-    //klanten info
-    private String Voornaam;
-    private String Tussenvoegsel;
-    private String Achternaam;
-    private String Telefoonnummer;
-    private String Email;
-    private String Plaats;
-    private String Land;
-    private String Huisnr;
-    private String Straat;
-    private String Postcode;
+    
+    //private Strings nodig voor het invullen van de informatie
+    private String kleurEntry, merkEntry, hoogteEntry, lengteEntry, breedteEntry, luchthavenVertrekEntry,
+            luchthavenAankomstEntry, countryEntry, hardSoftCaseEntry;
+    
+   
 
     public void start(Stage primaryStage) {
 
@@ -91,7 +77,8 @@ public class VerlKofferReg {
         root.setCenter(grid);
 
         int rij = 1;
-
+        
+        //alle labels en textfields voor het registreren van een klant
         Text scenetitle = new Text("Customer Information");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -145,7 +132,10 @@ public class VerlKofferReg {
 
         Button verderNaarBagage = new Button("Register Lugage");
         verderNaarBagage.setPrefWidth(150);
-
+        
+        
+        //eerst wordt er gekeken alles is ingevuld, daarna of de klant al bestaat
+        //als de klant al bestaat wordt daar mee verder gegaan, anders wordt er een nieuwe klant aangemaakt
         registreerKlant.setOnAction((ActionEvent e) -> {
             String lastName1 = lastNameEntry.getText();
             String firstName1 = firstNameEntry.getText();
@@ -157,9 +147,8 @@ public class VerlKofferReg {
                     || emailEntry.getText().trim().isEmpty() || phonenumberEntry.getText().trim().isEmpty()) {
                 actiontarget.setText("Lastname, Firstname,\ndate of birth, phonenumber\n and email can't\n be left open");
             } else {
-                Connection conn;
                 try {
-                    conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                    Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                     Statement stmt = (Statement) conn.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM customers WHERE voornaam = '" + firstName1 + "' AND achternaam = '" + lastName1 + "' AND tussenvoegsel = '" + tussenvoegsel + "' AND geb_datum = '" + geb_datum + "'");
                     int count = 0;
@@ -189,7 +178,8 @@ public class VerlKofferReg {
                 }
             }
         });
-
+        
+        //nadat de klant is toegevoegd door naar bagagetoevoegen
         verderNaarBagage.setOnAction((ActionEvent event) -> {
             BagageToevoegen(primaryStage);
         });
@@ -217,7 +207,8 @@ public class VerlKofferReg {
         root.setCenter(grid);
 
         int rij = 1;
-
+        
+        //alle labels, comboboxen en textfield voor het registreren van verloren bagage
         Text scenetitle = new Text("Register lost Lugage");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
@@ -241,7 +232,7 @@ public class VerlKofferReg {
 
         //eventhandler kleurKofferComboBox
         kleurKofferComboBox.setOnAction((event) -> {
-            kleur = (String) kleurKofferComboBox.getSelectionModel().getSelectedItem();
+            kleurEntry = (String) kleurKofferComboBox.getSelectionModel().getSelectedItem();
         });
 
         Label merkKoffer = new Label("Brand:");
@@ -258,7 +249,7 @@ public class VerlKofferReg {
 
         //eventhandler merkkoffercombobox      
         merkKofferComboBox.setOnAction((event) -> {
-            merk = (String) merkKofferComboBox.getSelectionModel().getSelectedItem();
+            merkEntry = (String) merkKofferComboBox.getSelectionModel().getSelectedItem();
         });
 
         Label hoogteKoffer = new Label("Height of luggage:");
@@ -274,7 +265,7 @@ public class VerlKofferReg {
 
         //eventhandler hoogtekoffercombobox
         hoogteKofferComboBox.setOnAction((event) -> {
-            hoogte = (String) hoogteKofferComboBox.getSelectionModel().getSelectedItem();
+            hoogteEntry = (String) hoogteKofferComboBox.getSelectionModel().getSelectedItem();
         });
 
         Label lengteKoffer = new Label("Length of luggage:");
@@ -290,7 +281,7 @@ public class VerlKofferReg {
 
         //eventhandler lengte combobox
         lengteKofferComboBox.setOnAction((event) -> {
-            lengte = (String) lengteKofferComboBox.getSelectionModel().getSelectedItem();
+            lengteEntry = (String) lengteKofferComboBox.getSelectionModel().getSelectedItem();
         });
 
         Label breedteKoffer = new Label("Width of luggage:");
@@ -305,7 +296,7 @@ public class VerlKofferReg {
 
         //eventhandler breedtekoffercombobox      
         breedteKofferComboBox.setOnAction((event) -> {
-            breedte = (String) breedteKofferComboBox.getSelectionModel().getSelectedItem();
+            breedteEntry = (String) breedteKofferComboBox.getSelectionModel().getSelectedItem();
         });
 
         Label hardSoftCaseLabel = new Label("Soft/hard case:");
@@ -320,7 +311,7 @@ public class VerlKofferReg {
 
         //eventhandler hardSoftCaseComboBox
         hardSoftCaseComboBox.setOnAction((event) -> {
-            hardSoftCase = (String) hardSoftCaseComboBox.getSelectionModel().getSelectedItem();
+            hardSoftCaseEntry = (String) hardSoftCaseComboBox.getSelectionModel().getSelectedItem();
         });
 
         Label luchthavenVertrek = new Label("Airport of departure:");
@@ -380,6 +371,7 @@ public class VerlKofferReg {
             countryEntry = (String) countryComboBox.getSelectionModel().getSelectedItem();
         });
 
+        //alle labels en textfields voor het registreren van het afleveradres
         Label plaats = new Label("City/town:");
         grid.add(plaats, 0, rij);
 
@@ -421,11 +413,16 @@ public class VerlKofferReg {
         Text actiontarget = new Text();
         actiontarget.setFill(Color.FIREBRICK);
         grid.add(actiontarget, 1, rij, 2, 1);
-
+        
+        /*
+         * Er wordt gekeken of alles is ingevuld, dan wordt gekeken of het bagagelabel al bestaat.
+         * Dan wordt de bagage toegevoegd aan de database en het afleveradres ook.
+         * Dan wordt de pdf gemaakt en daarna wordt er gezocht of er matches zijn.
+        */
+        
         registreerBagage.setOnAction((ActionEvent e) -> {
-            Connection conn;
             try {
-                conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+                Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                 String bagagelabel = bagageLabelEntry.getText();
                 String city = plaatsEntry.getText();
                 String straat = straatEntry.getText();
@@ -436,8 +433,8 @@ public class VerlKofferReg {
                 String toevoeging = huisnummerToevoeging.getText();
                 String postcode = postcodeEntry.getText();
                 Statement stmt = (Statement) conn.createStatement();
-                if (countryEntry == null || bagageLabelEntry.getText().trim().isEmpty() || city == null || straat == null || huisnummerEntry.getText().trim().isEmpty() || postcodeEntry.getText().trim().isEmpty() || merk == null
-                        || kleur == null || hoogte == null || lengte == null || breedte == null || luchthavenAankomstEntry == null || luchthavenVertrekEntry == null || hardSoftCase == null) {
+                if (countryEntry == null || bagageLabelEntry.getText().trim().isEmpty() || city == null || straat == null || huisnummerEntry.getText().trim().isEmpty() || postcodeEntry.getText().trim().isEmpty() || merkEntry == null
+                        || kleurEntry == null || hoogteEntry == null || lengteEntry == null || breedteEntry == null || luchthavenAankomstEntry == null || luchthavenVertrekEntry == null || hardSoftCaseEntry == null) {
                     actiontarget.setText("All fields must be\nfilled in except\nCharacteristics"); 
                 }else if(luchthavenAankomstEntry.equals(luchthavenVertrekEntry)){
                     actiontarget.setText("Airport of departure \ncan't be the same as\naiport of arrival");
@@ -448,45 +445,36 @@ public class VerlKofferReg {
                         count = bagagelabelExistsCheck.getInt("total");
                     }
                     if(count == 0){
-                    String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, softhard, status)"
-                            + "VALUES ('" + bagagelabel + "','" + kleur + "','" + hoogte + "','" + lengte + "','" + breedte + "','" + luchthavenVertrekEntry + "','" + luchthavenAankomstEntry
-                            + "',curdate(),'" + bijzonderheden + "','" + merk + "', '" + customerID + "', '" + hardSoftCase + "', 'notSolved')";
-                    stmt.execute(insert);
-                    actiontarget.setFill(Color.GREEN);
-                    actiontarget.setText("Lugage added");
-                    ResultSet result1232 = stmt.executeQuery("SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '" + bagagelabel + "' AND kleur = '" + kleur + "' AND dikte = '" + hoogte + "' AND lengte ='"
-                            + lengte + "' AND breedte = '" + breedte + "' AND luchthavenvertrokken = '" + luchthavenVertrekEntry + "' AND luchthavenaankomst = '" + luchthavenAankomstEntry
-                            + "' AND datum = curdate() AND bijzonderheden = '" + bijzonderheden + "' AND merk = '" + merk + "' AND customersID = '" + customerID + "'");
+                        String insert = "INSERT INTO verlorenbagage (bagagelabel, kleur, dikte, lengte, breedte, luchthavenvertrokken, luchthavenaankomst, datum, bijzonderheden, merk, customersID, softhard, status)"
+                                + "VALUES ('" + bagagelabel + "','" + kleurEntry + "','" + hoogteEntry + "','" + lengteEntry + "','" + breedteEntry + "','" + luchthavenVertrekEntry + "','" + luchthavenAankomstEntry
+                                + "',curdate(),'" + bijzonderheden + "','" + merkEntry + "', '" + customerID + "', '" + hardSoftCaseEntry + "', 'notSolved')";
+                        stmt.execute(insert);
+                        actiontarget.setFill(Color.GREEN);
+                        actiontarget.setText("Lugage added");
+                        ResultSet result1232 = stmt.executeQuery("SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '" + bagagelabel + "' AND kleur = '" + kleurEntry + "' AND dikte = '" + hoogteEntry + "' AND lengte ='"
+                                + lengteEntry + "' AND breedte = '" + breedteEntry + "' AND luchthavenvertrokken = '" + luchthavenVertrekEntry + "' AND luchthavenaankomst = '" + luchthavenAankomstEntry
+                                + "' AND datum = curdate() AND bijzonderheden = '" + bijzonderheden + "' AND merk = '" + merkEntry + "' AND customersID = '" + customerID + "'");
 
-                    int verlorenKofferID = 0;
-                    while (result1232.next()) {
-                        verlorenKofferID = result1232.getInt("verlorenkofferID");
-                    }
-                    
-                    stmt.execute("INSERT INTO afleveradres (verlorenkofferID, Land, Straat, Huisnummer, Toevoeging, Postcode, Plaats) VALUES "
-                            + "('" + verlorenKofferID + "','" + countryEntry + "','" + straat + "','" + Integer.valueOf(huisnummerEntry.getText()) + "','" + toevoeging + "','" + postcode + "','" + city + "')");
-                    
-                    
-                    
+                        int verlorenKofferID = 0;
+                        while (result1232.next()) {
+                            verlorenKofferID = result1232.getInt("verlorenkofferID");
+                        }
 
-                    
-                    
-                    
-                    maakPDF(verlorenKofferID);
-                    ZoekMatchVerlorenBagage zoekMatchVerlorenBagage = new ZoekMatchVerlorenBagage();
-                    zoekMatchVerlorenBagage.maakZoekString(customerID ,primaryStage, verlorenKofferID, bagagelabel, kleur, hoogte, lengte, breedte, 
-                            luchthavenVertrekEntry, luchthavenAankomstEntry, bijzonderheden, merk, hardSoftCase);
-                                                               
+                        stmt.execute("INSERT INTO afleveradres (verlorenkofferID, Land, Straat, Huisnummer, Toevoeging, Postcode, Plaats) VALUES "
+                                + "('" + verlorenKofferID + "','" + countryEntry + "','" + straat + "','" + Integer.valueOf(huisnummerEntry.getText()) + "','" + toevoeging + "','" + postcode + "','" + city + "')");
+
+                        maakPDF(verlorenKofferID);
+                        ZoekMatchVerlorenBagage zoekMatchVerlorenBagage = new ZoekMatchVerlorenBagage();
+                        zoekMatchVerlorenBagage.maakZoekString(customerID ,primaryStage, verlorenKofferID, bagagelabel, kleurEntry, hoogteEntry, lengteEntry, breedteEntry, 
+                                luchthavenVertrekEntry, luchthavenAankomstEntry, bijzonderheden, merkEntry, hardSoftCaseEntry);
                     }else{
                         actiontarget.setFill(Color.FIREBRICK);
                         actiontarget.setText("Luggage label already exists");
                     }          
-        }
-        } catch (SQLException ed) {
+                }
+            } catch (SQLException ed) {
                 System.out.println(ed);
-          
-        
-        } 
+            } 
         });
 
         Scene scene = new Scene(root, 1200, 920);
@@ -498,54 +486,52 @@ public class VerlKofferReg {
     }
     
     private void maakPDF(int verlorenBagageID){
+        //alle strings nodig voor het maken van de pdf
+        String bagagelabel = null, kleur = null, bijzonderhede = null, merk = null, 
+                softhard = null, luchthavenaankomst = null, voornaam = null,
+                tussenvoegsel = null, achternaam = null, telefoonnummer = null, 
+                email = null, plaats = null, land = null, huisnr = null, straat = null, postcode = null;
         
+        //alle informatie die nodig is wordt uit de database gehaald
         try{
             Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             Statement kofferinfo = conn.createStatement();
             String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID = '" +verlorenBagageID+" '" ;
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
-                    this.Bagagelabel = rs.getString("bagagelabel");
-                    this.Kleur = rs.getString("kleur");
-                    this.Bijzonderhede = rs.getString("bijzonderheden");
-                    this.Merk = rs.getString("merk");
-                    this.Softhard = rs.getString("softhard");
-                    this.Voornaam = rs.getString("voornaam");
-                    this.Tussenvoegsel = rs.getString("tussenvoegsel");
-                    this.Achternaam = rs.getString("achternaam");
-                    this.Telefoonnummer = rs.getString("telefoonnummer");
-                    this.Email = rs.getString("email");
-                    this.Plaats = rs.getString("Plaats");
-                    this.Land = rs.getString("Land");
-                    this.Huisnr = rs.getString("Huisnummer");
-                    this.Postcode = rs.getString("Postcode");
-                    this.Straat = rs.getString("Straat"); 
-                    this.Luchthavenaankomst = rs.getString("luchthavenaankomst");
-                    System.out.println(Bagagelabel + Kleur + Bijzonderhede + Merk+ Softhard+ Voornaam + Tussenvoegsel + Achternaam + Telefoonnummer + Email + Plaats + Land + Huisnr + Postcode + Straat + Luchthavenaankomst);
-                    }
+                bagagelabel = rs.getString("bagagelabel");
+                kleur = rs.getString("kleur");
+                bijzonderhede = rs.getString("bijzonderheden");
+                merk = rs.getString("merk");
+                softhard = rs.getString("softhard");
+                voornaam = rs.getString("voornaam");
+                tussenvoegsel = rs.getString("tussenvoegsel");
+                achternaam = rs.getString("achternaam");
+                telefoonnummer = rs.getString("telefoonnummer");
+                email = rs.getString("email");
+                plaats = rs.getString("Plaats");
+                land = rs.getString("Land");
+                huisnr = rs.getString("Huisnummer");
+                postcode = rs.getString("Postcode");
+                straat = rs.getString("Straat"); 
+                luchthavenaankomst = rs.getString("luchthavenaankomst");
+            }
 
            
             PDDocument document = new PDDocument();
 
-            // Create a new blank page and add it to the document
+            // Maak een pagina in het pdf bestand
             PDPage blankPage = new PDPage();
             document.addPage( blankPage );
-
-        
             PDFont font = PDType1Font.HELVETICA_BOLD;
             PDFont font2 = PDType1Font.TIMES_ROMAN;
             
-            // Create an instance of SimpleDateFormat used for formatting 
-            // the string representation of date (month/day/year)
+            //hier krijgen we de datum en de tijd
             DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-
-            // Get the date today using Calendar object.
-            java.util.Date today = Calendar.getInstance().getTime();        
-            // Using DateFormat format method we can create a string 
-            // representation of a date with the defined format.
+            java.util.Date today = Calendar.getInstance().getTime();
             String reportDate = df.format(today);
 
-            // Start a new content stream which will "hold" the to be created content
+            //contentStream slaat de informatie op die erin moet
             PDPageContentStream contentStream = new PDPageContentStream(document, blankPage);
             
             contentStream.setLeading(14.5f);
@@ -567,7 +553,7 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 635 );
-            contentStream.drawString( "Airport: " + Luchthavenaankomst);
+            contentStream.drawString( "Airport: " + luchthavenaankomst);
             contentStream.endText();
             
             //begin reiziger informatie
@@ -580,43 +566,43 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 575 );
-            contentStream.drawString( "Name: " + this.Voornaam + " " + this.Tussenvoegsel + " " + this.Achternaam  );
+            contentStream.drawString( "Name: " + voornaam + " " + tussenvoegsel + " " + achternaam  );
             contentStream.endText();
             //Adres
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 560 );
-            contentStream.drawString( "Address: " + this.Straat + " " + this.Huisnr);
+            contentStream.drawString( "Address: " + straat + " " + huisnr);
             contentStream.endText();
             //Woonplaats
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 545 );
-            contentStream.drawString( "Home town: " + Plaats);
+            contentStream.drawString( "Home town: " + plaats);
             contentStream.endText();
             //Postcode
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 530 );
-            contentStream.drawString( "Zip code: " + Postcode );
+            contentStream.drawString( "Zip code: " + postcode );
             contentStream.endText();
             //Land
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 515 );
-            contentStream.drawString( "Country: " + Land );
+            contentStream.drawString( "Country: " + land );
             contentStream.endText();
             //Telefoon
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 500 );
-            contentStream.drawString( "Telephone: " + Telefoonnummer);
+            contentStream.drawString( "Telephone: " + telefoonnummer);
             contentStream.endText();
             //E-mail
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 485 );
-            contentStream.drawString( "E-mail: " + Email );
+            contentStream.drawString( "E-mail: " + email );
             contentStream.endText();
             
             //bagagelabel informatie
@@ -629,13 +615,13 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 440 );
-            contentStream.drawString( "Label number: " + Bagagelabel);
+            contentStream.drawString( "Label number: " + bagagelabel);
             contentStream.endText();
             //Bestemming
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 425 );
-            contentStream.drawString( "Destination: " + Luchthavenaankomst);
+            contentStream.drawString( "Destination: " + luchthavenaankomst);
             contentStream.endText();
             
             //Bagage informatie
@@ -648,25 +634,25 @@ public class VerlKofferReg {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 365 );
-            contentStream.drawString( "Type: " + Softhard );
+            contentStream.drawString( "Type: " + softhard );
             contentStream.endText();
             //Merk
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 350);
-            contentStream.drawString( "Brand: " + Merk);
+            contentStream.drawString( "Brand: " + merk);
             contentStream.endText();
             //Kleur
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 335 );
-            contentStream.drawString( "Colour: " + Kleur);
+            contentStream.drawString( "Colour: " + kleur);
             contentStream.endText();
             //Kenmerken
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 320 );
-            contentStream.drawString( "Characteristics: " + Bijzonderhede);
+            contentStream.drawString( "Characteristics: " + bijzonderhede);
             contentStream.endText();
             
             //handtekening reiziger
@@ -682,35 +668,28 @@ public class VerlKofferReg {
             contentStream.drawString( "Autograph customer service: " );
             contentStream.endText();
             
-            // Make sure that the content stream is closed:
             contentStream.close();
 
+            //hier wordt een map aangemaakt als die nog niet bestand in mijn documenten
             JFileChooser fr = new JFileChooser();
-            FileSystemView fw = fr.getFileSystemView();
-            System.out.println(fw.getDefaultDirectory());
-
-                 
+            FileSystemView fw = fr.getFileSystemView();            
             Path test = Paths.get(fw.getDefaultDirectory() + "\\pdfopslaan");
             if(!Files.exists(test)){
                File file = new File(fw.getDefaultDirectory() + "\\pdfopslaan");
                file.mkdir();
             }
             
-            String opslaanAls = fw.getDefaultDirectory() + "\\pdfopslaan\\Luggage in database " + this.Bagagelabel + ".pdf";
+            //dan wordt de pdf opgeslagen in die map
+            String opslaanAls = fw.getDefaultDirectory() + "\\pdfopslaan\\Luggage in database " + bagagelabel + ".pdf";
             document.save(opslaanAls);
             document.close();
             
-            
-            
-            File myFile = new File(fw.getDefaultDirectory() + "\\pdfopslaan\\Luggage in database " + this.Bagagelabel + ".pdf");
+            //dan wordt het pdf bestand geopend
+            File myFile = new File(fw.getDefaultDirectory() + "\\pdfopslaan\\Luggage in database " + bagagelabel + ".pdf");
             Desktop.getDesktop().open(myFile);
             
-            } catch (SQLException | IOException ed) {
-                System.out.println(ed);
-            }
-        
-        
-        
+        } catch (SQLException | IOException ed) {
+            System.out.println(ed);
+        }
     }
-
 }

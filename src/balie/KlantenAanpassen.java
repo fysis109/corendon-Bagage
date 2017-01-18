@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Deze klasse zorgt voor een table met alle informatie over klanten
  */
 package balie;
 
@@ -20,118 +18,71 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
-/**
- *
- * @author Joljin Verwest
- */
 public class KlantenAanpassen extends Application {
 
-    private AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
     private Mysql mysql = new Mysql();
-    private Connection conn;
     private final String USERNAME = mysql.getUsername();
     private final String PASSWORD = mysql.getPassword();
     private final String CONN_STRING = mysql.getUrlmysql();
-    private String firstName, lastName, tussenvoegsel, mail, gebDatum, telefoon, customersID;
-    private int idcounter;
     private TableView<Person> table = new TableView<Person>();
-      
     
-   
-   
- 
-   
+    
+    @Override
     public void start(Stage stage) {
         
         //Menubar aan de bovenkant
         MenuB menuB = new MenuB();
         MenuBar menuBar = menuB.createMenuB(stage);
         BorderPane root = new BorderPane();
-        //menuBar.prefWidthProperty().bind(stage.widthProperty());
         root.setTop(menuBar);
         root.setCenter(table);
         
-     
-        try{           
-            //maak connectie met het database
-            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-            // querry voor aantal koffers
-            String query1 = "select count(*) AS count from customers";
-            System.out.println(query1);
-
-            // create the java statement
-            Statement st1 = conn.createStatement();
-
-            // execute the query, and get a java resultset
-            ResultSet databaseResponse = st1.executeQuery(query1);
-            while (databaseResponse.next())
-            { 
-                 this.idcounter = databaseResponse.getInt("count");
-
-            }
-            Person[] person = new Person[this.idcounter];
-
-
-
-                String query2 =  "select * from customers";
-            System.out.println(query2);
-                Statement st2 = conn.createStatement();
-                ResultSet databaseResponse2 = st2.executeQuery(query2);
-
+        try{
+            Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+            String selectQuery =  "SELECT * FROM customers";
+            Statement stmt = conn.createStatement();
+            ResultSet databaseResponse = stmt.executeQuery(selectQuery);
             ObservableList<Person> data = FXCollections.observableArrayList();
-
-            while (databaseResponse2.next())
-            {   
-
-
-                //database response verwerken
-                this.customersID = databaseResponse2.getString("customersID");
-                this.firstName = databaseResponse2.getString("voornaam");
-                this.lastName = databaseResponse2.getString("achternaam");
-                this.tussenvoegsel = databaseResponse2.getString("tussenvoegsel");
-                this.mail = databaseResponse2.getString("email");
-                this.gebDatum = databaseResponse2.getString("geb_datum");
-                this.telefoon = databaseResponse2.getString("telefoonnummer");
-
-                 data.add(new Person(firstName, lastName, tussenvoegsel, mail, gebDatum, telefoon, customersID));
-
-                 table.setItems(data);
-
+            while (databaseResponse.next())
+            {
+                String customersID = databaseResponse.getString("customersID");
+                String firstName = databaseResponse.getString("voornaam");
+                String lastName = databaseResponse.getString("achternaam");
+                String tussenvoegsel = databaseResponse.getString("tussenvoegsel");
+                String mail = databaseResponse.getString("email");
+                String gebDatum = databaseResponse.getString("geb_datum");
+                String telefoon = databaseResponse.getString("telefoonnummer");
+                
+                data.add(new Person(firstName, lastName, tussenvoegsel, mail, gebDatum, telefoon, customersID));
+                table.setItems(data);
             }
+        }catch (SQLException ed) {
+            System.out.println(ed);
         }
-        catch (SQLException ed) {
-        }
-        
         
         Scene scene = new Scene(new Group());
-        stage.setTitle("Table View Sample");
-        stage.setWidth(800);
-        stage.setHeight(800);
- 
+        stage.setTitle("All customers");
         
-        final Label label = new Label("Adjust customers");
-        label.setFont(new Font("Arial", 20));
+        Label adjustCustomersLabel = new Label("Adjust customers");
+        adjustCustomersLabel.setFont(new Font("Arial", 20));
         
         table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        //veranderd de grootte van de tableview aan de hand van de grootte van het scherm
         scene.widthProperty().addListener(new ChangeListener<Number>() {
             @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
                 table.setMinWidth(((double)newSceneWidth - 10));
@@ -145,12 +96,13 @@ public class KlantenAanpassen extends Application {
             }
         });
         
-        TableColumn gevondenkofferIDcol = new TableColumn("Firstname");
-        gevondenkofferIDcol.setCellValueFactory(
+        //alle tablecolum
+        TableColumn firstNameCol = new TableColumn("Firstname");
+        firstNameCol.setCellValueFactory(
                 new PropertyValueFactory<>("firstName"));
         
-        TableColumn bagagelabelcol = new TableColumn("Lastname");
-        bagagelabelcol.setCellValueFactory(
+        TableColumn lastNameCol = new TableColumn("Lastname");
+        lastNameCol.setCellValueFactory(
                 new PropertyValueFactory<>("lastName"));
         
         TableColumn tussenvoegselCol = new TableColumn("Insertion");
@@ -173,71 +125,36 @@ public class KlantenAanpassen extends Application {
         actionCol.setCellValueFactory( 
                 new PropertyValueFactory<>( "" ));
         
-        Callback<TableColumn<Person, String>, TableCell<Person, String>> cellFactory = //
-                new Callback<TableColumn<Person, String>, TableCell<Person, String>>()
-                {
-                    @Override
-                    public TableCell call( final TableColumn<Person, String> param )
-                    {
-                        final TableCell<Person, String> cell = new TableCell<Person, String>()
-                        {
-
-                            Button btn = new Button( "Adjust customer" );
-
-                            @Override
-                            public void updateItem( String item, boolean empty )
-                            {
-                                super.updateItem( item, empty );
-                                if ( empty )
-                                {
-                                    setGraphic( null );
-                                    setText( null );
-                                }
-                                else
-                                {
-                                    btn.setOnAction( ( ActionEvent event ) ->
-                                            {
-                                                Person person = getTableView().getItems().get( getIndex() );
-                                                aanpassenKlanten.AanpassenKlanten(stage,person.getFirstName(), person.getLastName(), person.getTussenvoegsel(),
-                                                        person.getTelefoon(), person.getMail(),person.getGebDatum(),person.getCustomersID()); 
-                                                
-                                    } );
-                                    setGraphic( btn );
-                                    btn.setPrefWidth(125);
-                                    setText( null );
-                                }
-                            }
-                        };
-                        cell.setAlignment(Pos.CENTER);
-                        return cell;
-                    }
-                };
-
-        actionCol.setCellFactory( cellFactory );
+        Button adjustCustomer = new Button("Adjust customer");
+            
+        //als er een klant is geselecteerd en er wordt gedrukt op adjsut customer,
+        //dan wordt dat scherm geopend.
+        adjustCustomer.setOnAction((ActionEvent e ) -> {
+            if(table.getSelectionModel().isEmpty() == false){
+                Person person = table.getSelectionModel().getSelectedItem();
+                AanpassenKlanten aanpassenKlanten = new AanpassenKlanten();
+                                        aanpassenKlanten.AanpassenKlanten(stage,person.getFirstName(), person.getLastName(), person.getTussenvoegsel(),
+                                                person.getTelefoon(), person.getMail(),person.getGebDatum(),person.getCustomersID());
+            }    
+        });
         
-        table.getColumns().addAll(gevondenkofferIDcol,bagagelabelcol,tussenvoegselCol, gebdatumcol,
-                mailcol,telefooncol, actionCol);
+        //voeg alle columns toe aan de table
+        table.getColumns().addAll(lastNameCol,firstNameCol,tussenvoegselCol, gebdatumcol,
+                mailcol,telefooncol);
         
         final VBox vbox = new VBox(root);
         
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, table);
+        vbox.getChildren().addAll(adjustCustomersLabel, table, adjustCustomer);
         ((Group) scene.getRoot()).getChildren().addAll(vbox);
-        
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
-        //set Stage boundaries to visible bounds of the main screen
-        stage.setX(primaryScreenBounds.getMinX());
-        stage.setY(primaryScreenBounds.getMinY());
-        stage.setWidth(primaryScreenBounds.getWidth());
-        stage.setHeight(primaryScreenBounds.getHeight());
         
         scene.getStylesheets().add("global/Style2.css");
         stage.setScene(scene);
         stage.show();
     }
  
+    //deze klasse is nodig om de tableview te kunnen maken
     public static class Person {
  
         private final SimpleStringProperty firstName;
@@ -247,7 +164,6 @@ public class KlantenAanpassen extends Application {
         private final SimpleStringProperty gebDatum;
         private final SimpleStringProperty telefoon;
         private final SimpleStringProperty customersID;
-        //private final Button btn = new Button();
  
         private Person(String firstName, String lastName, String tussenvoegsel, String mail, String gebDatum, String telefoon,
                 String customersID) {

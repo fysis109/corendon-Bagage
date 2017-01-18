@@ -52,15 +52,13 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 public class zoekBagage {
     
-    //mysql connectie
-    Mysql mysql = new Mysql();
+    //mysql informatie
+    private Mysql MYSQL = new Mysql();
+    private final String USERNAME = MYSQL.getUsername();
+    private final String PASSWORD = MYSQL.getPassword();
+    private final String CONN_STRING = MYSQL.getUrlmysql();   
     
-    //private mqsql
-    private final String USERNAME = mysql.getUsername();
-    private final String PASSWORD = mysql.getPassword();
-    private final String CONN_STRING = mysql.getUrlmysql();   
     private int gevKofID;
-
     
     public void maakZoekString(Stage primaryStage, int gevondenKofferID, String bagageLabel, 
             String kleur, String hoogte, String lengte, String breedte, String luchthaven, 
@@ -69,6 +67,8 @@ public class zoekBagage {
         String zoekBagage = null;
         gevKofID = gevondenKofferID;
         
+        //maakt een zoekstring als er een bagagelabel is ingevuld bij de verloren bagage dan zoekt ie alleen daarop
+        //anders alleen op de kenmerken
         if(bagageLabel != null){
             zoekBagage = "SELECT verlorenkofferID FROM verlorenbagage WHERE bagagelabel = '"+bagageLabel+"'";
         }else{
@@ -106,13 +106,12 @@ public class zoekBagage {
         }catch(SQLException ed){
             System.out.println(ed);
         }
-        
         laatResultatenZien(primaryStage, kofferIdResultaten);
     }
     
     
-    private TableView<Person> table = new TableView<Person>();
-    private String kofferid, dlabel, kleur, dikte, lengte, breedte, luchthavengevonden, luchthavenaankomst, datum, softhard, bijzonderhede, merk;
+    private TableView<bagageStuk> table = new TableView<bagageStuk>();
+   
     
     private void laatResultatenZien(Stage primaryStage, ArrayList<Integer> kofferIdResultaten){
         MenuB menuB = new MenuB();
@@ -128,42 +127,36 @@ public class zoekBagage {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
         root.setCenter(grid);
-
-        Connection conn;
+        
+        //als er een match is en dus is de array niet leeg, dan worden die allemaal getoond op het scherm
         if(!kofferIdResultaten.isEmpty()) {
             try {
-                //maak connectie met het database
-                conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-
-                //Person[] person = new Person[bagageIdArray.length];
+                Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
                 Statement st = conn.createStatement();
-
                 String selectString = "SELECT * FROM verlorenbagage WHERE verlorenkofferID = '" + kofferIdResultaten.get(0) + "'";
                 for (int i = 1; i < kofferIdResultaten.size(); i++) {
                     selectString += "OR verlorenkofferID = '" + kofferIdResultaten.get(i) + "'";
                 }
 
                 ResultSet databaseResponse2 = st.executeQuery(selectString);
-
-                ObservableList<Person> data = FXCollections.observableArrayList();
-
+                ObservableList<bagageStuk> data = FXCollections.observableArrayList();
                 while (databaseResponse2.next()) {
 
                     //database response verwerken
-                    this.kofferid = databaseResponse2.getString("verlorenkofferID");
-                    this.dlabel = databaseResponse2.getString("bagagelabel");
-                    this.kleur = databaseResponse2.getString("kleur");
-                    this.dikte = databaseResponse2.getString("dikte");
-                    this.lengte = databaseResponse2.getString("lengte");
-                    this.breedte = databaseResponse2.getString("breedte");
-                    this.luchthavengevonden = databaseResponse2.getString("luchthavenvertrokken");
-                    this.luchthavenaankomst = databaseResponse2.getString("luchthavenaankomst");
-                    this.datum = databaseResponse2.getString("datum");
-                    this.softhard = databaseResponse2.getString("softhard");
-                    this.bijzonderhede = databaseResponse2.getString("bijzonderheden");
-                    this.merk = databaseResponse2.getString("merk");
+                    String kofferid = databaseResponse2.getString("verlorenkofferID");
+                    String dlabel = databaseResponse2.getString("bagagelabel");
+                    String kleur = databaseResponse2.getString("kleur");
+                    String dikte = databaseResponse2.getString("dikte");
+                    String lengte = databaseResponse2.getString("lengte");
+                    String breedte = databaseResponse2.getString("breedte");
+                    String luchthavengevonden = databaseResponse2.getString("luchthavenvertrokken");
+                    String luchthavenaankomst = databaseResponse2.getString("luchthavenaankomst");
+                    String datum = databaseResponse2.getString("datum");
+                    String softhard = databaseResponse2.getString("softhard");
+                    String bijzonderhede = databaseResponse2.getString("bijzonderheden");
+                    String merk = databaseResponse2.getString("merk");
 
-                    data.add(new Person(kofferid, dlabel, kleur, dikte, lengte, breedte, luchthavengevonden, luchthavenaankomst, datum, softhard, bijzonderhede, merk));
+                    data.add(new bagageStuk(kofferid, dlabel, kleur, dikte, lengte, breedte, luchthavengevonden, luchthavenaankomst, datum, softhard, bijzonderhede, merk));
 
                     table.setItems(data);
 
@@ -245,6 +238,8 @@ public class zoekBagage {
 
             table.setEditable(true);
             table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            
+            //veranderd de grootte van de tableview aan de hand van de grootte van het scherm
             scene.widthProperty().addListener(new ChangeListener<Number>() {
             @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
                 table.setMinWidth(((double)newSceneWidth - 10));
@@ -258,9 +253,6 @@ public class zoekBagage {
                 table.setMaxHeight((double)newSceneHeight - 200);
             }
             });
-
-            
-            
             
             Button match = new Button("Match");
             Button geenMatch = new Button("No match");
@@ -273,8 +265,8 @@ public class zoekBagage {
             
             match.setOnAction((ActionEvent e) -> {
                 if(table.getSelectionModel().isEmpty() == false){
-                    Person selected = table.getSelectionModel().getSelectedItem();
-                    zetMatchInDatabase(selected.getGevondenkofferID());
+                    bagageStuk selected = table.getSelectionModel().getSelectedItem();
+                    zetMatchInDatabase(selected.getGevondenkofferID(), primaryStage);
                 }
             });
             
@@ -294,11 +286,10 @@ public class zoekBagage {
                     Home home = new Home();
                     home.start(primaryStage);
                     dialog.close();
-                  
                 }}); 
             });
 
-            final VBox vbox = new VBox(root);
+            VBox vbox = new VBox(root);
             vbox.setSpacing(10);
             vbox.setPadding(new Insets(10, 0, 0, 10));
             vbox.getChildren().addAll(matchesLabel, table, buttons);
@@ -307,7 +298,9 @@ public class zoekBagage {
             scene.getStylesheets().add("global/Style2.css");
             primaryStage.setScene(scene);
             primaryStage.show();
-        } else {
+        } 
+        //als er dus geen matches zijn
+        else {
             final Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(primaryStage);
@@ -331,24 +324,25 @@ public class zoekBagage {
 
     }
     
-    // Bagage info
-    private String Bagagelabel, Kleur, Land, Plaats, Straat, 
-               Luchthavengevonden, Merk, Softhard, Bijzonderhede,Huisnr,Postcode;
     
-   
-    
-    //klanten info
-    private String Voornaam, Tussenvoegsel, Achternaam, Telefoonnummer, Email, Luchthavenaankomst;
-    
-    private void zetMatchInDatabase(String verlorenKofferID){
-        Connection conn;
+    private void zetMatchInDatabase(String verlorenKofferID, Stage primaryStage){
         int klantID = 0;
+        
+        //Verloren koffer bagage strings
+        String  bagagelabelVerloren = null, voornaam = null, tussenvoegsel = null, 
+                achternaam = null, telefoonnummer = null, email = null, 
+                plaats = null, land = null, huisnr = null, straat = null, postcode = null;
+        
+        //gevonden koffer bagage strings
+        String bagageLabelGevonden = null, kleurGevonden = null, merkGevonden = null, hoogteGevonden = null,
+                    lengteGevonden = null, breedteGevonden = null, luchthavenGevonden = null, softHardGevonden = null, bijzonderhedenGevonden = null;
+        
         try {
-            //maak connectie met het database
-            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+            Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             Statement st = conn.createStatement();
-                        
-            String selectKlantID = "SELECT customersID from verlorenbagage where verlorenkofferID = '"+verlorenKofferID+"'";
+            
+            //informatie over de eigenaar van de verlorenkoffer
+            String selectKlantID = "SELECT customersID FROM verlorenbagage WHERE verlorenkofferID = '"+verlorenKofferID+"'";
             ResultSet resultKlantID = st.executeQuery(selectKlantID);
             while(resultKlantID.next()){
                 klantID = resultKlantID.getInt("customersID");
@@ -360,44 +354,28 @@ public class zoekBagage {
             
             String updateStatusVerl = "UPDATE verlorenbagage SET status = 'pending' WHERE verlorenkofferID = '"+verlorenKofferID+"'";
             String updateStatusGev = "UPDATE gevondenbagage SET status = 'pending' WHERE gevondenkofferID = '"+gevKofID+"'";
-            System.out.println(updateStatusGev);
             st.execute(updateStatusVerl);
             st.execute(updateStatusGev);
             
-            String bagagelabelVerloren = "";
+            //alle informatie over de verloren koffer en klant
             Statement kofferinfo = conn.createStatement();
             String insertString2 = "SELECT * FROM verlorenbagage v LEFT JOIN customers c ON c.customersID = v.customersID LEFT JOIN afleveradres a ON a.VerlorenkofferID = v.verlorenkofferID WHERE v.verlorenkofferID = '" +verlorenKofferID +"'";
-            System.out.println(insertString2);
             ResultSet rs = kofferinfo.executeQuery(insertString2);
             while (rs.next()) {
                 bagagelabelVerloren = rs.getString("bagagelabel");
-                this.Voornaam = rs.getString("voornaam");
-                this.Tussenvoegsel = rs.getString("tussenvoegsel");
-                this.Achternaam = rs.getString("achternaam");
-                this.Telefoonnummer = rs.getString("telefoonnummer");
-                this.Email = rs.getString("email");
-                this.Plaats = rs.getString("Plaats");
-                this.Land = rs.getString("Land");
-                this.Huisnr = rs.getString("Huisnummer");
-                this.Postcode = rs.getString("Postcode");
-                this.Straat = rs.getString("Straat"); 
-                this.Luchthavenaankomst = rs.getString("luchthavenaankomst");
+                voornaam = rs.getString("voornaam");
+                tussenvoegsel = rs.getString("tussenvoegsel");
+                achternaam = rs.getString("achternaam");
+                telefoonnummer = rs.getString("telefoonnummer");
+                email = rs.getString("email");
+                plaats = rs.getString("Plaats");
+                land = rs.getString("Land");
+                huisnr = rs.getString("Huisnummer");
+                postcode = rs.getString("Postcode");
+                straat = rs.getString("Straat");
             }
             
-            
-           
-            String bagageLabelGevonden = "";
-            String kleurGevonden = "";
-            String merkGevonden = "";
-            String hoogteGevonden = "";
-            String lengteGevonden = "";
-            String breedteGevonden = "";
-            String luchthavenGevonden = "";
-            String softHardGevonden = "";
-            String bijzonderhedenGevonden = "";
-            
-            
-            
+            //alle informatie over de gevonden koffer en de klant
             String insertString3 = "select * from gevondenbagage where gevondenkofferID = '" + gevKofID+ "'";
             ResultSet rs1 = kofferinfo.executeQuery(insertString3);
             while (rs1.next()) {
@@ -412,14 +390,12 @@ public class zoekBagage {
                 luchthavenGevonden = rs1.getString("luchthavengevonden");
             }
             
-            System.out.println(Land);
-            
             String stuurNaarLuchthaven = "";
-            if(Land.equals("Netherlands")){
+            if(land.equals("Netherlands")){
                 stuurNaarLuchthaven = "Schiphol, Amsterdam";
-            }if(Land.equals("Spain")){
+            }if(land.equals("Spain")){
                 stuurNaarLuchthaven = "El prat, Barcelona";
-            }if(Land.equals("Turkey")){
+            }if(land.equals("Turkey")){
                 stuurNaarLuchthaven = "Atatürk, Istanbul";
             }
             
@@ -427,30 +403,19 @@ public class zoekBagage {
                 bagageLabelGevonden = "Doesn't exist";
             }
      
-            // pdf verloren kofffer match
-               // Create a new empty document
+            //nieuw pdf document wordt aangemaakt
             PDDocument document = new PDDocument();
-
-            // Create a new blank page and add it to the document
             PDPage blankPage = new PDPage();
             document.addPage( blankPage );
-       
-         
-        
             PDFont font = PDType1Font.HELVETICA_BOLD;
             PDFont font2 = PDType1Font.TIMES_ROMAN;
             
-            // Create an instance of SimpleDateFormat used for formatting 
-            // the string representation of date (month/day/year)
+            //zorgt voor de tijd en datum
             DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-
-            // Get the date today using Calendar object.
-            java.util.Date today = Calendar.getInstance().getTime();        
-            // Using DateFormat format method we can create a string 
-            // representation of a date with the defined format.
+            java.util.Date today = Calendar.getInstance().getTime();
             String reportDate = df.format(today);
 
-            // Start a new content stream which will "hold" the to be created content
+            //contentStream slaat de informatie op die erin moet
             PDPageContentStream contentStream = new PDPageContentStream(document, blankPage);
             // headline
             contentStream.beginText();
@@ -486,43 +451,43 @@ public class zoekBagage {
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 575 );
-            contentStream.drawString( "Name: " + Voornaam + " " + Tussenvoegsel + " " + Achternaam);
+            contentStream.drawString( "Name: " + voornaam + " " + tussenvoegsel + " " + achternaam);
             contentStream.endText();
             //Adres
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 560 );
-            contentStream.drawString( "Address: " + Straat + " " + Huisnr );
+            contentStream.drawString( "Address: " + straat + " " + huisnr );
             contentStream.endText();
             //Woonplaats
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 545 );
-            contentStream.drawString( "Home town: " + Plaats );
+            contentStream.drawString( "Home town: " + plaats );
             contentStream.endText();
             //Postcode
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 530 );
-            contentStream.drawString( "Zip code: " + Postcode );
+            contentStream.drawString( "Zip code: " + postcode );
             contentStream.endText();
             //Land
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 515 );
-            contentStream.drawString( "Country: " + Land);
+            contentStream.drawString( "Country: " + land);
             contentStream.endText();
             //Telefoon
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 500 );
-            contentStream.drawString( "Phonenumber " + Telefoonnummer );
+            contentStream.drawString( "Phonenumber " + telefoonnummer );
             contentStream.endText();
             //E-mail
             contentStream.beginText();
             contentStream.setFont( font2, 12 );
             contentStream.moveTextPositionByAmount( 180, 485 );
-            contentStream.drawString( "E-mail: " + Email);
+            contentStream.drawString( "E-mail: " + email);
             contentStream.endText();
             
             //bagagelabel informatie
@@ -574,34 +539,33 @@ public class zoekBagage {
             contentStream.drawString( "Characteristics: "+bijzonderhedenGevonden);
             contentStream.endText();
             
-            // Make sure that the content stream is closed:
             contentStream.close();
             
+            //wordt gekeken of de map pdfopslaan bestaat, zo nee dan wordt deze aangemaakt op de computer.
             JFileChooser fr = new JFileChooser();
-            FileSystemView fw = fr.getFileSystemView();
-            System.out.println(fw.getDefaultDirectory());
-
-                 
+            FileSystemView fw = fr.getFileSystemView();   
             Path test = Paths.get(fw.getDefaultDirectory() + "\\pdfopslaan" );
             if(!Files.exists(test)){
                File file = new File(fw.getDefaultDirectory() + "\\pdfopslaan");
                file.mkdir();
             }
             
-            
-            
+            //pdf wordt opgeslagen in die map
             String opslaanAls = fw.getDefaultDirectory() + "\\pdfopslaan\\Match luggage " + gevKofID + "matches with "+ verlorenKofferID+ ".pdf";
             document.save(opslaanAls);
             document.close();
             
-            
-            
+            //mailtje naar de klant
             String body = "Dear Sir/Madam, \nYour luggage may have been found and will be sent to: "+stuurNaarLuchthaven+"\n Luggage label: "
                     + bagagelabelVerloren + "\nPlease visit the customer service of Corendon at "+ stuurNaarLuchthaven + " to verify it's your luggage \n\n"
                     + "Yours faithfully \nCorendon";
             WachtwoordVergeten sendMail = new WachtwoordVergeten();
-            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, Email, "Luggage might be found", body, null);
+            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, email, "Luggage might be found", body, null);
             
+            
+            //mail naar de luchthaven met de pdf als bijlage
+            //voor nu even onze eigen email gedaan omdat de mail applicatie anders
+            //een foutmelding geeft
             String luchthavenEmail = "";
             if(luchthavenGevonden.equals("Schiphol, Amsterdam")){
                 //luchthavenEmail = "schiphol@corendonbalie.com";
@@ -613,27 +577,37 @@ public class zoekBagage {
                 //luchthavenEmail = "atatürk@corendonbalie.com";
                 luchthavenEmail = "tim-vlaar@hotmail.com";
             }
-            
-            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, Email, "Send luggage back", "Send this back", opslaanAls);
-
-            
-            
-                 
-        
+            sendMail.sendEmail(WachtwoordVergeten.EMAIL_USER_NAME, WachtwoordVergeten.EMAIL_PASSWORD, luchthavenEmail, "Send luggage back", "Send this back", opslaanAls);
         } catch (SQLException | IOException ex) {
             System.out.println(ex);
         }
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(primaryStage);
+        VBox dialogVbox = new VBox(20);
+        Button homeButton = new Button();
+        homeButton.setText("Home");
+        dialogVbox.getChildren().addAll(new Text("The customer has received an email\nthe airport will send the luggage back\nclick home to go to the\nhomepage"), homeButton);
+        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+        dialog.setScene(dialogScene);
+        dialog.show();
+        homeButton.setOnAction(new EventHandler<ActionEvent>() { public void handle(ActionEvent e){
+            Home home = new Home();
+            home.start(primaryStage);
+            dialog.close();
+        }});
+        
     }
 
     
-
-    public static class Person {
+    //deze klasse is nodig om de tableview te maken
+    public static class bagageStuk {
 
         private SimpleStringProperty gevondenkofferID, bagagelabel, kleur,
                 dikte, lengte, breedte, luchthavengevonden, luchthavenaankomst, datum,
                 softhard, bijzonderhede, merk;
 
-        private Person(String gevondenkofferID, String bagagelabel, String kleur, String dikte, String lengte, String breedte, String luchthavengevonden, String luchthavenaankomst, String datum, String softhard, String bijzonderhede, String merk) {
+        private bagageStuk(String gevondenkofferID, String bagagelabel, String kleur, String dikte, String lengte, String breedte, String luchthavengevonden, String luchthavenaankomst, String datum, String softhard, String bijzonderhede, String merk) {
             this.gevondenkofferID = new SimpleStringProperty(gevondenkofferID);
             this.bagagelabel = new SimpleStringProperty(bagagelabel);
             this.kleur = new SimpleStringProperty(kleur);
